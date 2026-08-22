@@ -4,13 +4,15 @@ Use only when the user asks for multiple perspectives, a thorough challenge, or 
 
 ## Worker mode
 
-Disclose one execution mode before the synthesis:
+Record one execution mode before the synthesis:
 
 - `real_workers`: the host actually created isolated workers and supplies child-run receipts or equivalent provenance that the workers' prose cannot self-assert.
 - `single_agent_role_simulation`: one model or one call produced multiple role perspectives.
 - `contract_fixture`: a stored event stream is being validated for development or audit only.
 
 Only the host can establish `real_workers`. Role names, worker IDs, output hashes, or a model-generated `worker_mode` field are not proof of independent execution. If host evidence is unavailable, use `single_agent_role_simulation` and describe the result as a structured multi-perspective review, not real multi-Agent debate. Never present `contract_fixture` as a normal user result.
+
+Keep the raw enum, worker IDs and receipts in the event stream. In ordinary prose, disclose the mode in one natural sentence: say how many independent workers actually ran, whether they cross-examined one another, or whether the result was a single-agent structured review. Show receipts only when the user asks for the audit trail.
 
 ## Roles
 
@@ -42,11 +44,11 @@ Send only de-identified summaries and conflicting claims. Ask each agent to iden
 
 ### Synthesis
 
-The orchestrator reports consensus, disagreements, blind spots, evidence strength, one current judgment, 2–3 actions/experiments, and a stop condition. Majority vote cannot establish truth. High-risk topics require a risk-agent pass or `SAFE_STOP`.
+The orchestrator keeps consensus, disagreements, blind spots, evidence strength, one current judgment, proposed tests, and a stop condition in the synthesis artifact. The prose should lead with the decision and surface only the disagreements that could change it; do not print the same full set of headings for every debate. Majority vote cannot establish truth. High-risk topics require a risk-agent pass or `SAFE_STOP`.
 
 ### User decision
 
-Offer `accept`, `reject`, `defer`, `add_facts`, `rerun_agent`, or `stop`. Store the decision and later result separately from author knowledge. Default maximum is two rounds and a fixed budget.
+End with the decision the user actually needs to make. Store it internally as `accept`, `reject`, `defer`, `add_facts`, `rerun_agent`, or `stop`, but do not force those enum labels into the question. Store the decision and later result separately from author knowledge. Default maximum is two rounds and a fixed budget.
 
 ## Validation
 
