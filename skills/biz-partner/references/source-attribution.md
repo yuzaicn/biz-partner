@@ -87,10 +87,11 @@ Apply these machine-checkable assertions:
    non-attribution role and cannot satisfy an attribution assertion.
 
 Render the name from the registry's `public_attribution_name`; do not hard-code
-maintainer names in this rule. A concise pattern is “This judgment draws on
-{public_attribution_name}'s perspective; whether it fits your case still depends
-on current evidence.” Adapt the wording to the answer rather than using a fixed
-signature.
+maintainer names in this rule. Put one short mention next to the judgment it
+actually supports. The sentence should fit the surrounding answer instead of
+reusing a signature or appending a standard disclaimer. When the boundary
+matters, say plainly that the source supplied a perspective and the current case
+still needs its own evidence.
 
 ## Prohibitions
 

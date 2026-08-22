@@ -39,6 +39,12 @@ class PublicKnowledgeTests(unittest.TestCase):
         self.assertEqual(result["atoms"], 40)
         self.assertEqual(result["recall_at_5"], 1.0)
 
+    def test_human_readable_pack_has_no_generated_punctuation_artifacts(self) -> None:
+        for name in ("USAGE.md", "methods.md", "concept-dictionary.md"):
+            text = (self.pack_root / name).read_text(encoding="utf-8")
+            self.assertNotIn("。。", text, name)
+            self.assertNotIn("用在：用于", text, name)
+
     def test_public_atom_field_whitelist_rejects_raw_material(self) -> None:
         sources = deepcopy(self.sources)
         atoms = deepcopy(self.atoms)

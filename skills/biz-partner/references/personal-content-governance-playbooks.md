@@ -20,11 +20,13 @@ Each playbook must:
 
 1. Separate confirmed facts, user claims, inferences, and unknowns.
 2. Ask only for missing information that changes the action or acceptance test.
-3. Produce one current judgment, one artifact, one next action, and one stop condition.
+3. Keep one current judgment, one artifact, one next action, and one stop condition in the Handoff.
 4. Cite knowledge atoms only as attributed candidate rules; current user evidence wins.
 5. Create a `memory_proposal` only when durable reuse is useful. Never commit it silently.
 6. Mark unsupported experiment numbers as provisional parameters and state the evidence or
    condition that will adjust them.
+
+The Handoff is complete even when the prose is short. Render for the task in front of you: a title request can begin with the title; an action block can begin with today's action; a concept question can begin with the distinction that matters. Do not turn these internal fields into the same visible headings on every answer. Still surface any uncertainty, confirmation, or stop condition that changes what the user should do.
 
 ## Concept and Problem Clarification (`reasoning.clarify`)
 
@@ -136,8 +138,9 @@ Reporting is read-only unless the user approves an exact output path.
 - **Method**: identify the audience's current tension; connect one verified mechanism to one
   useful outcome; select format; state proof needed; propose 3-5 angles; rank by relevance,
   evidence strength, distinctiveness, effort, and business fit.
-- **Output**: ranked angle table and one selected brief. No draft when the factual anchor is
-  missing.
+- **Output**: keep the ranked angle table and selected brief in the artifact. In prose, lead with
+  the selected direction and expand the ranking only when comparison helps the decision. No draft
+  when the factual anchor is missing.
 
 ## Hook and Title (`content.hook`, `content.title`)
 
@@ -146,7 +149,9 @@ Reporting is read-only unless the user approves an exact output path.
 - **Method**: name the current hook failure; generate variants using tension, result,
   contradiction, question, or specific scene; score clarity, truthfulness, audience fit, and
   continuity with the body.
-- **Output**: top three with why each fits and what claim must be supported.
+- **Output**: keep the scored variants in the artifact. If the user only wants usable options,
+  show the strongest option first and a small number of alternatives; do not print a scorecard
+  unless the comparison itself is useful.
 - **Guard**: no fabricated number, urgency, authority, identity, guarantee, or personal event.
 
 ## Script Logic and Resonance (`content.script`, `content.resonate`)

@@ -72,6 +72,8 @@ Evidence gate 只有四种结果：
 - `memory_proposal`：默认 `null`，用户明确确认后另行提交；
 - `tool_trace`：只记录实际发生且已授权的读取；不得虚构调用。
 
+这些字段必须完整进入 Handoff，但正文只拿当前问题真正需要的部分。不要把字段名逐个改成标题，也不要让 Explore、Pricing 和 Product 的回答看起来像同一张表。正文先给用户此刻最需要的结果；任务仍以假设为主时，再补最可能错的地方和最低成本测试。其他候选只有在会改变选择或用户要求比较时才展开。
+
 ### 1.4 Explore / Diagnose 证据与实验约束
 
 - Explore 的每个机会假设必须完整保留 `user_advantage`、`maximum_unknown`、
@@ -92,6 +94,8 @@ Evidence gate 只有四种结果：
   offer 范围不清则收窄结果、边界和条款后重测；价格问题则固定其他条件测试价格/套餐，
   只否定已测价格；时机问题则记录触发条件和复查日期，只停止当前时间窗。只有多个可比、
   受控测试持续支持同一结论时，才扩大停止范围，并明确仍未覆盖的人群与路径。
+
+公开知识包只使用状态为 `release_eligible`、可移植且许可完整的原子。知识可以帮助提出假设，不能替代当前客户、成本、交付和结果证据。这条规则适用于下面所有 Playbook，不在每节重复。
 
 ## 2. Explore：无点子时对话式寻找生意
 
@@ -161,10 +165,6 @@ Evidence gate 只有四种结果：
 - 小样本未通过：按 1.4 分类问题不存在、触达失败、信任不足、offer 范围不清、价格或时机，
   执行对应下一步并限定停止范围，不直接淘汰整个方向；
 - 同一路径两轮无新证据：停止生成更多点子。
-
-### Optional public knowledge pack
-
-Use only atoms whose pack is release-eligible, portable, and licensed. Knowledge can shape a hypothesis but cannot replace current customer, cost, or outcome evidence.
 
 ### 不得做的事
 
@@ -244,10 +244,6 @@ Use only atoms whose pack is release-eligible, portable, and licensed. Knowledge
 - 实验命中预先声明的 falsifier：按 1.4 先归因并记录，不事后改门槛；停止范围只覆盖被该
   实验控制和证伪的客户、场景、渠道、offer、价格或时间窗，小样本不直接判整个方向失败。
 
-### Optional public knowledge pack
-
-Use only atoms whose pack is release-eligible, portable, and licensed. Knowledge can shape a hypothesis but cannot replace current customer, cost, or outcome evidence.
-
 ### 不得做的事
 
 - 不用一个总分掩盖证据缺口或不同风险；
@@ -317,10 +313,6 @@ Pricing 的 `artifacts` 包含 `pricing_hypothesis`：offer/边界、计量单�
   `requires_professional_escalation` blocker；
 - 已有重复付费和可交付证据：发出 `needs_decision`，不自动涨价或扩量。
 
-### Optional public knowledge pack
-
-Use only atoms whose pack is release-eligible, portable, and licensed. Knowledge can shape a hypothesis but cannot replace current customer, cost, or outcome evidence.
-
 ### 不得做的事
 
 - 不给缺少成本、条款和客户证据的“标准答案价”；
@@ -389,10 +381,6 @@ Historical Standard 的 `artifacts` 包含：`analogue_cards`、结构映射、�
 - 发现法域、时代、平台、客户或激励结构关键不同：停止迁移，保留为反例；
 - 涉及复制受保护内容、冒充、规避规则或未授权抓取：`safe_stop`；
 - 可迁移机制已形成：发出 `needs_decision` 或 `needs_action`，不直接实施。
-
-### Optional public knowledge pack
-
-Use only atoms whose pack is release-eligible, portable, and licensed. Knowledge can shape a hypothesis but cannot replace current customer, cost, or outcome evidence.
 
 ### 不得做的事
 
@@ -466,10 +454,6 @@ Use only atoms whose pack is release-eligible, portable, and licensed. Knowledge
 - 涉及本地写入、工单、发布、收费或生产变更：只生成 approval preview；
 - 最小实验推翻 problem/solution 假设：停止扩建，发出 `needs_decision`。
 
-### Optional public knowledge pack
-
-Use only atoms whose pack is release-eligible, portable, and licensed. Knowledge can shape a hypothesis but cannot replace current customer, cost, or outcome evidence.
-
 ### 不得做的事
 
 - 不把功能清单当 PRD，不把 PRD 当客户证据；
@@ -485,7 +469,7 @@ Use only atoms whose pack is release-eligible, portable, and licensed. Knowledge
 1. CasePacket 已冻结，required slots 与 evidence gate 结果可定位；
 2. 当前只运行一个 Playbook/子模式；
 3. 所有现实判断回到 CasePacket evidence，atom 只作为受限分析镜头；
-4. 输出包含一个当前决定、一个最小实验、一个 next action 和一个可观察 stop condition；
+4. Handoff 包含当前决定、最小实验、next action 和可观察 stop condition；正文按当前问题自然组织，但不能隐藏会改变行动的未知、验收条件或停止条件；
 5. 未经授权没有读取范围外资料、写文件、联系客户、报价、收费、发布或改生产；
 6. Handoff 通过 JSON Schema 与 `scripts/validate_contracts.py`；
 7. 后续任务只发出 signal，不自动执行；长期记忆保持 `null`，直到用户明确确认。
