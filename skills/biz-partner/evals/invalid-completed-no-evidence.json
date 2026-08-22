@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_invalid_001",
+  "packet_hash": "sha256:96ce8087ad39cbb13c1f138ced0e0c20f1fbcb7f51b790b405db93a086ca548c",
+  "state_version": 1,
+  "task_id": "business.diagnose@1.0.0",
+  "state": "completed",
+  "claims": [
+    {
+      "claim_id": "c1",
+      "kind": "judgment",
+      "assertion": "这个生意一定能成功",
+      "supporting_refs": [],
+      "strength": "high"
+    }
+  ],
+  "evidence_refs": [],
+  "assumptions": [],
+  "blockers": [],
+  "artifacts": [],
+  "rejected_options": [],
+  "open_questions": [],
+  "next_action": {"owner": "user", "due": "2026-08-27", "acceptance": "成功"},
+  "stop_condition": {"predicate": "never"},
+  "approvals": [],
+  "proposed_patches": [],
+  "memory_proposal": null,
+  "tool_trace": [],
+  "error": null
+}

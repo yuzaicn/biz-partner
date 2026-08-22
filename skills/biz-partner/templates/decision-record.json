@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "decision_id": "decision_example",
+  "project_id": "project_example",
+  "decision": "",
+  "options": [],
+  "evidence_refs": [],
+  "assumptions": [],
+  "rejected_options": [],
+  "costs_and_tradeoffs": [],
+  "reversibility": "unknown",
+  "falsifiers": [],
+  "owner": "user",
+  "decided_at": null,
+  "review_at": null,
+  "outcome": null,
+  "supersedes": null
+}

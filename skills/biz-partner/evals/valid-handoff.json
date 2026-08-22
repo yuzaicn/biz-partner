@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_valid_001",
+  "packet_hash": "sha256:96ce8087ad39cbb13c1f138ced0e0c20f1fbcb7f51b790b405db93a086ca548c",
+  "state_version": 1,
+  "task_id": "business.diagnose@1.0.0",
+  "state": "completed",
+  "claims": [
+    {
+      "claim_id": "c1",
+      "kind": "judgment",
+      "assertion": "需要验证客户是否愿意为具体方案付费",
+      "supporting_refs": ["e1"],
+      "strength": "medium"
+    }
+  ],
+  "evidence_refs": [
+    {"id": "e1", "source": "turn_12", "evidence_kind": "user_input", "locator": "user_message", "as_of": "2026-08-20"}
+  ],
+  "assumptions": [],
+  "blockers": [],
+  "artifacts": [],
+  "rejected_options": [],
+  "open_questions": [],
+  "next_action": {"owner": "user", "due": "2026-08-27", "acceptance": "完成5次访谈并记录付费行为"},
+  "stop_condition": {"predicate": "no_new_evidence"},
+  "approvals": [],
+  "proposed_patches": [],
+  "memory_proposal": null,
+  "tool_trace": [],
+  "error": null
+}

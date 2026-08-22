@@ -1,0 +1,32 @@
+{
+  "schema": "biz-partner.workbench-config/v1",
+  "schema_version": "1.0",
+  "canonical_root": "/absolute/path/to/canonical-content",
+  "canonical_owner": "content-owner",
+  "sync_direction": "canonical_to_consumer",
+  "assets": [
+    {
+      "id": "offer-playbook",
+      "path": "assets/offer-playbook.md",
+      "version": "1.0.0",
+      "classification": "private"
+    }
+  ],
+  "consumers": [
+    {
+      "id": "research-agent",
+      "root": "/absolute/path/to/consumer-root",
+      "owner": "consumer-owner",
+      "discovery_path": ".agent/workbench-bridge.json",
+      "consumer_version": "1.0.0",
+      "capabilities": [
+        "manifest-discovery",
+        "markdown-read"
+      ],
+      "supported_schema_versions": [
+        "1.0"
+      ],
+      "adapter_mode": "read_only"
+    }
+  ]
+}

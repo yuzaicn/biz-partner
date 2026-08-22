@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/biz-partner/memory-proposal.schema.json",
+  "title": "Business Partner Memory Proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["proposal_id", "namespace", "operation", "subject", "value", "source_refs", "confidence", "scope", "created_at", "expires_at", "deletion_key", "requires_confirmation"],
+  "properties": {
+    "proposal_id": {"type": "string", "minLength": 1},
+    "namespace": {"enum": ["user_profile", "project_state", "decision_log", "asset_index", "playbook_feedback"]},
+    "operation": {"enum": ["add", "supersede", "retire", "suppress"]},
+    "subject": {"type": "string", "minLength": 1},
+    "value": {},
+    "source_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "last_validated_at": {"type": ["string", "null"], "format": "date-time"},
+    "expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "deletion_key": {"type": "string", "minLength": 1},
+    "requires_confirmation": {"const": true},
+    "user_confirmation": {"type": ["object", "null"]}
+  }
+}

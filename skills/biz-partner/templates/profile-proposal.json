@@ -1,0 +1,16 @@
+{
+  "proposal_id": "proposal_example",
+  "namespace": "user_profile",
+  "operation": "add",
+  "subject": "",
+  "value": null,
+  "source_refs": [],
+  "confidence": 0.5,
+  "scope": "project_only",
+  "created_at": null,
+  "last_validated_at": null,
+  "expires_at": null,
+  "deletion_key": "delete_example",
+  "requires_confirmation": true,
+  "user_confirmation": null
+}

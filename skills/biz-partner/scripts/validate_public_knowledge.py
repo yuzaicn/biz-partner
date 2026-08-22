@@ -1,0 +1,407 @@
+#!/usr/bin/env python3
+"""Validate the built-in, redistribution-safe public knowledge pack."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+import sys
+from pathlib import Path
+from typing import Any
+
+from atom_contract import sha256_text
+from knowledge_runtime import evaluate_recall, load_knowledge_pack
+
+
+EXPECTED_COUNTS = {
+    "sources": 11,
+    "atoms": 40,
+    "methods": 9,
+    "operational_concepts": 18,
+    "book_concepts": 30,
+    "retrieval_cases": 40,
+}
+PACK_FILES = {
+    "USAGE.md",
+    "atoms.jsonl",
+    "book-metadata.md",
+    "concept-dictionary.md",
+    "concepts.jsonl",
+    "methods.md",
+    "retrieval-cases.jsonl",
+    "sources.jsonl",
+}
+SOURCE_FIELDS = {
+    "source_id", "kind", "title", "author_or_account", "public_attribution_name",
+    "attribution_mode", "relationship_to_runtime_user", "ownership_status", "status",
+    "rights_status", "license", "authorization_status", "release_decision",
+    "rights_basis", "source_expression_redistribution",
+}
+ATOM_FIELDS = {
+    "atom_id", "schema_version", "canonical", "claim_kind", "actionability", "domain",
+    "decision_rule", "procedure", "limits", "bias_flags", "provenance_type", "pipeline_run",
+    "temporal_scope", "source_date", "confidence", "relations", "content_hash", "source_refs",
+    "status", "rights", "authorization_status", "release_decision",
+}
+OPERATIONAL_CONCEPT_FIELDS = {
+    "concept_id", "concept_kind", "term", "normalized", "definition", "anti_definition",
+    "common_misuse", "source_atoms", "salience", "status", "rights",
+}
+BOOK_CONCEPT_FIELDS = {
+    "concept_id", "concept_kind", "term", "definition", "use_when", "limit", "source_id",
+    "expression_status", "map_boundary", "status", "rights",
+}
+LICENSE_FIELDS = {"id", "version", "scope", "applies_to"}
+RIGHTS_FIELDS = {"redistribution", "license", "boundary"}
+CONFIDENCE_FIELDS = {"attribution", "extraction", "interpretation", "operational"}
+LOCATOR_FIELDS = {"file", "lines"}
+RETRIEVAL_FIELDS = {"case_id", "query", "relevant_atom_ids"}
+MANIFEST_FIELDS = {
+    "schema_version", "pack_id", "as_of", "pack_version", "mode", "status",
+    "license", "counts", "source_count", "atom_count", "excluded",
+    "contains_raw_source_text", "contains_private_working_material",
+    "contains_machine_local_paths", "files",
+}
+MANIFEST_FILE_FIELDS = {"path", "sha256", "line_count"}
+FORBIDDEN_KEYS = {
+    "raw_text", "authored" + "Text", "capture_filter", "skill_refs", "evidence", "evidence" + "_paths",
+    "manifest" + "_paths", "source_confirmation", "classification_conflict", "concept_dictionary_path",
+    "full_text_path", "epub_path", "review_status", "disposition", "source_excerpt",
+}
+FORBIDDEN_CONTENT_TERMS = {
+    "SB7", "StoryBrand", "TRAC", "三座山峰", "认知三重限制",
+}
+MACHINE_PATH_RE = re.compile(
+    r"(?<![A-Za-z0-9_])/(?:Users|home|private/var|var/folders|Volumes)/[^\s`\"')\]]+"
+)
+WINDOWS_PATH_RE = re.compile(r"(?<![A-Za-z0-9_])[A-Za-z]:\\[^\s`\"')\]]+")
+HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+ATOM_REF_RE = re.compile(r"`(ka_[a-z0-9_]+)`")
+MAINTAINER_NAME = "鱼" + "仔"
+MAINTAINER_HANDLE = "Exp" + "Lang_Cn"
+
+
+def load_jsonl(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        value = json.loads(line)
+        if not isinstance(value, dict):
+            raise ValueError(f"non-object JSONL row: {path.name}:{line_number}")
+        rows.append(value)
+    return rows
+
+
+def file_hash(path: Path) -> str:
+    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def exact_fields(row: dict[str, Any], allowed: set[str], label: str) -> None:
+    unknown = set(row) - allowed
+    if unknown:
+        raise ValueError(f"unsupported fields in {label}: {','.join(sorted(unknown))}")
+
+
+def walk(value: Any, label: str) -> None:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key in FORBIDDEN_KEYS:
+                raise ValueError(f"private/raw field in {label}: {key}")
+            walk(child, f"{label}.{key}")
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            walk(child, f"{label}[{index}]")
+    elif isinstance(value, str):
+        if "file://" in value.casefold() or MACHINE_PATH_RE.search(value) or WINDOWS_PATH_RE.search(value):
+            raise ValueError(f"machine-local locator in {label}")
+
+
+def validate_license(record: Any, label: str) -> None:
+    if not isinstance(record, dict):
+        raise ValueError(f"license must be an object: {label}")
+    exact_fields(record, LICENSE_FIELDS, f"{label}.license")
+    if record != {
+        "id": "PolyForm-Noncommercial-1.0.0",
+        "version": "1.0.0",
+        "scope": "redistribution_and_derivatives",
+        "applies_to": "public-pack original paraphrases and compilation only",
+    }:
+        raise ValueError(f"unexpected public-pack license: {label}")
+
+
+def validate_sources(rows: list[dict[str, Any]]) -> set[str]:
+    if len(rows) != EXPECTED_COUNTS["sources"]:
+        raise ValueError(f"expected 11 sources, got {len(rows)}")
+    ids: set[str] = set()
+    maintainer_count = 0
+    for row in rows:
+        source_id = row.get("source_id")
+        if not isinstance(source_id, str) or not source_id or source_id in ids:
+            raise ValueError(f"invalid or duplicate source_id: {source_id!r}")
+        ids.add(source_id)
+        exact_fields(row, SOURCE_FIELDS, f"source:{source_id}")
+        if row.get("status") != "release_eligible" or row.get("release_decision") != "approved_for_public_release":
+            raise ValueError(f"source is not release-eligible: {source_id}")
+        if row.get("attribution_mode") != "when_materially_used":
+            raise ValueError(f"invalid attribution mode: {source_id}")
+        if row.get("relationship_to_runtime_user") != "external_named_source":
+            raise ValueError(f"source may not be inferred as runtime user: {source_id}")
+        if row.get("ownership_status") != "not_claimed":
+            raise ValueError(f"source ownership is not separated: {source_id}")
+        validate_license(row.get("license"), f"source:{source_id}")
+        identity_text = json.dumps(row, ensure_ascii=False)
+        has_maintainer_identity = MAINTAINER_NAME in identity_text or MAINTAINER_HANDLE in identity_text
+        if source_id == "maintainer_public_writing_v1":
+            maintainer_count += 1
+            if row.get("public_attribution_name") != MAINTAINER_NAME:
+                raise ValueError("maintainer public attribution name mismatch")
+            if row.get("author_or_account") != f"{MAINTAINER_NAME}（@{MAINTAINER_HANDLE}）":
+                raise ValueError("maintainer public account identity mismatch")
+            if row.get("rights_status") != "owner_authorized_public_release":
+                raise ValueError("maintainer source lacks owner authorization")
+            if row.get("authorization_status") != "owner_authorized_public_release":
+                raise ValueError("maintainer source authorization mismatch")
+        elif has_maintainer_identity:
+            raise ValueError(f"maintainer identity escaped source row: {source_id}")
+        elif row.get("rights_status") != "project_paraphrase_only":
+            raise ValueError(f"book synthesis record has invalid rights status: {source_id}")
+        elif (
+            row.get("kind") != "bibliographic_source_for_public_paraphrase"
+            or row.get("authorization_status") != "project_owner_authorized_public_paraphrase"
+            or row.get("source_expression_redistribution") != "not_granted_or_claimed"
+            or row.get("license", {}).get("applies_to")
+            != "public-pack original paraphrases and compilation only"
+        ):
+            raise ValueError(f"book synthesis boundary is invalid: {source_id}")
+        if row.get("source_expression_redistribution") not in {
+            "not_granted_or_claimed", "derived atoms only; raw source material excluded"
+        }:
+            raise ValueError(f"source-expression boundary missing: {source_id}")
+    if maintainer_count != 1:
+        raise ValueError(f"expected one maintainer source, got {maintainer_count}")
+    return ids
+
+
+def validate_atoms(rows: list[dict[str, Any]], source_ids: set[str]) -> set[str]:
+    if len(rows) != EXPECTED_COUNTS["atoms"]:
+        raise ValueError(f"expected 40 atoms, got {len(rows)}")
+    atom_ids: set[str] = set()
+    for line_number, row in enumerate(rows, 1):
+        atom_id = row.get("atom_id")
+        if not isinstance(atom_id, str) or not atom_id or atom_id in atom_ids:
+            raise ValueError(f"invalid or duplicate atom_id: {atom_id!r}")
+        atom_ids.add(atom_id)
+        exact_fields(row, ATOM_FIELDS, f"atom:{atom_id}")
+        if row.get("status") != "release_eligible" or row.get("release_decision") != "approved_for_public_release":
+            raise ValueError(f"atom is not release-eligible: {atom_id}")
+        rights = row.get("rights")
+        if not isinstance(rights, dict):
+            raise ValueError(f"atom rights must be an object: {atom_id}")
+        exact_fields(rights, RIGHTS_FIELDS, f"atom:{atom_id}.rights")
+        validate_license(rights.get("license"), f"atom:{atom_id}")
+        confidence = row.get("confidence")
+        if not isinstance(confidence, dict):
+            raise ValueError(f"atom confidence must be an object: {atom_id}")
+        exact_fields(confidence, CONFIDENCE_FIELDS, f"atom:{atom_id}.confidence")
+        if rights.get("redistribution") == "project_paraphrase_only":
+            if (
+                row.get("provenance_type") != "public_book_idea_synthesis"
+                or row.get("authorization_status")
+                != "project_owner_authorized_public_paraphrase"
+                or rights.get("boundary")
+                != "license covers this pack's original paraphrase, not source-book expression"
+            ):
+                raise ValueError(f"atom book-paraphrase boundary is invalid: {atom_id}")
+        elif rights.get("redistribution") != "owner_authorized_public_release":
+            raise ValueError(f"atom rights status is invalid: {atom_id}")
+        refs = row.get("source_refs")
+        if not isinstance(refs, list) or len(refs) != 1:
+            raise ValueError(f"atom must have exactly one public source ref: {atom_id}")
+        ref = refs[0]
+        if not isinstance(ref, dict):
+            raise ValueError(f"atom source ref is not an object: {atom_id}")
+        exact_fields(ref, {"source_id", "locator", "quote_hash"}, f"source_ref:{atom_id}")
+        locator = ref.get("locator")
+        if not isinstance(locator, dict):
+            raise ValueError(f"atom locator is not an object: {atom_id}")
+        exact_fields(locator, LOCATOR_FIELDS, f"source_ref:{atom_id}.locator")
+        if ref.get("source_id") not in source_ids:
+            raise ValueError(f"atom references unknown source: {atom_id}")
+        if locator != {"file": "public-knowledge/atoms.jsonl", "lines": f"{line_number}-{line_number}"}:
+            raise ValueError(f"atom locator is not its portable public row: {atom_id}")
+        if ref.get("quote_hash") != row.get("content_hash") or row.get("content_hash") != sha256_text(row.get("canonical", "")):
+            raise ValueError(f"public synthesis hash mismatch: {atom_id}")
+        if not HASH_RE.fullmatch(str(row.get("content_hash", ""))):
+            raise ValueError(f"invalid atom hash: {atom_id}")
+        atom_text = json.dumps(row, ensure_ascii=False)
+        if MAINTAINER_NAME in atom_text or MAINTAINER_HANDLE in atom_text:
+            raise ValueError(f"source identity leaked into atom: {atom_id}")
+    for row in rows:
+        for relation in row.get("relations", []):
+            if not isinstance(relation, dict) or set(relation) != {"type", "atom_id"}:
+                raise ValueError(f"invalid relation fields: {row['atom_id']}")
+            if relation["atom_id"] not in atom_ids:
+                raise ValueError(f"relation target missing: {row['atom_id']}")
+    return atom_ids
+
+
+def validate_concepts(rows: list[dict[str, Any]], atom_ids: set[str], source_ids: set[str]) -> None:
+    operational = [row for row in rows if row.get("concept_kind") == "operational_dictionary"]
+    books = [row for row in rows if row.get("concept_kind") == "book_concept"]
+    if len(operational) != 18 or len(books) != 30 or len(rows) != 48:
+        raise ValueError(f"concept counts mismatch: operational={len(operational)} book={len(books)}")
+    seen: set[str] = set()
+    for row in rows:
+        concept_id = row.get("concept_id")
+        if not isinstance(concept_id, str) or concept_id in seen:
+            raise ValueError(f"invalid or duplicate concept_id: {concept_id!r}")
+        seen.add(concept_id)
+        if row.get("status") != "release_eligible":
+            raise ValueError(f"concept is not release-eligible: {concept_id}")
+        rights = row.get("rights")
+        if not isinstance(rights, dict):
+            raise ValueError(f"concept rights must be an object: {concept_id}")
+        exact_fields(rights, RIGHTS_FIELDS, f"concept:{concept_id}.rights")
+        validate_license(rights.get("license"), f"concept:{concept_id}")
+        if (
+            rights.get("redistribution") != "project_paraphrase_only"
+            or rights.get("boundary")
+            != "license covers this pack's original paraphrase, not source-book expression"
+        ):
+            raise ValueError(f"concept paraphrase boundary is invalid: {concept_id}")
+        if row.get("concept_kind") == "operational_dictionary":
+            exact_fields(row, OPERATIONAL_CONCEPT_FIELDS, f"concept:{concept_id}")
+            if any(atom_id not in atom_ids for atom_id in row.get("source_atoms", [])):
+                raise ValueError(f"operational concept references unknown atom: {concept_id}")
+        else:
+            exact_fields(row, BOOK_CONCEPT_FIELDS, f"concept:{concept_id}")
+            if row.get("source_id") not in source_ids:
+                raise ValueError(f"book concept references unknown source: {concept_id}")
+            if row.get("expression_status") != "independently_worded_project_definition":
+                raise ValueError(f"book concept expression boundary missing: {concept_id}")
+        if row.get("term") in {"情绪体", "信念体"}:
+            raise ValueError(f"source-specific framework term in concept: {concept_id}")
+        text = json.dumps(row, ensure_ascii=False)
+        if MAINTAINER_NAME in text or MAINTAINER_HANDLE in text:
+            raise ValueError(f"maintainer identity leaked into concept: {concept_id}")
+        for term in FORBIDDEN_CONTENT_TERMS:
+            if term.casefold() in text.casefold():
+                raise ValueError(f"source-specific framework term in concept: {concept_id} ({term})")
+
+
+def validate_methods(path: Path, atom_ids: set[str]) -> None:
+    text = path.read_text(encoding="utf-8")
+    headings = re.findall(r"(?m)^## (M-[0-9]{3}) ", text)
+    if len(headings) != EXPECTED_COUNTS["methods"] or len(set(headings)) != len(headings):
+        raise ValueError(f"method count mismatch: {len(headings)}")
+    refs = set(ATOM_REF_RE.findall(text))
+    unknown = refs - atom_ids
+    if unknown:
+        raise ValueError(f"methods reference unknown atoms: {','.join(sorted(unknown))}")
+    for term in FORBIDDEN_CONTENT_TERMS:
+        if term.casefold() in text.casefold():
+            raise ValueError(f"source-specific framework term in methods: {term}")
+
+
+def validate_manifest(pack_root: Path, manifest: dict[str, Any]) -> None:
+    exact_fields(manifest, MANIFEST_FIELDS, "manifest")
+    if manifest.get("schema_version") != "1.0" or manifest.get("pack_version") != "1.0.0":
+        raise ValueError("manifest schema or pack version mismatch")
+    if manifest.get("mode") != "public" or manifest.get("status") != "release_eligible":
+        raise ValueError("manifest is not a release-eligible public pack")
+    if manifest.get("source_count") != 11 or manifest.get("atom_count") != 40:
+        raise ValueError("manifest source/atom counts mismatch")
+    if manifest.get("counts") != EXPECTED_COUNTS:
+        raise ValueError(f"manifest detailed counts mismatch: {manifest.get('counts')!r}")
+    exact_fields(manifest.get("counts"), set(EXPECTED_COUNTS), "manifest.counts")
+    for flag in (
+        "contains_raw_source_text", "contains_private_working_material", "contains_machine_local_paths"
+    ):
+        if manifest.get(flag) is not False:
+            raise ValueError(f"manifest boundary flag is not false: {flag}")
+    validate_license(manifest.get("license"), "manifest")
+    files = manifest.get("files")
+    if not isinstance(files, dict) or set(files) != PACK_FILES:
+        raise ValueError("manifest file set mismatch")
+    for name, record in files.items():
+        if not isinstance(record, dict):
+            raise ValueError(f"invalid manifest file record: {name}")
+        exact_fields(record, MANIFEST_FILE_FIELDS, f"manifest.files.{name}")
+        path = pack_root / name
+        if record.get("path") != name or not path.is_file() or path.is_symlink():
+            raise ValueError(f"missing or unsafe pack file: {name}")
+        if record.get("sha256") != file_hash(path):
+            raise ValueError(f"manifest hash mismatch: {name}")
+        if record.get("line_count") != len(path.read_text(encoding="utf-8").splitlines()):
+            raise ValueError(f"manifest line count mismatch: {name}")
+
+
+def validate_pack(skill_root: Path) -> dict[str, Any]:
+    pack_root = skill_root / "public-knowledge"
+    if not pack_root.is_dir() or pack_root.is_symlink():
+        raise ValueError("public-knowledge directory is missing or unsafe")
+    manifest = json.loads((pack_root / "manifest.json").read_text(encoding="utf-8"))
+    if not isinstance(manifest, dict):
+        raise ValueError("manifest root is not an object")
+    validate_manifest(pack_root, manifest)
+    sources = load_jsonl(pack_root / "sources.jsonl")
+    atoms = load_jsonl(pack_root / "atoms.jsonl")
+    concepts = load_jsonl(pack_root / "concepts.jsonl")
+    retrieval_cases = load_jsonl(pack_root / "retrieval-cases.jsonl")
+    for label, value in (("manifest", manifest), ("sources", sources), ("atoms", atoms), ("concepts", concepts), ("retrieval", retrieval_cases)):
+        walk(value, label)
+    source_ids = validate_sources(sources)
+    atom_ids = validate_atoms(atoms, source_ids)
+    validate_concepts(concepts, atom_ids, source_ids)
+    validate_methods(pack_root / "methods.md", atom_ids)
+    for row in retrieval_cases:
+        exact_fields(row, RETRIEVAL_FIELDS, f"retrieval:{row.get('case_id')}")
+    if len(retrieval_cases) != 40 or {row.get("relevant_atom_ids", [None])[0] for row in retrieval_cases} != atom_ids:
+        raise ValueError("retrieval fixture does not cover every atom exactly once")
+    pack = load_knowledge_pack(pack_root / "sources.jsonl", pack_root / "atoms.jsonl", mode="public")
+    if len(pack.sources) != 11 or len(pack.atoms) != 40 or pack.excluded_sources or pack.excluded_atoms:
+        raise ValueError("public runtime excluded a bundled source or atom")
+    recall = evaluate_recall(pack, pack_root / "retrieval-cases.jsonl", k=5, threshold=0.85)
+    if recall.get("recall_at_k", 0) < 0.85:
+        raise ValueError(f"public retrieval recall gate failed: {recall.get('recall_at_k')}")
+    dictionary = (pack_root / "concept-dictionary.md").read_text(encoding="utf-8")
+    if "词频" in dictionary and "不包含" not in dictionary:
+        raise ValueError("concept dictionary exposes frequency material")
+    for term in FORBIDDEN_CONTENT_TERMS:
+        if term.casefold() in dictionary.casefold():
+            raise ValueError(f"source-specific framework term in dictionary: {term}")
+    metadata = (pack_root / "book-metadata.md").read_text(encoding="utf-8")
+    book_sources = [row for row in sources if row["source_id"] != "maintainer_public_writing_v1"]
+    if not metadata.startswith("# Book Metadata\n") or len(book_sources) != 10:
+        raise ValueError("book metadata header or source count mismatch")
+    for source in book_sources:
+        if source["title"] not in metadata or source["author_or_account"] not in metadata:
+            raise ValueError(f"book metadata entry missing: {source['source_id']}")
+    return {
+        "sources": len(sources),
+        "atoms": len(atoms),
+        "methods": 9,
+        "concepts": len(concepts),
+        "retrieval_cases": len(retrieval_cases),
+        "recall_at_5": recall["recall_at_k"],
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("skill", type=Path, nargs="?", default=Path(__file__).resolve().parent.parent)
+    args = parser.parse_args()
+    try:
+        result = validate_pack(args.skill.resolve())
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        print(f"FAIL {exc}")
+        return 1
+    print("OK " + " ".join(f"{key}={value}" for key, value in result.items()) + " raw_source_text=false private_working_material=false")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

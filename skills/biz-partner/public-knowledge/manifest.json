@@ -1,0 +1,76 @@
+{
+  "as_of": "2026-08-22",
+  "atom_count": 40,
+  "contains_machine_local_paths": false,
+  "contains_private_working_material": false,
+  "contains_raw_source_text": false,
+  "counts": {
+    "atoms": 40,
+    "book_concepts": 30,
+    "methods": 9,
+    "operational_concepts": 18,
+    "retrieval_cases": 40,
+    "sources": 11
+  },
+  "excluded": [
+    "book text and excerpts",
+    "source-post text and raw captures",
+    "review and disposition ledgers",
+    "local paths and extraction artifacts",
+    "personal runtime memory"
+  ],
+  "files": {
+    "USAGE.md": {
+      "line_count": 34,
+      "path": "USAGE.md",
+      "sha256": "sha256:4f47d1ffa6b34d95e8ee0dbade7bd2c0d949f891f37b02de04092e515d330855"
+    },
+    "atoms.jsonl": {
+      "line_count": 40,
+      "path": "atoms.jsonl",
+      "sha256": "sha256:6db8be682279f38c12a649967fc6c650a37a6b5a8e1f48bd205a987bbc292be5"
+    },
+    "book-metadata.md": {
+      "line_count": 20,
+      "path": "book-metadata.md",
+      "sha256": "sha256:4751b87acddbc102d31207f4431a709ceea7c84b1f4a968bb686071f1953d18f"
+    },
+    "concept-dictionary.md": {
+      "line_count": 333,
+      "path": "concept-dictionary.md",
+      "sha256": "sha256:7e22087f3ed80deef8a7fbc45332cc4c5d41c33baad7cea5d8d6cd2ffee01163"
+    },
+    "concepts.jsonl": {
+      "line_count": 48,
+      "path": "concepts.jsonl",
+      "sha256": "sha256:8c8438646678e4436ab3b8cfb404e7646e4edc71f3e7f176173d1d623f8dd767"
+    },
+    "methods.md": {
+      "line_count": 97,
+      "path": "methods.md",
+      "sha256": "sha256:57ec72b8b400a01467b6ede361b6deb9378c5b18fc1dd3cdfae1a9c30c33261b"
+    },
+    "retrieval-cases.jsonl": {
+      "line_count": 40,
+      "path": "retrieval-cases.jsonl",
+      "sha256": "sha256:be3ab9dbaed4a821e17c25c4f784c8631c0bd92ae58c6e418b09ea3f41df7adf"
+    },
+    "sources.jsonl": {
+      "line_count": 11,
+      "path": "sources.jsonl",
+      "sha256": "sha256:16b0c7407b98f9a63e4e5f9db2ea94644e3e54ecb21c01173bfddad08a9f37db"
+    }
+  },
+  "license": {
+    "applies_to": "public-pack original paraphrases and compilation only",
+    "id": "PolyForm-Noncommercial-1.0.0",
+    "scope": "redistribution_and_derivatives",
+    "version": "1.0.0"
+  },
+  "mode": "public",
+  "pack_id": "biz-partner-public-knowledge-v1",
+  "pack_version": "1.0.0",
+  "schema_version": "1.0",
+  "source_count": 11,
+  "status": "release_eligible"
+}

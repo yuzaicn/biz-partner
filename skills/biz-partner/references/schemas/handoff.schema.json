@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/biz-partner/handoff.schema.json",
+  "title": "Business Partner Handoff",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "run_id", "packet_hash", "state_version", "task_id", "state", "claims", "evidence_refs", "next_action", "stop_condition"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "packet_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "state_version": {"type": "integer", "minimum": 1},
+    "task_id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*(?:\\.[a-z][a-z0-9_-]*)+@[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "state": {"enum": ["completed", "blocked", "clarify", "safe_stop", "conflict", "retry_limit"]},
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim_id", "kind", "assertion", "supporting_refs"],
+        "properties": {
+          "claim_id": {"type": "string", "minLength": 1},
+          "kind": {"type": "string", "minLength": 1},
+          "assertion": {"type": "string", "minLength": 1},
+          "supporting_refs": {"type": "array", "items": {"type": "string"}},
+          "strength": {"type": "string"}
+        }
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source", "locator", "as_of"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "evidence_kind": {"enum": ["user_input", "external_evidence", "knowledge_atom", "project_state", "tool_result"]},
+          "atom_id": {"type": "string", "minLength": 1},
+          "locator": {},
+          "as_of": {"type": "string", "minLength": 1}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"evidence_kind": {"const": "knowledge_atom"}}, "required": ["evidence_kind"]},
+            "then": {"required": ["atom_id"]}
+          },
+          {
+            "if": {"required": ["atom_id"]},
+            "then": {"properties": {"evidence_kind": {"const": "knowledge_atom"}}, "required": ["evidence_kind"]}
+          }
+        ]
+      }
+    },
+    "assumptions": {"type": "array"},
+    "blockers": {"type": "array"},
+    "artifacts": {"type": "array"},
+    "rejected_options": {"type": "array"},
+    "open_questions": {"type": "array"},
+    "next_action": {"type": "object", "required": ["owner"], "properties": {"owner": {"type": "string", "minLength": 1}}},
+    "stop_condition": {"type": "object", "required": ["predicate"], "properties": {"predicate": {"type": "string", "minLength": 1}}},
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action"],
+        "properties": {
+          "action": {"type": "string"},
+          "approval_id": {"type": "string"},
+          "target": {"type": "string"},
+          "body_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "scope_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "approved_at": {"type": "string", "format": "date-time"},
+          "expires_at": {"type": "string", "format": "date-time"},
+          "idempotency_key": {"type": "string"}
+        }
+      }
+    },
+    "proposed_patches": {"type": "array"},
+    "memory_proposal": {
+      "anyOf": [
+        {"type": "null"},
+        {"$ref": "memory-proposal.schema.json"}
+      ]
+    },
+    "tool_trace": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action", "status"],
+        "properties": {
+          "action": {"enum": ["read_local", "write_local", "network_read", "external_write", "destructive", "sensitive"]},
+          "status": {"type": "string", "minLength": 1},
+          "tool": {"type": "string"},
+          "approval_id": {"type": "string"},
+          "target": {"type": "string"},
+          "body_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "scope_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "idempotency_key": {"type": "string"},
+          "occurred_at": {"type": "string", "format": "date-time"}
+        }
+      }
+    },
+    "error": {}
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/biz-partner/case-packet.schema.json",
+  "title": "Business Partner CasePacket",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["kind", "schema_version", "packet_id", "case_id", "project_id", "request", "items", "consent", "tool_policy", "content_hash"],
+  "properties": {
+    "kind": {"const": "case_packet"},
+    "schema_version": {"type": "string", "const": "1.0"},
+    "packet_id": {"type": "string", "minLength": 1},
+    "case_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "parent_packet_hash": {"type": ["string", "null"]},
+    "request": {
+      "type": "object",
+      "required": ["raw_goal", "intent"],
+      "properties": {
+        "raw_goal": {"type": "string", "minLength": 1},
+        "intent": {"type": "string", "minLength": 1},
+        "explicit_command": {"type": "string"}
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "value"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["fact", "user_claim", "inference", "constraint", "unknown"]},
+          "value": {},
+          "source_ref": {"type": "string"},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "acceptance_criteria": {"type": "array", "items": {"type": "string"}},
+    "unknowns": {"type": "array", "items": {"type": "string"}},
+    "negative_constraints": {"type": "array", "items": {"type": "string"}},
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "read_local": {"type": "boolean"},
+        "write_local": {"type": "boolean"},
+        "network_read": {"type": "boolean"},
+        "external_write": {"type": "boolean"},
+        "destructive": {"type": "boolean"},
+        "sensitive": {"type": "boolean"}
+      }
+    },
+    "tool_policy": {
+      "type": "object",
+      "required": ["allowed_tools"],
+      "properties": {
+        "allowed_tools": {
+          "type": "array",
+          "items": {"enum": ["read_local", "write_local", "network_read", "external_write", "destructive", "sensitive"]},
+          "uniqueItems": true
+        }
+      }
+    },
+    "risk": {"type": "object"},
+    "ttl": {"type": "string"},
+    "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

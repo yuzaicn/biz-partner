@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "project_id": "project_example",
+  "state_version": 1,
+  "parent_hash": null,
+  "confirmed_facts": [],
+  "active_hypotheses": [],
+  "rejected_options": [],
+  "experiments": [],
+  "blockers": [],
+  "next_action": null,
+  "stop_condition": null,
+  "updated_at": null,
+  "content_hash": null
+}
