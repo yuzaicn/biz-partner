@@ -6,7 +6,7 @@
   "contains_raw_source_text": false,
   "counts": {
     "atoms": 40,
-    "book_concepts": 30,
+    "curated_concepts": 30,
     "methods": 9,
     "operational_concepts": 18,
     "retrieval_cases": 40,
@@ -21,44 +21,39 @@
   ],
   "files": {
     "USAGE.md": {
-      "line_count": 34,
+      "line_count": 33,
       "path": "USAGE.md",
-      "sha256": "sha256:4f47d1ffa6b34d95e8ee0dbade7bd2c0d949f891f37b02de04092e515d330855"
+      "sha256": "sha256:e3bc748f9b8aae9b553381c2f4a11ecea75a21307695dac3040f98148ce41f27"
     },
     "atoms.jsonl": {
       "line_count": 40,
       "path": "atoms.jsonl",
-      "sha256": "sha256:6db8be682279f38c12a649967fc6c650a37a6b5a8e1f48bd205a987bbc292be5"
-    },
-    "book-metadata.md": {
-      "line_count": 20,
-      "path": "book-metadata.md",
-      "sha256": "sha256:4751b87acddbc102d31207f4431a709ceea7c84b1f4a968bb686071f1953d18f"
+      "sha256": "sha256:c3be6e19ba970f977962da4e1d12930b834a241b6882bc53aefce6a29b66e5dd"
     },
     "concept-dictionary.md": {
-      "line_count": 333,
+      "line_count": 313,
       "path": "concept-dictionary.md",
-      "sha256": "sha256:7e22087f3ed80deef8a7fbc45332cc4c5d41c33baad7cea5d8d6cd2ffee01163"
+      "sha256": "sha256:fb37c7ef5dc21622a0e06035eedf8c430e6214dd288e0ab81225fe954d67c2e0"
     },
     "concepts.jsonl": {
       "line_count": 48,
       "path": "concepts.jsonl",
-      "sha256": "sha256:8c8438646678e4436ab3b8cfb404e7646e4edc71f3e7f176173d1d623f8dd767"
+      "sha256": "sha256:e6d4e8ac9b075ff22cf6850f42c136703efef6be058ef5a43716cf2f3de0f549"
     },
     "methods.md": {
       "line_count": 97,
       "path": "methods.md",
-      "sha256": "sha256:57ec72b8b400a01467b6ede361b6deb9378c5b18fc1dd3cdfae1a9c30c33261b"
+      "sha256": "sha256:937c575fe404058451b9327fbb39e38b203518e7c751f74cb0e0a6af4aa67ce5"
     },
     "retrieval-cases.jsonl": {
       "line_count": 40,
       "path": "retrieval-cases.jsonl",
-      "sha256": "sha256:be3ab9dbaed4a821e17c25c4f784c8631c0bd92ae58c6e418b09ea3f41df7adf"
+      "sha256": "sha256:e5f1934adf19415cf708394195e05469d3c72ab3be7838c16203f07d01b07906"
     },
     "sources.jsonl": {
       "line_count": 11,
       "path": "sources.jsonl",
-      "sha256": "sha256:16b0c7407b98f9a63e4e5f9db2ea94644e3e54ecb21c01173bfddad08a9f37db"
+      "sha256": "sha256:8159815c2244ce22c1160a637a6b81b718ba591353ee7a7d63bf4fe7ba9e4ed3"
     }
   },
   "license": {

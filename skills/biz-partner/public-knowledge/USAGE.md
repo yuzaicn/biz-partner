@@ -17,15 +17,14 @@ python3 scripts/knowledge_runtime.py pack-search \
 ```
 
 Read `methods.md` when a retrieved atom needs a multi-step workflow. Read
-`concept-dictionary.md` when a term needs clarification or contrast. Read
-`book-metadata.md` for the ten registered titles, authors, and public projection counts.
+`concept-dictionary.md` when a term needs clarification or contrast.
 
 ## Attribution and identity
 
 Pass materially used atom IDs into the Handoff evidence graph and resolve them
-through `scripts/render_source_attribution.py`. Attribute only sources that
-materially support a rendered claim. A named author or maintainer is always an
-external source and must never be inferred as the runtime user.
+through `scripts/render_source_attribution.py`. Curated sources remain anonymous
+in public output. Attribute the named maintainer source only when it materially
+supports a rendered claim, and never infer it as the runtime user.
 
 ## Rights boundary
 

@@ -7,7 +7,8 @@ source corpora or candidate material. Built-in and optional external packs may b
 loaded only when they provide:
 
 - stable source and atom IDs;
-- public attribution names and material-use attribution modes;
+- anonymous curated source IDs, plus attribution names and material-use modes
+  only for explicitly named sources;
 - explicit license ID, version, redistribution scope, and release status;
 - a portable locator and quote hash for every atom source reference;
 - content hashes, confidence, limits, and freshness metadata;
@@ -24,8 +25,9 @@ The public runtime accepts only `release_eligible` or `published` records. Priva
 candidate, blocked, unresolved, or rights-pending records remain in a separate
 maintainer build workspace and must not be copied into the open package.
 
-## Author and user boundary
+## Source and user boundary
 
-Source authors are evidence identities, not runtime-user identities. Author-derived
-claims never become user profile facts or durable user memory. Apply
-`source-attribution.md` when a named source materially supports an answer.
+Source identities are never runtime-user identities. Source-derived claims never
+become user profile facts or durable user memory. Anonymous curated sources stay
+unnamed; apply `source-attribution.md` when the named maintainer source materially
+supports an answer.
