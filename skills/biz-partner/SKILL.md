@@ -42,10 +42,10 @@ After each delivery, the user may add facts naturally. Re-enter `/biz` to select
 
 ## Reference Boundary
 
-Named sources are optional knowledge inputs, never identity defaults for the
-runtime user. Load a source pack only when it declares portable attribution,
-license, and public release status. Attribute materially used sources through
-`references/source-attribution.md`; never merge author knowledge into user facts.
+Curated knowledge sources are optional inputs, never identity defaults for the
+runtime user. Their public records stay anonymous. Only the registered
+maintainer source may be named, and only when one of its atoms materially
+supports the rendered judgment. Never merge source knowledge into user facts.
 
 The built-in [public knowledge pack](public-knowledge/USAGE.md) contains only
 independently worded atoms, task-oriented concepts, and cross-source methods. It
@@ -144,12 +144,13 @@ When deterministic execution is available, pass the actual `CasePacket` and Hand
 render only the consultation prose and state that the structured Handoff is undelivered.
 Do not emit a synthetic contract as a substitute.
 
-Do not present an author-derived rule as a universal fact. Cite knowledge atoms with source, locator, as-of date, and confidence. If no evidence is available, label the claim `unverified` and propose a test.
+Do not present a source-derived rule as a universal fact. Bind knowledge atoms with source ID, locator, as-of date, and confidence. If no evidence is available, label the claim `unverified` and propose a test.
 
-Before rendering prose, resolve each materially used author-derived atom through
-the source registry. Attribute a named source once near the supported judgment;
-do not name sources that did not affect the answer, repeat attribution on every
-bullet, or merge a source author with the runtime user's profile. Follow
+Before rendering prose, resolve each materially used source-derived atom through
+the source registry. Anonymous curated sources stay unnamed. Attribute the named
+maintainer source once near the supported judgment; do not name it when it did
+not affect the answer, repeat attribution on every bullet, or merge it with the
+runtime user's profile. Follow
 `references/source-attribution.md`. When the Handoff, source registry, and atom
 registry are available as JSON/JSONL, use `scripts/render_source_attribution.py`
 to verify the atom-source chain and compute the deduplicated material-source list
@@ -177,8 +178,7 @@ Disclose memory state only when it matters: after loading active records, propos
 - [Source attribution](references/source-attribution.md) — material-use attribution, author/user separation, and rendering rules.
 - [Public knowledge pack](public-knowledge/USAGE.md) — built-in retrieval, identity, attribution, and rights boundaries.
 - [Public methods](public-knowledge/methods.md) — nine task-oriented methods assembled from published atoms.
-- [Public concept dictionary](public-knowledge/concept-dictionary.md) — operational and book-derived concepts rewritten for task use.
-- [Book metadata](public-knowledge/book-metadata.md) — visible titles, authors, and public projection counts without source excerpts or chapter maps.
+- [Public concept dictionary](public-knowledge/concept-dictionary.md) — operational and curated concepts rewritten for task use.
 - [Memory governance](references/memory-governance.md) — durable state, evolution, deletion, and review rules.
 - [Workbench runtime](references/workbench-runtime.md) — canonical asset manifests, confirmation-gated apply, read-only bridges, and drift verification.
 - [Content safety](references/content-safety.md) — publish checks and platform-specific uncertainty.

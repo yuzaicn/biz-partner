@@ -97,19 +97,46 @@ class PublicKnowledgeTests(unittest.TestCase):
 
     def test_project_paraphrase_requires_exact_source_boundary(self) -> None:
         sources = deepcopy(self.sources)
-        book = next(row for row in sources if row["source_id"] != "maintainer_public_writing_v1")
-        book["source_expression_redistribution"] = "granted"
+        curated = next(row for row in sources if row["source_id"] != "maintainer_public_writing_v1")
+        curated["source_expression_redistribution"] = "granted"
         with self.assertRaisesRegex(ValueError, "boundary is invalid"):
+            validate_sources(sources)
+
+    def test_curated_source_rejects_bibliographic_identity_fields(self) -> None:
+        sources = deepcopy(self.sources)
+        curated = next(row for row in sources if row["source_id"] != "maintainer_public_writing_v1")
+        curated["title"] = "must not be public"
+        with self.assertRaisesRegex(ValueError, "unsupported fields"):
             validate_sources(sources)
 
     def test_project_paraphrase_requires_exact_atom_boundary(self) -> None:
         sources = deepcopy(self.sources)
         atoms = deepcopy(self.atoms)
         source_ids = validate_sources(sources)
-        book_atom = next(row for row in atoms if row["provenance_type"] == "public_book_idea_synthesis")
-        book_atom["authorization_status"] = "public_release_authorized"
+        curated_atom = next(
+            row for row in atoms if row["provenance_type"] == "public_curated_idea_synthesis"
+        )
+        curated_atom["authorization_status"] = "public_release_authorized"
         with self.assertRaisesRegex(ValueError, "boundary is invalid"):
             validate_atoms(atoms, source_ids)
+
+    def test_material_curated_atom_has_no_named_attribution(self) -> None:
+        atom = next(
+            row for row in self.atoms if row["provenance_type"] == "public_curated_idea_synthesis"
+        )
+        source_id = atom["source_refs"][0]["source_id"]
+        handoff = {
+            "claims": [{"claim_id": "c1", "supporting_refs": ["e1"]}],
+            "evidence_refs": [
+                {
+                    "id": "e1",
+                    "source": source_id,
+                    "evidence_kind": "knowledge_atom",
+                    "atom_id": atom["atom_id"],
+                }
+            ],
+        }
+        self.assertEqual(material_attribution_segments(handoff, self.sources, self.atoms), [])
 
     def test_material_maintainer_atom_attributes_fish_once(self) -> None:
         atom_id = "ka_maintainer_post_006"

@@ -107,28 +107,20 @@ It does not dump every capability into one answer. By default, it advances the s
 
 The public package includes a searchable, traceable knowledge pack. A knowledge atom is one judgment unit that can be found, cited, and combined on its own.
 
-- 40 knowledge atoms: 30 independently worded atoms derived from ten books, plus 10 distilled from Yuzai's public writing.
+- 40 knowledge atoms: 30 independently worded atoms distilled from curated materials, plus 10 distilled from Yuzai's public writing.
 - 9 methods for customer validation, business judgment, communication, content, action, and review.
-- 48 task concepts: 18 runtime concepts and 30 book-derived concepts selected and redefined for practical use.
+- 48 task concepts: 18 runtime concepts and 30 selected concepts redefined for practical use.
 - 40 retrieval cases that verify every atom can be found.
 
-Explore the [knowledge-pack guide](skills/biz-partner/public-knowledge/USAGE.md), [Book Metadata](skills/biz-partner/public-knowledge/book-metadata.md), [methods](skills/biz-partner/public-knowledge/methods.md), [concept dictionary](skills/biz-partner/public-knowledge/concept-dictionary.md), and [structured manifest](skills/biz-partner/public-knowledge/manifest.json).
+Explore the [knowledge-pack guide](skills/biz-partner/public-knowledge/USAGE.md), [methods](skills/biz-partner/public-knowledge/methods.md), [concept dictionary](skills/biz-partner/public-knowledge/concept-dictionary.md), and [structured manifest](skills/biz-partner/public-knowledge/manifest.json).
 
-A source is named only when its atom materially supports the final judgment. Retrieval alone does not trigger attribution. Yuzai is a registered external knowledge source, never the runtime user's identity.
+Curated materials stay anonymous in the public pack. Yuzai is named only when a Yuzai-derived atom materially supports the final judgment; retrieval alone does not trigger attribution. Yuzai is a registered external knowledge source, never the runtime user's identity.
 
 ## It can learn your context without defining you
 
 Biz Partner can follow project and action progress, then propose updates to user preferences, project state, decision records, and working playbooks.
 
 Long-term information starts as a proposal. It becomes active only after confirmation. Outdated or rejected information can be suppressed or deleted. More use can make the Skill better aligned with your constraints, but one conversation never becomes a permanent personality judgment.
-
-## What the public package contains
-
-This is the complete runnable public edition, not a mirror of the private research directory.
-
-It includes the runtime, workflows, contracts, state management, multi-agent debate protocol, read-only audit tools, and distilled public knowledge pack. It excludes book text, source-post text, frequency and chapter indexes, collection records, review working papers, local research paths, and personal data.
-
-Book titles and authors are retained for attribution. The license covers this project's independently written expression and compilation. It does not grant rights to source-book text, illustrations, tables, examples, or other source expression.
 
 ## Limits
 

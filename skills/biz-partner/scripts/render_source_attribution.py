@@ -147,7 +147,7 @@ def validate_public_license(record_id: str, license_record: Any, kind: str) -> N
 def validate_project_paraphrase_source(source_id: str, source: dict[str, Any]) -> None:
     license_record = source.get("license")
     if not (
-        source.get("kind") == "bibliographic_source_for_public_paraphrase"
+        source.get("kind") == "curated_source_for_public_paraphrase"
         and source.get("source_expression_redistribution") == "not_granted_or_claimed"
         and source.get("authorization_status")
         == "project_owner_authorized_public_paraphrase"
@@ -163,7 +163,7 @@ def validate_project_paraphrase_atom(
 ) -> None:
     license_record = rights.get("license")
     if not (
-        atom.get("provenance_type") == "public_book_idea_synthesis"
+        atom.get("provenance_type") == "public_curated_idea_synthesis"
         and atom.get("authorization_status")
         == "project_owner_authorized_public_paraphrase"
         and rights.get("boundary")

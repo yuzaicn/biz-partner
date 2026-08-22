@@ -20,24 +20,26 @@ EXPECTED_COUNTS = {
     "atoms": 40,
     "methods": 9,
     "operational_concepts": 18,
-    "book_concepts": 30,
+    "curated_concepts": 30,
     "retrieval_cases": 40,
 }
 PACK_FILES = {
     "USAGE.md",
     "atoms.jsonl",
-    "book-metadata.md",
     "concept-dictionary.md",
     "concepts.jsonl",
     "methods.md",
     "retrieval-cases.jsonl",
     "sources.jsonl",
 }
-SOURCE_FIELDS = {
-    "source_id", "kind", "title", "author_or_account", "public_attribution_name",
-    "attribution_mode", "relationship_to_runtime_user", "ownership_status", "status",
+SOURCE_COMMON_FIELDS = {
+    "source_id", "kind", "status",
     "rights_status", "license", "authorization_status", "release_decision",
     "rights_basis", "source_expression_redistribution",
+}
+NAMED_SOURCE_FIELDS = SOURCE_COMMON_FIELDS | {
+    "title", "author_or_account", "public_attribution_name", "attribution_mode",
+    "relationship_to_runtime_user", "ownership_status",
 }
 ATOM_FIELDS = {
     "atom_id", "schema_version", "canonical", "claim_kind", "actionability", "domain",
@@ -49,7 +51,7 @@ OPERATIONAL_CONCEPT_FIELDS = {
     "concept_id", "concept_kind", "term", "normalized", "definition", "anti_definition",
     "common_misuse", "source_atoms", "salience", "status", "rights",
 }
-BOOK_CONCEPT_FIELDS = {
+CURATED_CONCEPT_FIELDS = {
     "concept_id", "concept_kind", "term", "definition", "use_when", "limit", "source_id",
     "expression_status", "map_boundary", "status", "rights",
 }
@@ -81,6 +83,7 @@ HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 ATOM_REF_RE = re.compile(r"`(ka_[a-z0-9_]+)`")
 MAINTAINER_NAME = "鱼" + "仔"
 MAINTAINER_HANDLE = "Exp" + "Lang_Cn"
+CURATED_SOURCE_IDS = {f"curated_source_{index:02d}" for index in range(1, 11)}
 
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -142,20 +145,26 @@ def validate_sources(rows: list[dict[str, Any]]) -> set[str]:
         if not isinstance(source_id, str) or not source_id or source_id in ids:
             raise ValueError(f"invalid or duplicate source_id: {source_id!r}")
         ids.add(source_id)
-        exact_fields(row, SOURCE_FIELDS, f"source:{source_id}")
+        exact_fields(
+            row,
+            NAMED_SOURCE_FIELDS
+            if source_id == "maintainer_public_writing_v1"
+            else SOURCE_COMMON_FIELDS,
+            f"source:{source_id}",
+        )
         if row.get("status") != "release_eligible" or row.get("release_decision") != "approved_for_public_release":
             raise ValueError(f"source is not release-eligible: {source_id}")
-        if row.get("attribution_mode") != "when_materially_used":
-            raise ValueError(f"invalid attribution mode: {source_id}")
-        if row.get("relationship_to_runtime_user") != "external_named_source":
-            raise ValueError(f"source may not be inferred as runtime user: {source_id}")
-        if row.get("ownership_status") != "not_claimed":
-            raise ValueError(f"source ownership is not separated: {source_id}")
         validate_license(row.get("license"), f"source:{source_id}")
         identity_text = json.dumps(row, ensure_ascii=False)
         has_maintainer_identity = MAINTAINER_NAME in identity_text or MAINTAINER_HANDLE in identity_text
         if source_id == "maintainer_public_writing_v1":
             maintainer_count += 1
+            if row.get("attribution_mode") != "when_materially_used":
+                raise ValueError("maintainer attribution mode mismatch")
+            if row.get("relationship_to_runtime_user") != "external_named_source":
+                raise ValueError("maintainer source may not be inferred as runtime user")
+            if row.get("ownership_status") != "not_claimed":
+                raise ValueError("maintainer source ownership is not separated")
             if row.get("public_attribution_name") != MAINTAINER_NAME:
                 raise ValueError("maintainer public attribution name mismatch")
             if row.get("author_or_account") != f"{MAINTAINER_NAME}（@{MAINTAINER_HANDLE}）":
@@ -166,16 +175,18 @@ def validate_sources(rows: list[dict[str, Any]]) -> set[str]:
                 raise ValueError("maintainer source authorization mismatch")
         elif has_maintainer_identity:
             raise ValueError(f"maintainer identity escaped source row: {source_id}")
+        elif source_id not in CURATED_SOURCE_IDS:
+            raise ValueError(f"unexpected curated source id: {source_id}")
         elif row.get("rights_status") != "project_paraphrase_only":
-            raise ValueError(f"book synthesis record has invalid rights status: {source_id}")
+            raise ValueError(f"curated synthesis record has invalid rights status: {source_id}")
         elif (
-            row.get("kind") != "bibliographic_source_for_public_paraphrase"
+            row.get("kind") != "curated_source_for_public_paraphrase"
             or row.get("authorization_status") != "project_owner_authorized_public_paraphrase"
             or row.get("source_expression_redistribution") != "not_granted_or_claimed"
             or row.get("license", {}).get("applies_to")
             != "public-pack original paraphrases and compilation only"
         ):
-            raise ValueError(f"book synthesis boundary is invalid: {source_id}")
+            raise ValueError(f"curated synthesis boundary is invalid: {source_id}")
         if row.get("source_expression_redistribution") not in {
             "not_granted_or_claimed", "derived atoms only; raw source material excluded"
         }:
@@ -208,13 +219,13 @@ def validate_atoms(rows: list[dict[str, Any]], source_ids: set[str]) -> set[str]
         exact_fields(confidence, CONFIDENCE_FIELDS, f"atom:{atom_id}.confidence")
         if rights.get("redistribution") == "project_paraphrase_only":
             if (
-                row.get("provenance_type") != "public_book_idea_synthesis"
+                row.get("provenance_type") != "public_curated_idea_synthesis"
                 or row.get("authorization_status")
                 != "project_owner_authorized_public_paraphrase"
                 or rights.get("boundary")
                 != "license covers this pack's original paraphrase, not source-book expression"
             ):
-                raise ValueError(f"atom book-paraphrase boundary is invalid: {atom_id}")
+                raise ValueError(f"atom curated-paraphrase boundary is invalid: {atom_id}")
         elif rights.get("redistribution") != "owner_authorized_public_release":
             raise ValueError(f"atom rights status is invalid: {atom_id}")
         refs = row.get("source_refs")
@@ -250,9 +261,11 @@ def validate_atoms(rows: list[dict[str, Any]], source_ids: set[str]) -> set[str]
 
 def validate_concepts(rows: list[dict[str, Any]], atom_ids: set[str], source_ids: set[str]) -> None:
     operational = [row for row in rows if row.get("concept_kind") == "operational_dictionary"]
-    books = [row for row in rows if row.get("concept_kind") == "book_concept"]
-    if len(operational) != 18 or len(books) != 30 or len(rows) != 48:
-        raise ValueError(f"concept counts mismatch: operational={len(operational)} book={len(books)}")
+    curated = [row for row in rows if row.get("concept_kind") == "curated_concept"]
+    if len(operational) != 18 or len(curated) != 30 or len(rows) != 48:
+        raise ValueError(
+            f"concept counts mismatch: operational={len(operational)} curated={len(curated)}"
+        )
     seen: set[str] = set()
     for row in rows:
         concept_id = row.get("concept_id")
@@ -277,11 +290,11 @@ def validate_concepts(rows: list[dict[str, Any]], atom_ids: set[str], source_ids
             if any(atom_id not in atom_ids for atom_id in row.get("source_atoms", [])):
                 raise ValueError(f"operational concept references unknown atom: {concept_id}")
         else:
-            exact_fields(row, BOOK_CONCEPT_FIELDS, f"concept:{concept_id}")
-            if row.get("source_id") not in source_ids:
-                raise ValueError(f"book concept references unknown source: {concept_id}")
+            exact_fields(row, CURATED_CONCEPT_FIELDS, f"concept:{concept_id}")
+            if row.get("source_id") not in CURATED_SOURCE_IDS:
+                raise ValueError(f"curated concept references unknown source: {concept_id}")
             if row.get("expression_status") != "independently_worded_project_definition":
-                raise ValueError(f"book concept expression boundary missing: {concept_id}")
+                raise ValueError(f"curated concept expression boundary missing: {concept_id}")
         if row.get("term") in {"情绪体", "信念体"}:
             raise ValueError(f"source-specific framework term in concept: {concept_id}")
         text = json.dumps(row, ensure_ascii=False)
@@ -373,13 +386,6 @@ def validate_pack(skill_root: Path) -> dict[str, Any]:
     for term in FORBIDDEN_CONTENT_TERMS:
         if term.casefold() in dictionary.casefold():
             raise ValueError(f"source-specific framework term in dictionary: {term}")
-    metadata = (pack_root / "book-metadata.md").read_text(encoding="utf-8")
-    book_sources = [row for row in sources if row["source_id"] != "maintainer_public_writing_v1"]
-    if not metadata.startswith("# Book Metadata\n") or len(book_sources) != 10:
-        raise ValueError("book metadata header or source count mismatch")
-    for source in book_sources:
-        if source["title"] not in metadata or source["author_or_account"] not in metadata:
-            raise ValueError(f"book metadata entry missing: {source['source_id']}")
     return {
         "sources": len(sources),
         "atoms": len(atoms),

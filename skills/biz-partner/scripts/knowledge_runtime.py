@@ -723,7 +723,7 @@ def project_paraphrase_source_allowed(source: dict[str, Any]) -> bool:
     """Keep the special status narrower than source-expression redistribution."""
     license_record = source.get("license")
     return (
-        source.get("kind") == "bibliographic_source_for_public_paraphrase"
+        source.get("kind") == "curated_source_for_public_paraphrase"
         and source.get("source_expression_redistribution") == "not_granted_or_claimed"
         and source.get("authorization_status")
         == "project_owner_authorized_public_paraphrase"
@@ -734,10 +734,10 @@ def project_paraphrase_source_allowed(source: dict[str, Any]) -> bool:
 
 
 def project_paraphrase_atom_allowed(atom: dict[str, Any], rights: dict[str, Any]) -> bool:
-    """Allow only independently worded book-idea records under this status."""
+    """Allow only independently worded curated records under this status."""
     license_record = rights.get("license")
     return (
-        atom.get("provenance_type") == "public_book_idea_synthesis"
+        atom.get("provenance_type") == "public_curated_idea_synthesis"
         and atom.get("authorization_status")
         == "project_owner_authorized_public_paraphrase"
         and rights.get("boundary")

@@ -107,28 +107,20 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 
 公开版自带一套可检索、可追溯的知识包。“知识原子”就是一条可以单独找到、引用和组合的判断材料。
 
-- 40 条知识原子：30 条来自 10 本书的独立再表述，10 条来自鱼仔公开内容的提炼。
+- 40 条知识原子：30 条来自整理材料的独立再表述，10 条来自鱼仔公开内容的提炼。
 - 9 套方法：覆盖客户验证、商业判断、沟通、内容、行动和复盘。
-- 48 个任务概念：18 个运行时概念，30 个从书中筛选并重新定义的通用概念。
+- 48 个任务概念：18 个运行时概念，30 个经过筛选并重新定义的通用概念。
 - 40 个检索用例：验证每条知识原子都能被找到。
 
-继续查看：[知识包说明](skills/biz-partner/public-knowledge/USAGE.md) · [Book Metadata](skills/biz-partner/public-knowledge/book-metadata.md) · [方法论](skills/biz-partner/public-knowledge/methods.md) · [概念词典](skills/biz-partner/public-knowledge/concept-dictionary.md) · [结构化清单](skills/biz-partner/public-knowledge/manifest.json)
+继续查看：[知识包说明](skills/biz-partner/public-knowledge/USAGE.md) · [方法论](skills/biz-partner/public-knowledge/methods.md) · [概念词典](skills/biz-partner/public-knowledge/concept-dictionary.md) · [结构化清单](skills/biz-partner/public-knowledge/manifest.json)
 
-来源只有在真正支撑最终判断时才会出现。只是检索到但没有采用，不会硬塞作者名字。鱼仔是登记的外部知识来源，不是运行时用户。
+整理材料在公开包中保持匿名。只有鱼仔相关知识真正支撑最终判断时，才会显示来源；只是检索到但没有采用，不会触发署名。鱼仔是登记的外部知识来源，不是运行时用户。
 
 ## 它会逐渐了解你，但不会擅自定义你
 
 Biz Partner 可以跟随你的项目和行动进度，提出对用户偏好、项目状态、决策记录与有效做法的更新建议。
 
 这些长期信息默认只是候选。只有经过确认才会写入；过期、被否定或不再适用的信息可以被抑制或删除。使用得越久，它可以越贴近你的真实约束，但不会把一次对话当成永久人格结论。
-
-## 公开版包含什么
-
-这是完整可运行的公开版，不是私有研究目录的镜像。
-
-包含运行核心、工作流、契约、状态管理、多 Agent 讨论协议、只读审计工具和提炼后的公开知识包。不会公开书籍原文、账号原文、词频与章节索引、采集记录、审核底稿、本机研究路径或个人数据。
-
-书名和作者只用于来源说明。许可证只覆盖本项目重新写过的表达和编排，不授予原书文字、插图、表格、案例或其他原始表达的权利。
 
 ## 使用边界
 
