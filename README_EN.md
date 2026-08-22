@@ -16,6 +16,8 @@ An Agent Skill that questions assumptions, diagnoses problems, and helps you mov
 
 You do not need to learn a business framework or figure out the perfect question first. Describe the situation as it is.
 
+It is built for individuals and small teams finding a side-business direction, validating an idea, or running a product and content operation.
+
 No idea yet? It helps you find a direction. Already building? It examines the customer, product, price, and delivery model. Stuck? It turns the blockage into one step you can complete today.
 
 Think of it as a partner that asks for evidence, remembers past decisions, and sometimes tells you to stop. You still make the final call.
