@@ -18,7 +18,9 @@ You do not need to learn a business framework or figure out the perfect question
 
 It is built for individuals and small teams finding a side-business direction, validating an idea, or running a product and content operation.
 
-No idea yet? It helps you find a direction. Already building? It examines the customer, product, price, and delivery model. Stuck? It turns the blockage into one step you can complete today.
+No idea yet? It helps you find a direction.<br>
+Already building? It examines the customer, product, price, and delivery model.<br>
+Stuck? It turns the blockage into one step you can complete today.
 
 Think of it as a partner that asks for evidence, remembers past decisions, and sometimes tells you to stop. You still make the final call.
 
