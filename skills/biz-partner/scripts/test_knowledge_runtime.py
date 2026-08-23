@@ -286,6 +286,68 @@ class KnowledgePackRuntimeTests(unittest.TestCase):
         return row
 
     @staticmethod
+    def supporting_rights(*, public: bool) -> dict[str, object]:
+        rights: dict[str, object] = {
+            "redistribution": "open_license" if public else "internal_use_only"
+        }
+        if public:
+            rights["license"] = {
+                "id": "CC-BY",
+                "version": "4.0",
+                "scope": "redistribution_and_derivatives",
+            }
+        return rights
+
+    @classmethod
+    def concept(
+        cls,
+        concept_id: str,
+        atom_ids: list[str],
+        method_ids: list[str],
+        *,
+        public: bool = True,
+        aliases: list[str] | None = None,
+    ) -> dict[str, object]:
+        return {
+            "concept_id": concept_id,
+            "term": "付费信号",
+            "normalized": "payment_signal",
+            "definition": "客户用可观察承诺表达真实购买意愿",
+            "aliases": aliases or ["愿不愿掏钱"],
+            "source_atoms": atom_ids,
+            "related_methods": method_ids,
+            "status": "release_eligible" if public else "candidate",
+            "rights": cls.supporting_rights(public=public),
+        }
+
+    @classmethod
+    def method(
+        cls,
+        method_id: str,
+        atom_ids: list[str],
+        concept_ids: list[str],
+        *,
+        public: bool = True,
+    ) -> dict[str, object]:
+        return {
+            "method_id": method_id,
+            "title": "客户付费验证",
+            "purpose": "用真实承诺验证购买意愿",
+            "use_when": ["只有口头兴趣"],
+            "inputs": ["目标客户", "待验证报价"],
+            "steps": ["提出窄报价", "请求可观察承诺"],
+            "decision_gates": ["没有承诺则保持未验证"],
+            "stop_conditions": ["达到事前停止条件"],
+            "outputs": ["验证记录"],
+            "quality_checks": ["承诺可回溯"],
+            "pitfalls": ["把点赞当购买"],
+            "atom_ids": atom_ids,
+            "concept_ids": concept_ids,
+            "status": "release_eligible" if public else "candidate",
+            "rights": cls.supporting_rights(public=public),
+        }
+
+    @staticmethod
     def write_jsonl(path: Path, rows: list[dict[str, object]]) -> None:
         path.write_text(
             "".join(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in rows),
@@ -297,11 +359,18 @@ class KnowledgePackRuntimeTests(unittest.TestCase):
         root: Path,
         sources: list[dict[str, object]],
         atoms: list[dict[str, object]],
+        *,
+        concepts: list[dict[str, object]] | None = None,
+        methods: list[dict[str, object]] | None = None,
     ) -> tuple[Path, Path]:
         source_path = root / "sources.jsonl"
         atom_path = root / "atoms.jsonl"
         self.write_jsonl(source_path, sources)
         self.write_jsonl(atom_path, atoms)
+        if concepts is not None:
+            self.write_jsonl(root / "concepts.jsonl", concepts)
+        if methods is not None:
+            self.write_jsonl(root / "methods.jsonl", methods)
         return source_path, atom_path
 
     def test_public_mode_fails_closed_and_private_mode_is_explicit(self) -> None:
@@ -422,6 +491,157 @@ class KnowledgePackRuntimeTests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "answer-leaking"):
                 evaluate_recall(load_knowledge_pack(source_path, atom_path), cases_path)
+
+    def test_concept_alias_expands_atoms_and_recommends_method(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            atom = self.atom(
+                "ka_payment", "public", "客户访谈需要记录真实购买承诺", public=True
+            )
+            concept = self.concept(
+                "oc_payment", ["ka_payment"], ["M-001"], aliases=["愿不愿掏钱"]
+            )
+            method = self.method("M-001", ["ka_payment"], ["oc_payment"])
+            source_path, atom_path = self.write_pack(
+                root,
+                [self.source("public", public=True)],
+                [atom],
+                concepts=[concept],
+                methods=[method],
+            )
+
+            result = search_knowledge_pack(
+                load_knowledge_pack(source_path, atom_path), "先找人聊聊愿不愿掏钱", limit=5
+            )
+
+            self.assertEqual(result["matched_concepts"][0]["concept_id"], "oc_payment")
+            self.assertEqual(result["results"][0]["atom_id"], "ka_payment")
+            self.assertEqual(result["recommended_methods"][0]["method_id"], "M-001")
+            self.assertIn("oc_payment", result["results"][0]["matched_concept_ids"])
+
+    def test_initial_atom_exposes_one_hop_concept_and_method_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            atom = self.atom(
+                "ka_inventory", "public", "库存周转必须先核对滞销记录", public=True
+            )
+            concept = self.concept("oc_payment", ["ka_inventory"], ["M-001"])
+            method = self.method("M-001", ["ka_inventory"], ["oc_payment"])
+            source_path, atom_path = self.write_pack(
+                root,
+                [self.source("public", public=True)],
+                [atom],
+                concepts=[concept],
+                methods=[method],
+            )
+
+            result = search_knowledge_pack(
+                load_knowledge_pack(source_path, atom_path), "怎么核对库存周转", limit=5
+            )
+
+            linked = next(
+                row for row in result["matched_concepts"] if row["concept_id"] == "oc_payment"
+            )
+            self.assertEqual(linked["inference"], "linked_atom")
+            self.assertEqual(linked["linked_atom_ids"], ["ka_inventory"])
+            self.assertEqual(
+                result["recommended_methods"][0]["matched_atom_ids"], ["ka_inventory"]
+            )
+
+    def test_search_returns_all_allowed_relation_types(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            relations = [
+                {"type": relation_type, "atom_id": "ka_target"}
+                for relation_type in ("depends_on", "supports", "refines", "contradicts")
+            ]
+            atoms = [
+                self.atom(
+                    "ka_primary",
+                    "public",
+                    "客户验证主张",
+                    public=True,
+                    relations=relations,
+                ),
+                self.atom("ka_target", "public", "客户验证边界", public=True),
+            ]
+            source_path, atom_path = self.write_pack(
+                root, [self.source("public", public=True)], atoms
+            )
+
+            result = search_knowledge_pack(
+                load_knowledge_pack(source_path, atom_path), "客户验证主张", limit=1
+            )
+
+            self.assertEqual(
+                {row["type"] for row in result["results"][0]["relations"]},
+                {"depends_on", "supports", "refines", "contradicts"},
+            )
+            self.assertEqual(result["results"][0]["conflicts"], ["ka_target"])
+
+    def test_eval_reports_atom_method_and_concept_metrics(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            atom = self.atom(
+                "ka_payment", "public", "客户访谈需要记录真实购买承诺", public=True
+            )
+            concept = self.concept("oc_payment", ["ka_payment"], ["M-001"])
+            method = self.method("M-001", ["ka_payment"], ["oc_payment"])
+            source_path, atom_path = self.write_pack(
+                root,
+                [self.source("public", public=True)],
+                [atom],
+                concepts=[concept],
+                methods=[method],
+            )
+            cases_path = root / "cases.jsonl"
+            self.write_jsonl(
+                cases_path,
+                [
+                    {
+                        "case_id": "colloquial",
+                        "case_kind": "colloquial_alias",
+                        "query": "这人到底愿不愿掏钱",
+                        "relevant_atom_ids": ["ka_payment"],
+                        "relevant_method_ids": ["M-001"],
+                        "relevant_concept_ids": ["oc_payment"],
+                    }
+                ],
+            )
+
+            result = evaluate_recall(load_knowledge_pack(source_path, atom_path), cases_path)
+
+            self.assertEqual(result["atom_recall_at_5"], 1.0)
+            self.assertEqual(result["atom_top1"], 1.0)
+            self.assertEqual(result["atom_mrr"], 1.0)
+            self.assertEqual(result["method_recall_at_3"], 1.0)
+            self.assertEqual(result["concept_match_recall"], 1.0)
+            self.assertTrue(result["passed"])
+
+    def test_public_mode_excludes_private_concepts_and_methods(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            atom = self.atom("ka_public", "public", "公开客户方法", public=True)
+            concept = self.concept(
+                "oc_private", ["ka_public"], ["M-PRIVATE"], public=False
+            )
+            method = self.method(
+                "M-PRIVATE", ["ka_public"], ["oc_private"], public=False
+            )
+            source_path, atom_path = self.write_pack(
+                root,
+                [self.source("public", public=True)],
+                [atom],
+                concepts=[concept],
+                methods=[method],
+            )
+
+            pack = load_knowledge_pack(source_path, atom_path)
+
+            self.assertEqual(pack.concepts, {})
+            self.assertEqual(pack.methods, {})
+            self.assertIn("oc_private", pack.excluded_concepts)
+            self.assertIn("M-PRIVATE", pack.excluded_methods)
 
 
 if __name__ == "__main__":

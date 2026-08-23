@@ -5,10 +5,10 @@
 ### Make the next business decision testable
 
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-biz--partner-111827?style=flat-square)](skills/biz-partner/SKILL.md)
-[![Knowledge Pack](https://img.shields.io/badge/knowledge-40%20atoms-2563EB?style=flat-square)](skills/biz-partner/public-knowledge/USAGE.md)
+[![Knowledge Pack](https://img.shields.io/badge/knowledge-60%20atoms-2563EB?style=flat-square)](skills/biz-partner/public-knowledge/USAGE.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial-E11D48?style=flat-square)](LICENSE)
 
-[中文](README.md) · [English](README_EN.md) · [Knowledge pack](skills/biz-partner/public-knowledge/USAGE.md) · [X / Twitter](https://x.com/ExpLang_Cn)
+[中文](README.md) · [English](README_EN.md) · [Knowledge pack (Chinese)](skills/biz-partner/public-knowledge/USAGE.md) · [X / Twitter](https://x.com/ExpLang_Cn)
 
 </div>
 
@@ -68,15 +68,21 @@ When the evidence is good enough, it moves one step. When it is not, it asks for
 
 Files, publishing, payments, deletion, and external messages remain under your control. The exact target and scope must be shown before anything is changed or sent.
 
-The same Skill can shape a product brief, review content, work through an execution block, keep confirmed decision records, organize an approved knowledge folder, or perform a read-only local Skill audit. The [Skill entry file](skills/biz-partner/SKILL.md) has the full routing guide.
+See the [Skill entry file](skills/biz-partner/SKILL.md) for its other capabilities and operating boundaries.
 
 ## What it has to work with
 
-The public pack contains 40 searchable knowledge atoms, nine working methods, 48 task concepts, and 40 retrieval regression cases. Thirty atoms are independent rewrites from curated material; ten were distilled from Yuzai's public writing.
+The knowledge pack has 60 knowledge atoms, 12 methods, 30 work terms, 50 analytical concepts, and 84 retrieval regression cases. Each layer has a different job:
 
-These are working notes, not material to recite. The Skill retrieves them only when they help with the current customer, pricing, content, or execution problem. See the [knowledge-pack guide](skills/biz-partner/public-knowledge/USAGE.md), [methods](skills/biz-partner/public-knowledge/methods.md), [concept dictionary](skills/biz-partner/public-knowledge/concept-dictionary.md), and [manifest](skills/biz-partner/public-knowledge/manifest.json).
+| Layer | In plain language |
+| --- | --- |
+| Knowledge atoms | One idea, rule, or practice that can be retrieved and judged on its own. |
+| Methods | A usable process assembled from related atoms, with guidance on when to use it, what to do, and when to stop. |
+| Work dictionary and analytical concepts | The work dictionary gives shared meanings to terms such as customer, product, and evidence; analytical concepts offer another way to break down a problem when needed. |
+| Structured data | Machine-readable, checkable JSON/JSONL records for atoms, terms, concepts, and tests. |
+| Retrieval regression | Fixed questions paired with expected atoms, rerun after a pack change to catch missing matches. |
 
-Curated material stays anonymous. Yuzai is credited only when a Yuzai-derived atom actually supports the answer.
+See the [knowledge-pack guide (Chinese)](skills/biz-partner/public-knowledge/USAGE.md), [12 methods (Chinese)](skills/biz-partner/public-knowledge/methods.md), [work dictionary and analytical concepts (Chinese)](skills/biz-partner/public-knowledge/concept-dictionary.md), [atom data](skills/biz-partner/public-knowledge/atoms.jsonl), [method data](skills/biz-partner/public-knowledge/methods.jsonl), [concept data](skills/biz-partner/public-knowledge/concepts.jsonl), [retrieval regression data](skills/biz-partner/public-knowledge/retrieval-cases.jsonl), and [knowledge-pack manifest and version information](skills/biz-partner/public-knowledge/manifest.json).
 
 Confirmed project records can carry useful context into later conversations. New preferences and judgments begin as proposals; they become active only after confirmation. Outdated or incorrect information can be corrected or suppressed. One conversation does not become a permanent profile.
 

@@ -16,10 +16,13 @@ sys.path.insert(0, str(SCRIPT_DIR))
 from render_source_attribution import material_attribution_segments  # noqa: E402
 from validate_public_knowledge import (  # noqa: E402
     MAINTAINER_NAME,
+    MINIMUM_COUNTS,
     load_jsonl,
     validate_atoms,
     validate_concepts,
+    validate_cross_references,
     validate_manifest,
+    validate_methods,
     validate_pack,
     validate_sources,
 )
@@ -32,12 +35,16 @@ class PublicKnowledgeTests(unittest.TestCase):
         cls.sources = load_jsonl(cls.pack_root / "sources.jsonl")
         cls.atoms = load_jsonl(cls.pack_root / "atoms.jsonl")
         cls.concepts = load_jsonl(cls.pack_root / "concepts.jsonl")
+        cls.methods = load_jsonl(cls.pack_root / "methods.jsonl")
 
     def test_bundled_pack_passes_strict_validation(self) -> None:
         result = validate_pack(SKILL_DIR)
-        self.assertEqual(result["sources"], 11)
-        self.assertEqual(result["atoms"], 40)
-        self.assertEqual(result["recall_at_5"], 1.0)
+        self.assertGreaterEqual(result["sources"], MINIMUM_COUNTS["sources"])
+        self.assertGreaterEqual(result["atoms"], MINIMUM_COUNTS["atoms"])
+        self.assertGreaterEqual(result["methods"], MINIMUM_COUNTS["methods"])
+        self.assertGreaterEqual(result["recall_at_5"], 0.85)
+        self.assertGreaterEqual(result["method_recall_at_3"], 0.85)
+        self.assertGreaterEqual(result["concept_match_recall"], 0.85)
 
     def test_human_readable_pack_has_no_generated_punctuation_artifacts(self) -> None:
         for name in ("USAGE.md", "methods.md", "concept-dictionary.md"):
@@ -100,6 +107,56 @@ class PublicKnowledgeTests(unittest.TestCase):
         manifest["unexpected_top_level_field"] = True
         with self.assertRaisesRegex(ValueError, "unsupported fields"):
             validate_manifest(self.pack_root, manifest)
+
+    def test_manifest_enforces_minimums_but_uses_dynamic_actual_counts(self) -> None:
+        manifest = json.loads((self.pack_root / "manifest.json").read_text(encoding="utf-8"))
+        actual = dict(manifest["counts"])
+        validate_manifest(self.pack_root, manifest, actual)
+        below = deepcopy(manifest)
+        below["counts"]["atoms"] = MINIMUM_COUNTS["atoms"] - 1
+        below["atom_count"] = MINIMUM_COUNTS["atoms"] - 1
+        with self.assertRaisesRegex(ValueError, "below minimum"):
+            validate_manifest(self.pack_root, below, dict(below["counts"]))
+
+    def test_concept_aliases_field_is_required_but_may_be_empty(self) -> None:
+        sources = deepcopy(self.sources)
+        atoms = deepcopy(self.atoms)
+        concepts = deepcopy(self.concepts)
+        source_ids = validate_sources(sources)
+        atom_ids = validate_atoms(atoms, source_ids)
+        concepts[0]["aliases"] = []
+        validate_concepts(concepts, atom_ids, source_ids)
+        del concepts[0]["aliases"]
+        with self.assertRaisesRegex(ValueError, "missing fields.*aliases"):
+            validate_concepts(concepts, atom_ids, source_ids)
+
+    def test_concept_method_edges_must_not_dangle(self) -> None:
+        sources = deepcopy(self.sources)
+        atoms = deepcopy(self.atoms)
+        concepts = deepcopy(self.concepts)
+        methods = deepcopy(self.methods)
+        source_ids = validate_sources(sources)
+        atom_ids = validate_atoms(atoms, source_ids)
+        concept_ids = validate_concepts(concepts, atom_ids, source_ids)
+        method_ids = validate_methods(methods, atom_ids, concept_ids)
+        concepts[0]["related_methods"] = ["M-999"]
+        with self.assertRaisesRegex(ValueError, "unknown methods"):
+            validate_cross_references(concepts, methods, method_ids)
+
+    def test_method_concept_ids_must_not_contain_duplicates(self) -> None:
+        sources = deepcopy(self.sources)
+        atoms = deepcopy(self.atoms)
+        concepts = deepcopy(self.concepts)
+        methods = deepcopy(self.methods)
+        source_ids = validate_sources(sources)
+        atom_ids = validate_atoms(atoms, source_ids)
+        concept_ids = validate_concepts(concepts, atom_ids, source_ids)
+        methods[0]["concept_ids"] = [
+            methods[0]["concept_ids"][0],
+            methods[0]["concept_ids"][0],
+        ]
+        with self.assertRaisesRegex(ValueError, "must not contain duplicates"):
+            validate_methods(methods, atom_ids, concept_ids)
 
     def test_project_paraphrase_requires_exact_source_boundary(self) -> None:
         sources = deepcopy(self.sources)

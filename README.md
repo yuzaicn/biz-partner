@@ -7,7 +7,7 @@
 一个会把判断落到下一步的 Agent Skill。
 
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-biz--partner-111827?style=flat-square)](skills/biz-partner/SKILL.md)
-[![Knowledge Pack](https://img.shields.io/badge/knowledge-40%20atoms-2563EB?style=flat-square)](skills/biz-partner/public-knowledge/USAGE.md)
+[![Knowledge Pack](https://img.shields.io/badge/knowledge-60%20atoms-2563EB?style=flat-square)](skills/biz-partner/public-knowledge/USAGE.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial-E11D48?style=flat-square)](LICENSE)
 
 [中文](README.md) · [English](README_EN.md) · [知识包](skills/biz-partner/public-knowledge/USAGE.md) · [X / Twitter](https://x.com/ExpLang_Cn)
@@ -73,17 +73,21 @@ Skill 已经载入，或者客户端支持隐式调用时，也可以直接用 `
 
 写文件、发布内容、付款、删除数据或向外发送消息前，它仍会把准确范围摆出来，等你确认。
 
-除了生意判断，它也能整理产品方案、检查内容、处理行动受阻、记录长期决策、治理文件夹知识库，并只读审查本地 Skill。完整入口在 [Skill 文档](skills/biz-partner/SKILL.md)。
+其他能力和使用边界见 [Skill 文档](skills/biz-partner/SKILL.md)。
 
 ## 它手里有什么
 
-Skill 内置 40 条可以检索的知识原子、9 套方法、48 个任务概念和 40 个检索回归用例。30 条知识原子来自整理材料的独立再表述，10 条来自鱼仔公开内容的提炼。
+这套知识包有 60 条知识原子、12 套方法、30 个工作词条、50 个分析概念和 84 个检索回归用例。每一层解决的问题不同：
 
-这些内容不是拿来背的。讨论客户、定价、内容或行动问题时，它会按当前问题去找；每条知识原子都有检索用例，可以检查它到底能不能被找到。
+| 这一层 | 人话解释 |
+| --- | --- |
+| 知识原子 | 一条能单独找到，也能单独判断是否适用于当前问题的观点、规则或做法。 |
+| 方法 | 把相关原子连成一套能执行的做法，交代何时用、怎么做和何时停。 |
+| 工作词典与分析概念 | 工作词典统一“客户、产品、证据”等常用词；分析概念在需要时帮你换个角度拆问题。 |
+| 结构化数据 | 把原子、词条、概念和测试记录写成程序可读取、可校验的 JSON/JSONL。 |
+| 检索回归 | 为固定问题保存预期命中的原子，知识包变化后重跑，检查原来能找到的内容是否丢了。 |
 
-[知识包说明](skills/biz-partner/public-knowledge/USAGE.md) · [方法论](skills/biz-partner/public-knowledge/methods.md) · [概念词典](skills/biz-partner/public-knowledge/concept-dictionary.md) · [结构化清单](skills/biz-partner/public-knowledge/manifest.json)
-
-整理材料保持匿名。真正使用了鱼仔的知识原子，结果里才会显示来源；只是搜到，不算。
+[知识包说明](skills/biz-partner/public-knowledge/USAGE.md) · [12 套方法](skills/biz-partner/public-knowledge/methods.md) · [工作词典与分析概念](skills/biz-partner/public-knowledge/concept-dictionary.md) · [知识原子数据](skills/biz-partner/public-knowledge/atoms.jsonl) · [方法数据](skills/biz-partner/public-knowledge/methods.jsonl) · [概念数据](skills/biz-partner/public-knowledge/concepts.jsonl) · [检索回归数据](skills/biz-partner/public-knowledge/retrieval-cases.jsonl) · [知识包清单与版本信息](skills/biz-partner/public-knowledge/manifest.json)
 
 ## 它会记住什么
 
