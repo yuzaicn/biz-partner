@@ -1,0 +1,4017 @@
+{
+  "counts": {
+    "edges": 477,
+    "nodes": 163
+  },
+  "edges": [
+    {
+      "directed": true,
+      "from": "atom:ka_curated_001",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_002",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_003",
+      "to": "source:curated_source_07",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_004",
+      "to": "source:curated_source_04",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_005",
+      "to": "source:curated_source_06",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_006",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_007",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_008",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_009",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_010",
+      "to": "source:curated_source_03",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_011",
+      "to": "source:curated_source_03",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_012",
+      "to": "source:curated_source_03",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_013",
+      "to": "source:curated_source_05",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_014",
+      "to": "source:curated_source_05",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_015",
+      "to": "source:curated_source_05",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_016",
+      "to": "source:curated_source_08",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_017",
+      "to": "source:curated_source_08",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_018",
+      "to": "source:curated_source_08",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_019",
+      "to": "source:curated_source_09",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_020",
+      "to": "source:curated_source_09",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_021",
+      "to": "source:curated_source_09",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_022",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_023",
+      "to": "atom:ka_maintainer_004",
+      "type": "depends_on"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_023",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_024",
+      "to": "source:curated_source_04",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_025",
+      "to": "source:curated_source_04",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_026",
+      "to": "source:curated_source_06",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_027",
+      "to": "source:curated_source_07",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_028",
+      "to": "source:curated_source_10",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_029",
+      "to": "source:curated_source_10",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_030",
+      "to": "source:curated_source_10",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_031",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_032",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_033",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_034",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_035",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_036",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_037",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_038",
+      "to": "source:curated_source_02",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_039",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_040",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_041",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_042",
+      "to": "source:curated_source_01",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_043",
+      "to": "source:curated_source_06",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_044",
+      "to": "source:curated_source_09",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_045",
+      "to": "source:curated_source_03",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_046",
+      "to": "source:curated_source_03",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_047",
+      "to": "source:curated_source_03",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_048",
+      "to": "source:curated_source_07",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_049",
+      "to": "source:curated_source_05",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_curated_050",
+      "to": "source:curated_source_04",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_001",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_002",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_003",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_004",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_post_001",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_post_002",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_post_003",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_post_004",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_post_005",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "atom:ka_maintainer_post_006",
+      "to": "source:maintainer_public_writing_v1",
+      "type": "derived_from"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_001",
+      "to": "atom:ka_curated_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_001",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_002",
+      "to": "atom:ka_curated_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_002",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_003",
+      "to": "atom:ka_curated_022",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_003",
+      "to": "method:M-009",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_004",
+      "to": "atom:ka_curated_007",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_004",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_005",
+      "to": "atom:ka_curated_006",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_005",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_006",
+      "to": "atom:ka_curated_007",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_006",
+      "to": "atom:ka_curated_008",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_006",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_006",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_007",
+      "to": "atom:ka_curated_010",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_007",
+      "to": "method:M-007",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_008",
+      "to": "atom:ka_curated_011",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_008",
+      "to": "method:M-007",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_009",
+      "to": "atom:ka_curated_012",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_009",
+      "to": "method:M-007",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_010",
+      "to": "atom:ka_curated_004",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_010",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_011",
+      "to": "atom:ka_curated_024",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_011",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_011",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_012",
+      "to": "atom:ka_curated_025",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_012",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_012",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_012",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_013",
+      "to": "atom:ka_curated_013",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_013",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_014",
+      "to": "atom:ka_curated_014",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_014",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_015",
+      "to": "atom:ka_curated_015",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_015",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_016",
+      "to": "atom:ka_curated_005",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_016",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_017",
+      "to": "atom:ka_curated_028",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_017",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_018",
+      "to": "atom:ka_curated_005",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_018",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_019",
+      "to": "atom:ka_curated_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_019",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_020",
+      "to": "atom:ka_curated_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_020",
+      "to": "atom:ka_curated_027",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_020",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_020",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_020",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_021",
+      "to": "atom:ka_curated_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_021",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_022",
+      "to": "atom:ka_curated_017",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_022",
+      "to": "method:M-009",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_023",
+      "to": "atom:ka_curated_016",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_023",
+      "to": "atom:ka_curated_017",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_023",
+      "to": "method:M-009",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_024",
+      "to": "atom:ka_curated_018",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_024",
+      "to": "method:M-009",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_025",
+      "to": "atom:ka_curated_019",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_025",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_026",
+      "to": "atom:ka_curated_021",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_026",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_027",
+      "to": "atom:ka_curated_020",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_027",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_028",
+      "to": "atom:ka_curated_028",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_028",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_029",
+      "to": "atom:ka_curated_029",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_029",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_030",
+      "to": "atom:ka_curated_030",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_030",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_031",
+      "to": "atom:ka_curated_032",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_031",
+      "to": "method:M-001",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_031",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_032",
+      "to": "atom:ka_curated_040",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_032",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_033",
+      "to": "atom:ka_curated_033",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_033",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_034",
+      "to": "atom:ka_curated_034",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_034",
+      "to": "atom:ka_curated_049",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_034",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_034",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_034",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_035",
+      "to": "atom:ka_curated_025",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_035",
+      "to": "atom:ka_curated_050",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_035",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_035",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_035",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_035",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_036",
+      "to": "atom:ka_curated_035",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_037",
+      "to": "atom:ka_curated_044",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_037",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_038",
+      "to": "atom:ka_curated_009",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_038",
+      "to": "atom:ka_curated_037",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_038",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_038",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_039",
+      "to": "atom:ka_curated_038",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_039",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_040",
+      "to": "atom:ka_curated_042",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_040",
+      "to": "method:M-003",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_041",
+      "to": "atom:ka_curated_041",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_041",
+      "to": "atom:ka_curated_042",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_041",
+      "to": "method:M-003",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_042",
+      "to": "atom:ka_curated_039",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_042",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_043",
+      "to": "atom:ka_curated_039",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_043",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_044",
+      "to": "atom:ka_curated_041",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_044",
+      "to": "atom:ka_curated_046",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_044",
+      "to": "method:M-007",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_045",
+      "to": "atom:ka_curated_043",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_045",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_045",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_045",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_046",
+      "to": "atom:ka_curated_005",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_046",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_047",
+      "to": "atom:ka_curated_010",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_047",
+      "to": "atom:ka_curated_045",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_047",
+      "to": "method:M-007",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_048",
+      "to": "atom:ka_curated_045",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_048",
+      "to": "atom:ka_curated_047",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_048",
+      "to": "method:M-007",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_049",
+      "to": "atom:ka_curated_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_049",
+      "to": "atom:ka_curated_048",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_049",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_050",
+      "to": "atom:ka_curated_050",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_050",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:bc_050",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_001",
+      "to": "atom:ka_curated_002",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_001",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_001",
+      "to": "method:M-001",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_001",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_002",
+      "to": "atom:ka_curated_002",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_002",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_002",
+      "to": "atom:ka_maintainer_post_002",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_002",
+      "to": "method:M-001",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_002",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_002",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_003",
+      "to": "atom:ka_maintainer_post_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_003",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_004",
+      "to": "atom:ka_maintainer_post_002",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_004",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_005",
+      "to": "atom:ka_curated_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_005",
+      "to": "atom:ka_maintainer_002",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_005",
+      "to": "method:M-003",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_005",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_006",
+      "to": "atom:ka_curated_025",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_006",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_006",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_006",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_007",
+      "to": "atom:ka_curated_005",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_007",
+      "to": "atom:ka_maintainer_post_005",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_007",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_008",
+      "to": "atom:ka_maintainer_post_006",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_009",
+      "to": "atom:ka_maintainer_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_009",
+      "to": "atom:ka_maintainer_002",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_009",
+      "to": "method:M-003",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_010",
+      "to": "atom:ka_curated_002",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_010",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_010",
+      "to": "method:M-001",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_010",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_011",
+      "to": "atom:ka_curated_006",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_011",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_012",
+      "to": "atom:ka_curated_007",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_012",
+      "to": "atom:ka_curated_008",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_012",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_012",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_013",
+      "to": "atom:ka_curated_008",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_013",
+      "to": "atom:ka_curated_009",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_013",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_013",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_014",
+      "to": "atom:ka_curated_010",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_014",
+      "to": "atom:ka_curated_012",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_014",
+      "to": "atom:ka_curated_047",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_014",
+      "to": "method:M-007",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_015",
+      "to": "atom:ka_curated_011",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_015",
+      "to": "method:M-007",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_016",
+      "to": "atom:ka_curated_013",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_016",
+      "to": "atom:ka_curated_014",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_016",
+      "to": "atom:ka_curated_015",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_016",
+      "to": "atom:ka_curated_024",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_016",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_016",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_017",
+      "to": "atom:ka_curated_016",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_017",
+      "to": "atom:ka_curated_017",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_017",
+      "to": "atom:ka_curated_018",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_017",
+      "to": "atom:ka_curated_022",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_017",
+      "to": "method:M-009",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "atom:ka_curated_019",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "atom:ka_curated_020",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "atom:ka_curated_021",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "atom:ka_curated_023",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "atom:ka_curated_026",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "atom:ka_curated_027",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "atom:ka_curated_028",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "method:M-009",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "method:M-010",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_018",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_019",
+      "to": "atom:ka_curated_031",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_019",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_019",
+      "to": "method:M-001",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_019",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_019",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_020",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_020",
+      "to": "atom:ka_maintainer_post_004",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_020",
+      "to": "method:M-001",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_020",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_020",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_021",
+      "to": "atom:ka_curated_034",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_021",
+      "to": "atom:ka_maintainer_post_002",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_021",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_021",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_022",
+      "to": "atom:ka_curated_037",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_022",
+      "to": "atom:ka_maintainer_post_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_022",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_022",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_023",
+      "to": "atom:ka_curated_005",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_023",
+      "to": "atom:ka_curated_049",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_023",
+      "to": "method:M-004",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_023",
+      "to": "method:M-008",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_024",
+      "to": "atom:ka_curated_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_024",
+      "to": "atom:ka_curated_048",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_024",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_025",
+      "to": "atom:ka_curated_048",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_025",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_026",
+      "to": "atom:ka_curated_003",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_026",
+      "to": "atom:ka_curated_048",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_026",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_027",
+      "to": "atom:ka_curated_033",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_027",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_027",
+      "to": "method:M-001",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_027",
+      "to": "method:M-006",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_027",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_028",
+      "to": "atom:ka_curated_004",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_028",
+      "to": "atom:ka_curated_031",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_028",
+      "to": "atom:ka_curated_050",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_028",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_028",
+      "to": "method:M-001",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_028",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_028",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_028",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_029",
+      "to": "atom:ka_curated_050",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_029",
+      "to": "method:M-012",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_029",
+      "to": "method:M-013",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_030",
+      "to": "atom:ka_curated_034",
+      "type": "grounded_by"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_030",
+      "to": "method:M-005",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "concept:oc_030",
+      "to": "method:M-011",
+      "type": "related_to_method"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "atom:ka_curated_031",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "atom:ka_curated_032",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "atom:ka_maintainer_post_004",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "concept:bc_001",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "concept:bc_031",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "concept:oc_001",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "concept:oc_010",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "concept:oc_019",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "concept:oc_020",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-001",
+      "to": "concept:oc_027",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "atom:ka_curated_042",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "atom:ka_maintainer_001",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "atom:ka_maintainer_002",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "atom:ka_maintainer_003",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "atom:ka_maintainer_004",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "concept:bc_008",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "concept:bc_040",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "concept:oc_005",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-003",
+      "to": "concept:oc_009",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "atom:ka_curated_005",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "atom:ka_curated_028",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "atom:ka_curated_043",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "atom:ka_maintainer_post_004",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "atom:ka_maintainer_post_005",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "concept:bc_016",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "concept:bc_017",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "concept:bc_028",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "concept:bc_045",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "concept:oc_007",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "concept:oc_008",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-004",
+      "to": "concept:oc_023",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "atom:ka_curated_008",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "atom:ka_curated_009",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "atom:ka_curated_034",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "atom:ka_curated_044",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "atom:ka_maintainer_post_002",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "atom:ka_maintainer_post_003",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:bc_002",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:bc_006",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:bc_037",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:bc_038",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:oc_002",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:oc_003",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:oc_004",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:oc_021",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-005",
+      "to": "concept:oc_022",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "atom:ka_curated_006",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "atom:ka_curated_007",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "atom:ka_curated_008",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "atom:ka_curated_009",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "atom:ka_curated_033",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "atom:ka_curated_037",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "atom:ka_curated_038",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:bc_004",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:bc_005",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:bc_006",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:bc_033",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:bc_038",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:bc_039",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:oc_011",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:oc_012",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:oc_013",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-006",
+      "to": "concept:oc_022",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "atom:ka_curated_010",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "atom:ka_curated_011",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "atom:ka_curated_012",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "atom:ka_curated_045",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "atom:ka_curated_046",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "atom:ka_curated_047",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:bc_007",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:bc_008",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:bc_009",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:bc_047",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:bc_048",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:bc_049",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:oc_014",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:oc_015",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-007",
+      "to": "concept:oc_017",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "atom:ka_curated_013",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "atom:ka_curated_014",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "atom:ka_curated_015",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "atom:ka_curated_024",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "atom:ka_curated_025",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "atom:ka_curated_027",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "atom:ka_curated_029",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "atom:ka_curated_049",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "concept:bc_013",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "concept:bc_014",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "concept:bc_015",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "concept:bc_029",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "concept:bc_034",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "concept:bc_050",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "concept:oc_016",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-008",
+      "to": "concept:oc_023",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "atom:ka_curated_016",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "atom:ka_curated_017",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "atom:ka_curated_018",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "atom:ka_curated_022",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "atom:ka_curated_023",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "atom:ka_curated_036",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "concept:bc_003",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "concept:bc_022",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "concept:bc_023",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "concept:bc_024",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-009",
+      "to": "concept:oc_017",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "atom:ka_curated_019",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "atom:ka_curated_020",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "atom:ka_curated_021",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "atom:ka_curated_025",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "atom:ka_curated_026",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "atom:ka_curated_027",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "atom:ka_curated_030",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "atom:ka_curated_043",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:bc_016",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:bc_025",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:bc_026",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:bc_027",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:bc_045",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:oc_007",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:oc_008",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:oc_018",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-010",
+      "to": "concept:oc_023",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "atom:ka_curated_001",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "atom:ka_curated_031",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "atom:ka_curated_032",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "atom:ka_curated_034",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "atom:ka_curated_039",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "atom:ka_curated_040",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:bc_001",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:bc_031",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:bc_032",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:bc_042",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:bc_043",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:oc_010",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:oc_019",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:oc_021",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-011",
+      "to": "concept:oc_030",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "atom:ka_curated_003",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "atom:ka_curated_027",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "atom:ka_curated_048",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "atom:ka_curated_050",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:bc_019",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:bc_020",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:bc_021",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:bc_049",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:bc_050",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:oc_005",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:oc_006",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:oc_025",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:oc_026",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:oc_028",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-012",
+      "to": "concept:oc_029",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "atom:ka_curated_004",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "atom:ka_curated_024",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "atom:ka_curated_025",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "atom:ka_curated_031",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "atom:ka_curated_043",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "atom:ka_curated_050",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "atom:ka_maintainer_post_001",
+      "type": "uses_atom"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:bc_010",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:bc_011",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:bc_012",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:bc_035",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:bc_045",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:bc_050",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:oc_024",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:oc_028",
+      "type": "uses_concept"
+    },
+    {
+      "directed": true,
+      "from": "method:M-013",
+      "to": "concept:oc_029",
+      "type": "uses_concept"
+    }
+  ],
+  "mode": "public",
+  "nodes": [
+    {
+      "href": "knowledge-network.md#source-curated_source_01",
+      "kind": "source",
+      "label": "curated_source_01",
+      "node_id": "source:curated_source_01",
+      "record_id": "curated_source_01"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_02",
+      "kind": "source",
+      "label": "curated_source_02",
+      "node_id": "source:curated_source_02",
+      "record_id": "curated_source_02"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_03",
+      "kind": "source",
+      "label": "curated_source_03",
+      "node_id": "source:curated_source_03",
+      "record_id": "curated_source_03"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_04",
+      "kind": "source",
+      "label": "curated_source_04",
+      "node_id": "source:curated_source_04",
+      "record_id": "curated_source_04"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_05",
+      "kind": "source",
+      "label": "curated_source_05",
+      "node_id": "source:curated_source_05",
+      "record_id": "curated_source_05"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_06",
+      "kind": "source",
+      "label": "curated_source_06",
+      "node_id": "source:curated_source_06",
+      "record_id": "curated_source_06"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_07",
+      "kind": "source",
+      "label": "curated_source_07",
+      "node_id": "source:curated_source_07",
+      "record_id": "curated_source_07"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_08",
+      "kind": "source",
+      "label": "curated_source_08",
+      "node_id": "source:curated_source_08",
+      "record_id": "curated_source_08"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_09",
+      "kind": "source",
+      "label": "curated_source_09",
+      "node_id": "source:curated_source_09",
+      "record_id": "curated_source_09"
+    },
+    {
+      "href": "knowledge-network.md#source-curated_source_10",
+      "kind": "source",
+      "label": "curated_source_10",
+      "node_id": "source:curated_source_10",
+      "record_id": "curated_source_10"
+    },
+    {
+      "href": "knowledge-network.md#source-maintainer_public_writing_v1",
+      "kind": "source",
+      "label": "鱼仔",
+      "node_id": "source:maintainer_public_writing_v1",
+      "record_id": "maintainer_public_writing_v1"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_001",
+      "kind": "atom",
+      "label": "检查商业表达时，先确认目标客户能否迅速看懂自己的处境、可获得的改变以及下一步动作，再用真实反馈修正表达。",
+      "node_id": "atom:ka_curated_001",
+      "record_id": "ka_curated_001"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_002",
+      "kind": "atom",
+      "label": "品牌主题应位于能力、兴趣、受众需要与反对立场的交集，并由实际交付持续验证",
+      "node_id": "atom:ka_curated_002",
+      "record_id": "ka_curated_002"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_003",
+      "kind": "atom",
+      "label": "评估一个重要判断时，先分开主张与依据，再优先检查会改变结论的假设、反例和缺失信息。",
+      "node_id": "atom:ka_curated_003",
+      "record_id": "ka_curated_003"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_004",
+      "kind": "atom",
+      "label": "问题久解不开时，先检查是否漏掉关键变量、边界或评价标准；新视角只用于产生可验证假设。",
+      "node_id": "atom:ka_curated_004",
+      "record_id": "ka_curated_004"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_005",
+      "kind": "atom",
+      "label": "注意力、焦虑和行动可以通过环境设计、小步练习、反馈和迭代形成可观察的训练回路",
+      "node_id": "atom:ka_curated_005",
+      "record_id": "ka_curated_005"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_006",
+      "kind": "atom",
+      "label": "供给增加不会自动带来交易；必须分别验证供给能否产生、目标客户能否触达，以及客户能否低成本找到合适选择。",
+      "node_id": "atom:ka_curated_006",
+      "record_id": "ka_curated_006"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_007",
+      "kind": "atom",
+      "label": "免费模式必须说清使用者、付费者、成本承担者以及价值如何转移",
+      "node_id": "atom:ka_curated_007",
+      "record_id": "ka_curated_007"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_008",
+      "kind": "atom",
+      "label": "当底层功能越来越便宜时，收费理由要回到客户愿意为哪种可观察结果、风险降低或服务责任付费。",
+      "node_id": "atom:ka_curated_008",
+      "record_id": "ka_curated_008"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_009",
+      "kind": "atom",
+      "label": "资源变充足后，真正限制成交的因素可能转移；应根据客户行为找出当前最紧的时间、信任、注意力或交付瓶颈。",
+      "node_id": "atom:ka_curated_009",
+      "record_id": "ka_curated_009"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_010",
+      "kind": "atom",
+      "label": "沟通设计应从接收者能否理解开始，而不是从发送者想表达什么开始",
+      "node_id": "atom:ka_curated_010",
+      "record_id": "ka_curated_010"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_011",
+      "kind": "atom",
+      "label": "检查沟通质量时，分别确认内容是否真实、与当前任务有关、依据是否可靠，以及接收者能否正确理解并行动。",
+      "node_id": "atom:ka_curated_011",
+      "record_id": "ka_curated_011"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_012",
+      "kind": "atom",
+      "label": "棘手谈话先处理互动模式，再处理争议议题",
+      "node_id": "atom:ka_curated_012",
+      "record_id": "ka_curated_012"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_013",
+      "kind": "atom",
+      "label": "跨市场复制商业做法前，先理解当地规则和历史，不能直接套模板",
+      "node_id": "atom:ka_curated_013",
+      "record_id": "ka_curated_013"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_014",
+      "kind": "atom",
+      "label": "商业环境判断要同时观察民族性、组织习惯和现实规则",
+      "node_id": "atom:ka_curated_014",
+      "record_id": "ka_curated_014"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_015",
+      "kind": "atom",
+      "label": "设计跨境生意时要验证参与者的真实动机，而不是只看表面流程",
+      "node_id": "atom:ka_curated_015",
+      "record_id": "ka_curated_015"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_016",
+      "kind": "atom",
+      "label": "共享意图是理解合作性沟通与社会协调的重要入口",
+      "node_id": "atom:ka_curated_016",
+      "record_id": "ka_curated_016"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_017",
+      "kind": "atom",
+      "label": "共同目标是联合意图性形成合作的关键条件",
+      "node_id": "atom:ka_curated_017",
+      "record_id": "ka_curated_017"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_018",
+      "kind": "atom",
+      "label": "分析协作机制时要区分联合意图性与集体意图性两个阶段",
+      "node_id": "atom:ka_curated_018",
+      "record_id": "ka_curated_018"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_019",
+      "kind": "atom",
+      "label": "做判断前先承认大脑会欺骗自己，把直觉结论当作待检验解释",
+      "node_id": "atom:ka_curated_019",
+      "record_id": "ka_curated_019"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_020",
+      "kind": "atom",
+      "label": "个人提升不要套固定的人生分类；应围绕当前目标选择少数关键约束，逐项寻找证据、行动和反馈。",
+      "node_id": "atom:ka_curated_020",
+      "record_id": "ka_curated_020"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_021",
+      "kind": "atom",
+      "label": "不能解释问题并指导行动的认知结论，不应被视为已完成的提升",
+      "node_id": "atom:ka_curated_021",
+      "record_id": "ka_curated_021"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_022",
+      "kind": "atom",
+      "label": "价值观只有进入真实选择、会议、指标和客户体验，才成为可执行原则",
+      "node_id": "atom:ka_curated_022",
+      "record_id": "ka_curated_022"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_023",
+      "kind": "atom",
+      "label": "品牌叙事可通过形成候选表达、观察反馈、承认偏差和更新行动持续修正",
+      "node_id": "atom:ka_curated_023",
+      "record_id": "ka_curated_023"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_024",
+      "kind": "atom",
+      "label": "发现问题时，要主动改变观察范围和比较标准，检查结论是否只在原有边界内成立。",
+      "node_id": "atom:ka_curated_024",
+      "record_id": "ka_curated_024"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_025",
+      "kind": "atom",
+      "label": "复杂任务需要在细节推进与跳跃式探索两种思考模式间切换",
+      "node_id": "atom:ka_curated_025",
+      "record_id": "ka_curated_025"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_026",
+      "kind": "atom",
+      "label": "遇到焦虑或行动阻塞时，先调节生理状态，再重构解释",
+      "node_id": "atom:ka_curated_026",
+      "record_id": "ka_curated_026"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_027",
+      "kind": "atom",
+      "label": "完成证据检查后仍要比较多个合理结论，避免把第一个答案当唯一答案",
+      "node_id": "atom:ka_curated_027",
+      "record_id": "ka_curated_027"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_028",
+      "kind": "atom",
+      "label": "把新认知内化为能力，需要让真实体验、问题分析、持续实践和反馈形成循环，而不是停留在顿悟或收藏方法。",
+      "node_id": "atom:ka_curated_028",
+      "record_id": "ka_curated_028"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_029",
+      "kind": "atom",
+      "label": "旧经验用于当前决策前，要先检验对象、时间、前提与场景是否仍成立，并用转换视角或多方查证校正片面记忆。",
+      "node_id": "atom:ka_curated_029",
+      "record_id": "ka_curated_029"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_030",
+      "kind": "atom",
+      "label": "面对笼统信念或结论，先厘清定义并拆开相关与不相关要素，再检验合理性与真实性；未经验证的部分保留为假设。",
+      "node_id": "atom:ka_curated_030",
+      "record_id": "ka_curated_030"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_031",
+      "kind": "atom",
+      "label": "需求只有功能描述时，补看客户要完成的事情、当前挫败和在意的原则，再决定哪一层真正影响购买。",
+      "node_id": "atom:ka_curated_031",
+      "record_id": "ka_curated_031"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_032",
+      "kind": "atom",
+      "label": "高风险购买既需要客户确认自己被理解，也需要看到与当前任务相匹配的交付证据。",
+      "node_id": "atom:ka_curated_032",
+      "record_id": "ka_curated_032"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_033",
+      "kind": "atom",
+      "label": "大量低频需求只有在发现和履约成本足够低时才可能形成有意义的总体市场。",
+      "node_id": "atom:ka_curated_033",
+      "record_id": "ka_curated_033"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_034",
+      "kind": "atom",
+      "label": "客户难以开始复杂服务时，把外部可见流程压成少量步骤，同时单独说明价格、时间和责任边界。",
+      "node_id": "atom:ka_curated_034",
+      "record_id": "ka_curated_034"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_035",
+      "kind": "atom",
+      "label": "快速做出原型只能证明部分用途可试，不能自动证明材料、认证、质量和供应链能够稳定放大。",
+      "node_id": "atom:ka_curated_035",
+      "record_id": "ka_curated_035"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_036",
+      "kind": "atom",
+      "label": "开放贡献要转成可靠产品，需要许可、审核、版本、质量和责任规则共同约束。",
+      "node_id": "atom:ka_curated_036",
+      "record_id": "ka_curated_036"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_037",
+      "kind": "atom",
+      "label": "免费层负责降低采用门槛时，收费层仍须提供客户愿意支付的质量、效率、支持或风险承担。",
+      "node_id": "atom:ka_curated_037",
+      "record_id": "ka_curated_037"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_038",
+      "kind": "atom",
+      "label": "社区、平台和开放产品中的时间、注意力、数据、声誉与参与也是有成本的贡献。",
+      "node_id": "atom:ka_curated_038",
+      "record_id": "ka_curated_038"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_039",
+      "kind": "atom",
+      "label": "同一页面可以给准备购买者一个明确入口，也给仍在评估者一个有实际价值的低门槛下一步。",
+      "node_id": "atom:ka_curated_039",
+      "record_id": "ka_curated_039"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_040",
+      "kind": "atom",
+      "label": "把不行动的真实代价和成功后的具体变化写清，可以让抽象卖点变得可判断。",
+      "node_id": "atom:ka_curated_040",
+      "record_id": "ka_curated_040"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_041",
+      "kind": "atom",
+      "label": "推动商业决定时，可先给一个相关场景，再用数据说明规模，最后提出一项清楚的行动。",
+      "node_id": "atom:ka_curated_041",
+      "record_id": "ka_curated_041"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_042",
+      "kind": "atom",
+      "label": "可复用的客户或产品故事应保留事件依据、使用授权、适用场景、关键选择和结果记录。",
+      "node_id": "atom:ka_curated_042",
+      "record_id": "ka_curated_042"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_043",
+      "kind": "atom",
+      "label": "复杂行动在局部优化前，先确认当前位置、目标、关键地标和可更新的整体路线。",
+      "node_id": "atom:ka_curated_043",
+      "record_id": "ka_curated_043"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_044",
+      "kind": "atom",
+      "label": "购买服务或外包所节省的时间，只有被用于更高价值活动时才构成实际收益。",
+      "node_id": "atom:ka_curated_044",
+      "record_id": "ka_curated_044"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_045",
+      "kind": "atom",
+      "label": "跨度大的交谈先对齐目的和讨论框架，再阶段性确认共识与尚未解决的问题。",
+      "node_id": "atom:ka_curated_045",
+      "record_id": "ka_curated_045"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_046",
+      "kind": "atom",
+      "label": "需要说服时，同时检查信息源是否可信、论证是否可检验，以及后果是否与听众真正相关。",
+      "node_id": "atom:ka_curated_046",
+      "record_id": "ka_curated_046"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_047",
+      "kind": "atom",
+      "label": "书面商业沟通先呈现主要判断与行动请求，再删除冗余并校正逻辑、语气和时间边界。",
+      "node_id": "atom:ka_curated_047",
+      "record_id": "ka_curated_047"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_048",
+      "kind": "atom",
+      "label": "增长率、比例和平均值只有连同来源、分母、基期、分布与比较对象一起检查才有解释力。",
+      "node_id": "atom:ka_curated_048",
+      "record_id": "ka_curated_048"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_049",
+      "kind": "atom",
+      "label": "高风险项目在投入前应写明触发停止或退出的条件、责任人、路径和最大暴露。",
+      "node_id": "atom:ka_curated_049",
+      "record_id": "ka_curated_049"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_curated_050",
+      "kind": "atom",
+      "label": "反复出现的异常和边界失败应先保留原始事实，用来检查现有问题定义是否遗漏了变量。",
+      "node_id": "atom:ka_curated_050",
+      "record_id": "ka_curated_050"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_001",
+      "kind": "atom",
+      "label": "新内容必须有来自当前输入的fresh anchor；没有就先补一个短事实",
+      "node_id": "atom:ka_maintainer_001",
+      "record_id": "ka_maintainer_001"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_002",
+      "kind": "atom",
+      "label": "写作前把facts与inferences分开，具体细节只能来自facts",
+      "node_id": "atom:ka_maintainer_002",
+      "record_id": "ka_maintainer_002"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_003",
+      "kind": "atom",
+      "label": "有真实事件材料的独立短帖，可按发生了什么、材料中已有的反应或矛盾、一个实际判断、停止来组织",
+      "node_id": "atom:ka_maintainer_003",
+      "record_id": "ka_maintainer_003"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_004",
+      "kind": "atom",
+      "label": "公开发布或与X互动前必须展示最终文本并取得用户确认",
+      "node_id": "atom:ka_maintainer_004",
+      "record_id": "ka_maintainer_004"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_post_001",
+      "kind": "atom",
+      "label": "先找客户、再做产品，是该来源提出的一条经验性顺序；缺少回复上下文时只能作为待验证假设",
+      "node_id": "atom:ka_maintainer_post_001",
+      "record_id": "ka_maintainer_post_001"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_post_002",
+      "kind": "atom",
+      "label": "AI 中转站不应只卖 token，而应把上游、风控、余额、客服、稳定性和异常处理组织成可被信任的服务方案",
+      "node_id": "atom:ka_maintainer_post_002",
+      "record_id": "ka_maintainer_post_002"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_post_003",
+      "kind": "atom",
+      "label": "避免把 AI 网关放进最低价竞争，价值主张应围绕稳定性、高并发和高 RPM",
+      "node_id": "atom:ka_maintainer_post_003",
+      "record_id": "ka_maintainer_post_003"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_post_004",
+      "kind": "atom",
+      "label": "在相近的早期试单场景中，连续成交可作为需求和交付链路的初步信号，但不能单独证明项目成立",
+      "node_id": "atom:ka_maintainer_post_004",
+      "record_id": "ka_maintainer_post_004"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_post_005",
+      "kind": "atom",
+      "label": "先做一个可收费的小切口并持续行动，比停留在寻找完美项目更快获得真实反馈",
+      "node_id": "atom:ka_maintainer_post_005",
+      "record_id": "ka_maintainer_post_005"
+    },
+    {
+      "href": "knowledge-network.md#atom-ka_maintainer_post_006",
+      "kind": "atom",
+      "label": "AI 时代的溢价来自可交付的结果闭环，而不是信息或工具本身",
+      "node_id": "atom:ka_maintainer_post_006",
+      "record_id": "ka_maintainer_post_006"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_001",
+      "kind": "concept",
+      "label": "客户任务视角",
+      "node_id": "concept:bc_001",
+      "record_id": "bc_001"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_002",
+      "kind": "concept",
+      "label": "承诺与能力一致",
+      "node_id": "concept:bc_002",
+      "record_id": "bc_002"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_003",
+      "kind": "concept",
+      "label": "可执行价值观",
+      "node_id": "concept:bc_003",
+      "record_id": "bc_003"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_004",
+      "kind": "concept",
+      "label": "角色与成本链",
+      "node_id": "concept:bc_004",
+      "record_id": "bc_004"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_005",
+      "kind": "concept",
+      "label": "供给可发现性",
+      "node_id": "concept:bc_005",
+      "record_id": "bc_005"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_006",
+      "kind": "concept",
+      "label": "边际成本与总成本",
+      "node_id": "concept:bc_006",
+      "record_id": "bc_006"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_007",
+      "kind": "concept",
+      "label": "接收验证",
+      "node_id": "concept:bc_007",
+      "record_id": "bc_007"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_008",
+      "kind": "concept",
+      "label": "沟通证据层级",
+      "node_id": "concept:bc_008",
+      "record_id": "bc_008"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_009",
+      "kind": "concept",
+      "label": "互动条件",
+      "node_id": "concept:bc_009",
+      "record_id": "bc_009"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_010",
+      "kind": "concept",
+      "label": "遗漏变量检查",
+      "node_id": "concept:bc_010",
+      "record_id": "bc_010"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_011",
+      "kind": "concept",
+      "label": "系统边界",
+      "node_id": "concept:bc_011",
+      "record_id": "bc_011"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_012",
+      "kind": "concept",
+      "label": "探索与推进切换",
+      "node_id": "concept:bc_012",
+      "record_id": "bc_012"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_013",
+      "kind": "concept",
+      "label": "本地规则验证",
+      "node_id": "concept:bc_013",
+      "record_id": "bc_013"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_014",
+      "kind": "concept",
+      "label": "文化标签边界",
+      "node_id": "concept:bc_014",
+      "record_id": "bc_014"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_015",
+      "kind": "concept",
+      "label": "参与者激励",
+      "node_id": "concept:bc_015",
+      "record_id": "bc_015"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_016",
+      "kind": "concept",
+      "label": "最小可验收行动",
+      "node_id": "concept:bc_016",
+      "record_id": "bc_016"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_017",
+      "kind": "concept",
+      "label": "行动反馈回路",
+      "node_id": "concept:bc_017",
+      "record_id": "bc_017"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_018",
+      "kind": "concept",
+      "label": "环境设计",
+      "node_id": "concept:bc_018",
+      "record_id": "bc_018"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_019",
+      "kind": "concept",
+      "label": "主张与依据分离",
+      "node_id": "concept:bc_019",
+      "record_id": "bc_019"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_020",
+      "kind": "concept",
+      "label": "替代解释",
+      "node_id": "concept:bc_020",
+      "record_id": "bc_020"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_021",
+      "kind": "concept",
+      "label": "省略信息",
+      "node_id": "concept:bc_021",
+      "record_id": "bc_021"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_022",
+      "kind": "concept",
+      "label": "共享目标",
+      "node_id": "concept:bc_022",
+      "record_id": "bc_022"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_023",
+      "kind": "concept",
+      "label": "共同注意",
+      "node_id": "concept:bc_023",
+      "record_id": "bc_023"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_024",
+      "kind": "concept",
+      "label": "协作层级",
+      "node_id": "concept:bc_024",
+      "record_id": "bc_024"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_025",
+      "kind": "concept",
+      "label": "直觉待验证",
+      "node_id": "concept:bc_025",
+      "record_id": "bc_025"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_026",
+      "kind": "concept",
+      "label": "行动有效性",
+      "node_id": "concept:bc_026",
+      "record_id": "bc_026"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_027",
+      "kind": "concept",
+      "label": "关键约束选择",
+      "node_id": "concept:bc_027",
+      "record_id": "bc_027"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_028",
+      "kind": "concept",
+      "label": "经验练习回路",
+      "node_id": "concept:bc_028",
+      "record_id": "bc_028"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_029",
+      "kind": "concept",
+      "label": "经验迁移条件",
+      "node_id": "concept:bc_029",
+      "record_id": "bc_029"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_030",
+      "kind": "concept",
+      "label": "概念拆分",
+      "node_id": "concept:bc_030",
+      "record_id": "bc_030"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_031",
+      "kind": "concept",
+      "label": "共情",
+      "node_id": "concept:bc_031",
+      "record_id": "bc_031"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_032",
+      "kind": "concept",
+      "label": "身份转变",
+      "node_id": "concept:bc_032",
+      "record_id": "bc_032"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_033",
+      "kind": "concept",
+      "label": "长尾",
+      "node_id": "concept:bc_033",
+      "record_id": "bc_033"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_034",
+      "kind": "concept",
+      "label": "执行摩擦",
+      "node_id": "concept:bc_034",
+      "record_id": "bc_034"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_035",
+      "kind": "concept",
+      "label": "上游问题与下游解决",
+      "node_id": "concept:bc_035",
+      "record_id": "bc_035"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_036",
+      "kind": "concept",
+      "label": "数字原型",
+      "node_id": "concept:bc_036",
+      "record_id": "bc_036"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_037",
+      "kind": "concept",
+      "label": "机会成本",
+      "node_id": "concept:bc_037",
+      "record_id": "bc_037"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_038",
+      "kind": "concept",
+      "label": "新稀缺",
+      "node_id": "concept:bc_038",
+      "record_id": "bc_038"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_039",
+      "kind": "concept",
+      "label": "非货币贡献",
+      "node_id": "concept:bc_039",
+      "record_id": "bc_039"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_040",
+      "kind": "concept",
+      "label": "故事库",
+      "node_id": "concept:bc_040",
+      "record_id": "bc_040"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_041",
+      "kind": "concept",
+      "label": "商业故事类型",
+      "node_id": "concept:bc_041",
+      "record_id": "bc_041"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_042",
+      "kind": "concept",
+      "label": "主行动请求",
+      "node_id": "concept:bc_042",
+      "record_id": "bc_042"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_043",
+      "kind": "concept",
+      "label": "过渡行动",
+      "node_id": "concept:bc_043",
+      "record_id": "bc_043"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_044",
+      "kind": "concept",
+      "label": "听众模型",
+      "node_id": "concept:bc_044",
+      "record_id": "bc_044"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_045",
+      "kind": "concept",
+      "label": "认知地图",
+      "node_id": "concept:bc_045",
+      "record_id": "bc_045"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_046",
+      "kind": "concept",
+      "label": "数字边界",
+      "node_id": "concept:bc_046",
+      "record_id": "bc_046"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_047",
+      "kind": "concept",
+      "label": "主动倾听",
+      "node_id": "concept:bc_047",
+      "record_id": "bc_047"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_048",
+      "kind": "concept",
+      "label": "语境",
+      "node_id": "concept:bc_048",
+      "record_id": "bc_048"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_049",
+      "kind": "concept",
+      "label": "论证结构",
+      "node_id": "concept:bc_049",
+      "record_id": "bc_049"
+    },
+    {
+      "href": "knowledge-network.md#concept-bc_050",
+      "kind": "concept",
+      "label": "异常样本分析",
+      "node_id": "concept:bc_050",
+      "record_id": "bc_050"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_001",
+      "kind": "concept",
+      "label": "客户",
+      "node_id": "concept:oc_001",
+      "record_id": "oc_001"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_002",
+      "kind": "concept",
+      "label": "产品",
+      "node_id": "concept:oc_002",
+      "record_id": "oc_002"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_003",
+      "kind": "concept",
+      "label": "价格",
+      "node_id": "concept:oc_003",
+      "record_id": "oc_003"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_004",
+      "kind": "concept",
+      "label": "信任",
+      "node_id": "concept:oc_004",
+      "record_id": "oc_004"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_005",
+      "kind": "concept",
+      "label": "证据",
+      "node_id": "concept:oc_005",
+      "record_id": "oc_005"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_006",
+      "kind": "concept",
+      "label": "假设",
+      "node_id": "concept:oc_006",
+      "record_id": "oc_006"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_007",
+      "kind": "concept",
+      "label": "行动",
+      "node_id": "concept:oc_007",
+      "record_id": "oc_007"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_008",
+      "kind": "concept",
+      "label": "复盘",
+      "node_id": "concept:oc_008",
+      "record_id": "oc_008"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_009",
+      "kind": "concept",
+      "label": "当前事实锚点",
+      "node_id": "concept:oc_009",
+      "record_id": "oc_009"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_010",
+      "kind": "concept",
+      "label": "客户任务",
+      "node_id": "concept:oc_010",
+      "record_id": "oc_010"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_011",
+      "kind": "concept",
+      "label": "供给发现链",
+      "node_id": "concept:oc_011",
+      "record_id": "oc_011"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_012",
+      "kind": "concept",
+      "label": "免费方案成本链",
+      "node_id": "concept:oc_012",
+      "record_id": "oc_012"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_013",
+      "kind": "concept",
+      "label": "当前成交瓶颈",
+      "node_id": "concept:oc_013",
+      "record_id": "oc_013"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_014",
+      "kind": "concept",
+      "label": "接收优先",
+      "node_id": "concept:oc_014",
+      "record_id": "oc_014"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_015",
+      "kind": "concept",
+      "label": "沟通质量检查",
+      "node_id": "concept:oc_015",
+      "record_id": "oc_015"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_016",
+      "kind": "concept",
+      "label": "跨市场迁移",
+      "node_id": "concept:oc_016",
+      "record_id": "oc_016"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_017",
+      "kind": "concept",
+      "label": "协作共识",
+      "node_id": "concept:oc_017",
+      "record_id": "oc_017"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_018",
+      "kind": "concept",
+      "label": "输出验证",
+      "node_id": "concept:oc_018",
+      "record_id": "oc_018"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_019",
+      "kind": "concept",
+      "label": "问题证据",
+      "node_id": "concept:oc_019",
+      "record_id": "oc_019"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_020",
+      "kind": "concept",
+      "label": "可观察承诺",
+      "node_id": "concept:oc_020",
+      "record_id": "oc_020"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_021",
+      "kind": "concept",
+      "label": "交付边界",
+      "node_id": "concept:oc_021",
+      "record_id": "oc_021"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_022",
+      "kind": "concept",
+      "label": "单位经济",
+      "node_id": "concept:oc_022",
+      "record_id": "oc_022"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_023",
+      "kind": "concept",
+      "label": "停止条件",
+      "node_id": "concept:oc_023",
+      "record_id": "oc_023"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_024",
+      "kind": "concept",
+      "label": "判断门槛",
+      "node_id": "concept:oc_024",
+      "record_id": "oc_024"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_025",
+      "kind": "concept",
+      "label": "对照基准",
+      "node_id": "concept:oc_025",
+      "record_id": "oc_025"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_026",
+      "kind": "concept",
+      "label": "因果主张",
+      "node_id": "concept:oc_026",
+      "record_id": "oc_026"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_027",
+      "kind": "concept",
+      "label": "替代方案",
+      "node_id": "concept:oc_027",
+      "record_id": "oc_027"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_028",
+      "kind": "concept",
+      "label": "未知项",
+      "node_id": "concept:oc_028",
+      "record_id": "oc_028"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_029",
+      "kind": "concept",
+      "label": "异常样本",
+      "node_id": "concept:oc_029",
+      "record_id": "oc_029"
+    },
+    {
+      "href": "knowledge-network.md#concept-oc_030",
+      "kind": "concept",
+      "label": "方案步骤",
+      "node_id": "concept:oc_030",
+      "record_id": "oc_030"
+    },
+    {
+      "href": "knowledge-network.md#method-m-001",
+      "kind": "method",
+      "label": "客户先行的短周期验证",
+      "node_id": "method:M-001",
+      "record_id": "M-001"
+    },
+    {
+      "href": "knowledge-network.md#method-m-003",
+      "kind": "method",
+      "label": "事实—推断—传播安全检查",
+      "node_id": "method:M-003",
+      "record_id": "M-003"
+    },
+    {
+      "href": "knowledge-network.md#method-m-004",
+      "kind": "method",
+      "label": "行动—反馈—复盘回路",
+      "node_id": "method:M-004",
+      "record_id": "M-004"
+    },
+    {
+      "href": "knowledge-network.md#method-m-005",
+      "kind": "method",
+      "label": "方案价值而非接口价格",
+      "node_id": "method:M-005",
+      "record_id": "M-005"
+    },
+    {
+      "href": "knowledge-network.md#method-m-006",
+      "kind": "method",
+      "label": "数字商业的供给—触达—付费检查",
+      "node_id": "method:M-006",
+      "record_id": "M-006"
+    },
+    {
+      "href": "knowledge-network.md#method-m-007",
+      "kind": "method",
+      "label": "接收者验证的沟通回路",
+      "node_id": "method:M-007",
+      "record_id": "M-007"
+    },
+    {
+      "href": "knowledge-network.md#method-m-008",
+      "kind": "method",
+      "label": "跨市场结构迁移检查",
+      "node_id": "method:M-008",
+      "record_id": "M-008"
+    },
+    {
+      "href": "knowledge-network.md#method-m-009",
+      "kind": "method",
+      "label": "共享意图到组织执行",
+      "node_id": "method:M-009",
+      "record_id": "M-009"
+    },
+    {
+      "href": "knowledge-network.md#method-m-010",
+      "kind": "method",
+      "label": "关键约束与最小行动诊断",
+      "node_id": "method:M-010",
+      "record_id": "M-010"
+    },
+    {
+      "href": "knowledge-network.md#method-m-011",
+      "kind": "method",
+      "label": "客户视角的一页方案",
+      "node_id": "method:M-011",
+      "record_id": "M-011"
+    },
+    {
+      "href": "knowledge-network.md#method-m-012",
+      "kind": "method",
+      "label": "证据与因果审计",
+      "node_id": "method:M-012",
+      "record_id": "M-012"
+    },
+    {
+      "href": "knowledge-network.md#method-m-013",
+      "kind": "method",
+      "label": "未知地图与问题发现",
+      "node_id": "method:M-013",
+      "record_id": "M-013"
+    }
+  ],
+  "pack_id": "biz-partner-public-knowledge-v1",
+  "pack_version": "1.2.0",
+  "schema_version": "1.0"
+}

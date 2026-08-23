@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from atom_contract import sha256_text
+from build_knowledge_network import GRAPH_FILE, NETWORK_FILE, build_artifacts
 from knowledge_runtime import (
     ALLOWED_RELATION_TYPES,
     evaluate_recall,
@@ -28,12 +29,16 @@ MINIMUM_COUNTS = {
     "retrieval_cases": 84,
     "direct_retrieval_cases": 60,
     "colloquial_retrieval_cases": 24,
+    "knowledge_nodes": 163,
+    "knowledge_edges": 477,
 }
 PACK_FILES = {
     "USAGE.md",
     "atoms.jsonl",
     "concept-dictionary.md",
     "concepts.jsonl",
+    GRAPH_FILE,
+    NETWORK_FILE,
     "methods.md",
     "methods.jsonl",
     "retrieval-cases.jsonl",
@@ -514,6 +519,37 @@ def validate_concept_dictionary(path: Path, concepts: list[dict[str, Any]]) -> N
             raise ValueError(f"source-specific framework term in dictionary: {term}")
 
 
+def validate_knowledge_network(
+    pack_root: Path, manifest: dict[str, Any]
+) -> dict[str, int]:
+    expected = build_artifacts(
+        pack_root,
+        "public",
+        metadata={
+            "pack_id": require_string(manifest.get("pack_id"), "manifest pack_id"),
+            "pack_version": require_string(
+                manifest.get("pack_version"), "manifest pack_version"
+            ),
+            "mode": "public",
+        },
+    )
+    for name, text in expected.items():
+        path = pack_root / name
+        if not path.is_file() or path.read_text(encoding="utf-8") != text:
+            raise ValueError(f"generated knowledge network is missing or stale: {name}")
+    graph = json.loads(expected[GRAPH_FILE])
+    counts = graph.get("counts")
+    if not isinstance(counts, dict):
+        raise ValueError("knowledge graph counts must be an object")
+    nodes = counts.get("nodes")
+    edges = counts.get("edges")
+    if not isinstance(nodes, int) or isinstance(nodes, bool) or nodes <= 0:
+        raise ValueError("knowledge graph node count is invalid")
+    if not isinstance(edges, int) or isinstance(edges, bool) or edges <= 0:
+        raise ValueError("knowledge graph edge count is invalid")
+    return {"knowledge_nodes": nodes, "knowledge_edges": edges}
+
+
 def validate_manifest(
     pack_root: Path,
     manifest: dict[str, Any],
@@ -579,6 +615,9 @@ def validate_pack(skill_root: Path) -> dict[str, Any]:
     concepts = load_jsonl(pack_root / "concepts.jsonl")
     methods = load_jsonl(pack_root / "methods.jsonl")
     retrieval_cases = load_jsonl(pack_root / "retrieval-cases.jsonl")
+    graph = json.loads((pack_root / GRAPH_FILE).read_text(encoding="utf-8"))
+    if not isinstance(graph, dict) or not isinstance(graph.get("counts"), dict):
+        raise ValueError("knowledge graph root or counts are invalid")
     actual_counts = {
         "sources": len(sources),
         "atoms": len(atoms),
@@ -596,6 +635,8 @@ def validate_pack(skill_root: Path) -> dict[str, Any]:
         "colloquial_retrieval_cases": sum(
             row.get("case_kind") == "colloquial_paraphrase" for row in retrieval_cases
         ),
+        "knowledge_nodes": graph["counts"].get("nodes"),
+        "knowledge_edges": graph["counts"].get("edges"),
     }
     validate_manifest(pack_root, manifest, actual_counts)
     for label, value in (
@@ -605,8 +646,15 @@ def validate_pack(skill_root: Path) -> dict[str, Any]:
         ("concepts", concepts),
         ("methods", methods),
         ("retrieval", retrieval_cases),
+        ("knowledge_graph", graph),
     ):
         walk(value, label)
+    network_counts = validate_knowledge_network(pack_root, manifest)
+    if network_counts != {
+        "knowledge_nodes": actual_counts["knowledge_nodes"],
+        "knowledge_edges": actual_counts["knowledge_edges"],
+    }:
+        raise ValueError("knowledge network counts differ from generated graph")
     source_ids = validate_sources(sources)
     atom_ids = validate_atoms(atoms, source_ids)
     concept_ids = validate_concepts(concepts, atom_ids, source_ids)
@@ -683,6 +731,8 @@ def validate_pack(skill_root: Path) -> dict[str, Any]:
         "methods": len(methods),
         "concepts": len(concepts),
         "retrieval_cases": len(retrieval_cases),
+        "knowledge_nodes": network_counts["knowledge_nodes"],
+        "knowledge_edges": network_counts["knowledge_edges"],
         "atom_recall_at_5": recall["atom_recall_at_5"],
         "atom_top1": recall["atom_top1"],
         "atom_mrr": recall["atom_mrr"],

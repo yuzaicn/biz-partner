@@ -22,6 +22,18 @@ fails closed unless every referenced record passes the public rights policy.
 Folder-index previews emit a confirmation hash; commits require that exact hash
 and fail if sources or options changed. Search verifies the source hash.
 
+`build_knowledge_network.py <pack-root>` deterministically derives
+`knowledge-graph.json` and `knowledge-network.md` from eligible sources, atoms,
+concepts, and methods. Use `--check` to reject missing or stale outputs. The
+network does not add facts or infer undeclared relationships.
+
+`knowledge_learning.py` manages user-local KnowledgePack changes. `analyze` is
+read-only; `plan-apply` and `plan-rollback` produce exact confirmation hashes;
+`apply` and `rollback` require the matching hash and expected revision; `verify`
+checks the active snapshot; `search` reads it in private mode. It never modifies
+the built-in public pack, invokes Git, or performs network writes. See
+`knowledge-learning.md` for the candidate and decision contracts.
+
 `workbench_runtime.py` implements `plan -> confirmed apply -> verify` for a
 canonical content root and read-only consumer bridge manifests. Bind both the
 expected version and confirmation hash emitted by `plan`; product-specific bridge

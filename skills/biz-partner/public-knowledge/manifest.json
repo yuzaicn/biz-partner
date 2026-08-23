@@ -9,6 +9,8 @@
     "colloquial_retrieval_cases": 24,
     "curated_concepts": 50,
     "direct_retrieval_cases": 60,
+    "knowledge_edges": 477,
+    "knowledge_nodes": 163,
     "methods": 12,
     "operational_concepts": 30,
     "retrieval_cases": 84,
@@ -23,14 +25,14 @@
   ],
   "files": {
     "USAGE.md": {
-      "line_count": 33,
+      "line_count": 38,
       "path": "USAGE.md",
-      "sha256": "sha256:9165be718c4b8786a31a3becea146c8fe968d637fd35fa52e5265ef0944a5ff9"
+      "sha256": "sha256:475b8670c4baae9bbc95dd9051eb6ffa0d0fcbf6772d6110acb1ad5ec3eafc9c"
     },
     "atoms.jsonl": {
       "line_count": 60,
       "path": "atoms.jsonl",
-      "sha256": "sha256:9c93f53f84e48a9e62ee9f46ce20a6bf5abb230912834007bb4eb87a32ddbe29"
+      "sha256": "sha256:b8c04772b552316ca8669a20bfa22a49e0d37dfce0ea0a15e444555b3f211157"
     },
     "concept-dictionary.md": {
       "line_count": 1575,
@@ -41,6 +43,16 @@
       "line_count": 80,
       "path": "concepts.jsonl",
       "sha256": "sha256:af71e24c3661465458cba8d1ea2c90d5afbd7449bdf0eb3d8b43ae85e27ff373"
+    },
+    "knowledge-graph.json": {
+      "line_count": 4017,
+      "path": "knowledge-graph.json",
+      "sha256": "sha256:3faced211ce6b12ba4f4f5626f2ebdd455a2cfee861e5b27dfab43d97bd89192"
+    },
+    "knowledge-network.md": {
+      "line_count": 4282,
+      "path": "knowledge-network.md",
+      "sha256": "sha256:088a31bedd2ed57c13e8837e5d9605747e9b876d6cb4a9c9468861d17f4bc6b8"
     },
     "methods.jsonl": {
       "line_count": 12,
@@ -71,7 +83,7 @@
   },
   "mode": "public",
   "pack_id": "biz-partner-public-knowledge-v1",
-  "pack_version": "1.1.0",
+  "pack_version": "1.2.0",
   "schema_version": "1.0",
   "source_count": 11,
   "status": "release_eligible"

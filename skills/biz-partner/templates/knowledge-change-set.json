@@ -1,0 +1,28 @@
+{
+  "schema_version": "knowledge-change-set-v1",
+  "change_set_id": "kcs_example",
+  "target": {
+    "pack_id": "my-business",
+    "pack_kind": "user_private",
+    "pack_path": "/absolute/approved/project/.biz-partner/knowledge-packs/my-business",
+    "base_revision": 0,
+    "base_manifest_sha256": null
+  },
+  "created_at": "2026-08-23T12:00:00+08:00",
+  "expires_at": null,
+  "candidates": [
+    {
+      "candidate_id": "candidate_source_example",
+      "record_kind": "source",
+      "operation": "add",
+      "record": {
+        "source_id": "user_source_example",
+        "kind": "user_supplied_snapshot",
+        "evidence_kind": "external_evidence",
+        "content_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        "rights_status": "private_local_only",
+        "status": "candidate"
+      }
+    }
+  ]
+}

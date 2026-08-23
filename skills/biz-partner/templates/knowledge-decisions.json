@@ -1,0 +1,11 @@
+{
+  "schema_version": "knowledge-decisions-v1",
+  "change_set_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "decisions": [
+    {
+      "candidate_id": "candidate_source_example",
+      "candidate_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "decision": "defer"
+    }
+  ]
+}

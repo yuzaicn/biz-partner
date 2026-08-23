@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import shutil
 import sys
+import tempfile
 import unittest
 from copy import deepcopy
 from pathlib import Path
@@ -23,6 +25,7 @@ from validate_public_knowledge import (  # noqa: E402
     validate_cross_references,
     validate_manifest,
     validate_methods,
+    validate_knowledge_network,
     validate_pack,
     validate_sources,
 )
@@ -45,6 +48,24 @@ class PublicKnowledgeTests(unittest.TestCase):
         self.assertGreaterEqual(result["recall_at_5"], 0.85)
         self.assertGreaterEqual(result["method_recall_at_3"], 0.85)
         self.assertGreaterEqual(result["concept_match_recall"], 0.85)
+        self.assertGreaterEqual(result["knowledge_nodes"], MINIMUM_COUNTS["knowledge_nodes"])
+        self.assertGreaterEqual(result["knowledge_edges"], MINIMUM_COUNTS["knowledge_edges"])
+
+    def test_generated_knowledge_network_must_match_structured_pack(self) -> None:
+        manifest = json.loads((self.pack_root / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(
+            validate_knowledge_network(self.pack_root, manifest),
+            {
+                "knowledge_nodes": manifest["counts"]["knowledge_nodes"],
+                "knowledge_edges": manifest["counts"]["knowledge_edges"],
+            },
+        )
+        with tempfile.TemporaryDirectory() as raw:
+            copied = Path(raw) / "public-knowledge"
+            shutil.copytree(self.pack_root, copied)
+            (copied / "knowledge-network.md").write_text("stale\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "missing or stale"):
+                validate_knowledge_network(copied, manifest)
 
     def test_human_readable_pack_has_no_generated_punctuation_artifacts(self) -> None:
         for name in ("USAGE.md", "methods.md", "concept-dictionary.md"):

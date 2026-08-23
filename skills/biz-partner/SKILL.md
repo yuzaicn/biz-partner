@@ -74,6 +74,18 @@ Handoff 是内部账本，不是固定的回答目录。普通回答不展示 `t
 
 内置 [公开知识包](public-knowledge/USAGE.md) 只有独立改写的知识原子、任务概念和组合方法，不含来源原文、采集记录、审核底稿或个人运行记忆。知识可以帮助提出假设，不能替代当前客户、成本和结果证据。
 
+公开包的可点击关系页由 `scripts/build_knowledge_network.py` 从结构化记录生成。它只展示来源、原子、概念和方法之间已经声明的关系，不把页面当成第二份知识，也不沿关系递归制造结论。
+
+## 学习新材料要先过候选区
+
+用户要求分析材料并扩充知识包时，继续使用现有知识治理任务，不增加新角色或路由。先确认准确的材料范围和用户项目根目录；普通聊天、用户偏好和项目状态仍走 MemoryProposal，不要混进通用知识包。
+
+先由 Agent 把材料分析成 change set。候选可以包含私有来源、知识原子、方法、概念、工作词条和检索样例；词条仍使用 `operational_dictionary` 概念，语义仍限于别名、原子四类关系及原子 → 概念 → 方法的一跳引用。模型判断只能标成候选，不能冒充已核验事实。
+
+用 `scripts/knowledge_learning.py analyze` 做查重、冲突、关系、隐私和权利检查。未通过检查时只说明阻塞项，不写入。通过后运行 `plan-apply`，向用户展示准确目标、基础版本、新增记录、跳过项、风险、文件变化和确认哈希。只有用户确认这份准确预览，才能用相同输入调用 `apply`。
+
+写入只发生在用户批准项目的版本化私有知识包里。内置公开包保持只读；学习流程不得自动改 Skill、提交 Git、上传 GitHub 或把用户材料升级为公开内容。写入后运行 `verify` 和至少一个真实问法检索；需要恢复时先 `plan-rollback`，确认后再 `rollback`，通过新版本恢复，不删除历史。完整命令和 change-set 结构见 [Knowledge Learning](references/knowledge-learning.md)。
+
 ## 长期记录要经过确认
 
 用户偏好、项目状态、决策记录、资产索引和任务反馈分开保存。新观察先是候选；没有明确确认、重复行为或结果证据，就不能升级为长期事实。反馈也不能静默改写 Skill、安全规则、工具权限或最终路由。
@@ -86,6 +98,7 @@ Handoff 是内部账本，不是固定的回答目录。普通回答不展示 `t
 - 生意与产品：[Business and Product Playbooks](references/business-product-playbooks.md)。
 - 个人行动、内容、决策与治理：[Personal, Content, and Governance Playbooks](references/personal-content-governance-playbooks.md)。发布前检查再读 [Content Safety](references/content-safety.md)。
 - 知识、归因和长期状态：[Knowledge Runtime](references/knowledge-runtime.md)、[Knowledge Governance](references/knowledge-governance.md)、[Source Attribution](references/source-attribution.md)、[Memory Governance](references/memory-governance.md)。
+- 分析新材料、候选查重、确认写入和回退：[Knowledge Learning](references/knowledge-learning.md)。
 - 多 Agent、工作台和脚本：[Debate Protocol](references/debate-protocol.md)、[Workbench Runtime](references/workbench-runtime.md)、[Script Operations](references/script-operations.md)。
 
 ## 范围

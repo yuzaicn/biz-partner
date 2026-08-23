@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/biz-partner/knowledge-change-set.schema.json",
+  "title": "User-private knowledge change-set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "change_set_id",
+    "target",
+    "created_at",
+    "candidates"
+  ],
+  "properties": {
+    "schema_version": {"const": "knowledge-change-set-v1"},
+    "change_set_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pack_id",
+        "pack_kind",
+        "pack_path",
+        "base_revision",
+        "base_manifest_sha256"
+      ],
+      "properties": {
+        "pack_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"},
+        "pack_kind": {"const": "user_private"},
+        "pack_path": {
+          "type": "string",
+          "pattern": "^/.+/\\.biz-partner/knowledge-packs/[a-z0-9][a-z0-9_-]{0,95}$"
+        },
+        "base_revision": {"type": "integer", "minimum": 0},
+        "base_manifest_sha256": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+          ]
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "record_kind", "operation", "record"],
+        "properties": {
+          "candidate_id": {"type": "string", "pattern": "^candidate_[a-zA-Z0-9_-]+$"},
+          "record_kind": {
+            "enum": [
+              "source",
+              "atom",
+              "concept",
+              "method",
+              "atom_relation",
+              "retrieval_case"
+            ]
+          },
+          "operation": {"const": "add"},
+          "record": {"type": "object"}
+        }
+      }
+    }
+  }
+}
