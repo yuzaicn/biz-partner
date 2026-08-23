@@ -77,7 +77,7 @@ Skill 已经载入，或者客户端支持隐式调用时，也可以直接用 `
 
 ## 它手里有什么
 
-这套知识包有 60 条知识原子、12 套方法、30 个工作词条、50 个分析概念和 84 个检索回归用例。每一层解决的问题不同：
+这套知识包有 60 条知识原子、12 套方法、30 个工作词条、50 个分析概念和 84 个检索回归用例。它们组成 163 个可点击节点和 477 条已声明关系。每一层解决的问题不同：
 
 | 这一层 | 人话解释 |
 | --- | --- |
@@ -85,9 +85,16 @@ Skill 已经载入，或者客户端支持隐式调用时，也可以直接用 `
 | 方法 | 把相关原子连成一套能执行的做法，交代何时用、怎么做和何时停。 |
 | 工作词典与分析概念 | 工作词典统一“客户、产品、证据”等常用词；分析概念在需要时帮你换个角度拆问题。 |
 | 结构化数据 | 把原子、词条、概念和测试记录写成程序可读取、可校验的 JSON/JSONL。 |
+| 知识网络 | 每条来源、原子、概念和方法都有固定链接，可以顺着“来源、支撑、依赖、细化、冲突和使用”继续查看。 |
 | 检索回归 | 为固定问题保存预期命中的原子，知识包变化后重跑，检查原来能找到的内容是否丢了。 |
 
-[知识包说明](skills/biz-partner/public-knowledge/USAGE.md) · [12 套方法](skills/biz-partner/public-knowledge/methods.md) · [工作词典与分析概念](skills/biz-partner/public-knowledge/concept-dictionary.md) · [知识原子数据](skills/biz-partner/public-knowledge/atoms.jsonl) · [方法数据](skills/biz-partner/public-knowledge/methods.jsonl) · [概念数据](skills/biz-partner/public-knowledge/concepts.jsonl) · [检索回归数据](skills/biz-partner/public-knowledge/retrieval-cases.jsonl) · [知识包清单与版本信息](skills/biz-partner/public-knowledge/manifest.json)
+[在线知识网络](skills/biz-partner/public-knowledge/knowledge-network.md) · [机器可读图谱](skills/biz-partner/public-knowledge/knowledge-graph.json) · [知识包说明](skills/biz-partner/public-knowledge/USAGE.md) · [12 套方法](skills/biz-partner/public-knowledge/methods.md) · [工作词典与分析概念](skills/biz-partner/public-knowledge/concept-dictionary.md) · [知识原子数据](skills/biz-partner/public-knowledge/atoms.jsonl) · [方法数据](skills/biz-partner/public-knowledge/methods.jsonl) · [概念数据](skills/biz-partner/public-knowledge/concepts.jsonl) · [检索回归数据](skills/biz-partner/public-knowledge/retrieval-cases.jsonl) · [知识包清单与版本信息](skills/biz-partner/public-knowledge/manifest.json)
+
+## 它能学新材料，但不会偷改自己
+
+你可以让它分析一份文档、一次项目复盘或一组经过允许的资料。它会先整理出候选知识原子、方法、概念、词条和关系，再检查重复、冲突、隐私、权利与适用边界。
+
+候选内容不会立刻参与判断。只有你确认了准确的变更预览，它才会在你指定的项目里创建一个新的私有知识包版本。旧版本仍然保留，可以验证，也可以回退。整个过程不会自动修改内置公开包、提交 Git 或上传 GitHub。
 
 ## 它会记住什么
 
