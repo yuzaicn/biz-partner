@@ -15,12 +15,12 @@ active project records and returns advisory context. Expired or suppressed recor
 do not influence later context, and the result cannot choose a route or expand
 permissions.
 
-`knowledge_runtime.py` supports allowlisted local folder indexing/search and an
-optional external KnowledgePack. Public pack mode is the default and fails closed
-unless source and atom records carry explicit public redistribution rights and the
-shared Atom v2 provenance contract. Folder-index previews emit a confirmation hash;
-commits require that exact hash and fail if sources or options changed. Search
-verifies the source hash.
+`knowledge_runtime.py` supports allowlisted local folder indexing/search, the
+built-in public KnowledgePack, and approved external packs. It loads adjacent
+concept and method records, applies one bounded and visible vocabulary hop, and
+fails closed unless every referenced record passes the public rights policy.
+Folder-index previews emit a confirmation hash; commits require that exact hash
+and fail if sources or options changed. Search verifies the source hash.
 
 `workbench_runtime.py` implements `plan -> confirmed apply -> verify` for a
 canonical content root and read-only consumer bridge manifests. Bind both the
@@ -44,7 +44,8 @@ attribution segments; no standalone renderer accepts caller-supplied source labe
 The bundled regression suites cover routing and contracts plus state adaptation,
 folder/KnowledgePack retrieval, public-pack field and privacy gates, material-use
 attribution, and workbench plan/apply/verify behavior. The built-in retrieval
-fixture contains only questions and relevant atom IDs, never answer text.
+fixture contains only questions and relevant atom, method, and concept IDs, never
+answer text.
 
 `validate_public_runtime.py <skill-path>` rejects private source artifacts,
 machine-local paths, private source locators, bytecode, symlinks, and broken local

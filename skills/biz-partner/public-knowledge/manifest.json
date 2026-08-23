@@ -1,15 +1,17 @@
 {
-  "as_of": "2026-08-22",
-  "atom_count": 40,
+  "as_of": "2026-08-23",
+  "atom_count": 60,
   "contains_machine_local_paths": false,
   "contains_private_working_material": false,
   "contains_raw_source_text": false,
   "counts": {
-    "atoms": 40,
-    "curated_concepts": 30,
-    "methods": 9,
-    "operational_concepts": 18,
-    "retrieval_cases": 40,
+    "atoms": 60,
+    "colloquial_retrieval_cases": 24,
+    "curated_concepts": 50,
+    "direct_retrieval_cases": 60,
+    "methods": 12,
+    "operational_concepts": 30,
+    "retrieval_cases": 84,
     "sources": 11
   },
   "excluded": [
@@ -21,34 +23,39 @@
   ],
   "files": {
     "USAGE.md": {
-      "line_count": 31,
+      "line_count": 33,
       "path": "USAGE.md",
-      "sha256": "sha256:a17a4fba959aa28d525d005168f37cf71dac79a2341d30f35b8bcae08a3c899b"
+      "sha256": "sha256:9165be718c4b8786a31a3becea146c8fe968d637fd35fa52e5265ef0944a5ff9"
     },
     "atoms.jsonl": {
-      "line_count": 40,
+      "line_count": 60,
       "path": "atoms.jsonl",
-      "sha256": "sha256:c3be6e19ba970f977962da4e1d12930b834a241b6882bc53aefce6a29b66e5dd"
+      "sha256": "sha256:9c93f53f84e48a9e62ee9f46ce20a6bf5abb230912834007bb4eb87a32ddbe29"
     },
     "concept-dictionary.md": {
-      "line_count": 331,
+      "line_count": 1575,
       "path": "concept-dictionary.md",
-      "sha256": "sha256:47caa0164cab1eaa9416f1b7500829fa1c3b8ecb56bf8ceab04326c6fdceefce"
+      "sha256": "sha256:87902d58d4e8fdd621418cf10673b8ac687b428ba8dc81315d1b9fcd9c3cd50a"
     },
     "concepts.jsonl": {
-      "line_count": 48,
+      "line_count": 80,
       "path": "concepts.jsonl",
-      "sha256": "sha256:e6d4e8ac9b075ff22cf6850f42c136703efef6be058ef5a43716cf2f3de0f549"
+      "sha256": "sha256:af71e24c3661465458cba8d1ea2c90d5afbd7449bdf0eb3d8b43ae85e27ff373"
+    },
+    "methods.jsonl": {
+      "line_count": 12,
+      "path": "methods.jsonl",
+      "sha256": "sha256:ab7cc9b6d756e16cd2d177429ed6accda427690838984561ad1c31241b0b171a"
     },
     "methods.md": {
-      "line_count": 135,
+      "line_count": 394,
       "path": "methods.md",
-      "sha256": "sha256:d74a2c7166ffd735435ab7e7ded38ed16be22a8538a43399da04f4c482552f6b"
+      "sha256": "sha256:43a22a19a8ba36c07da74644b0f89858f92fa6520264363dc587f7bed0ac059b"
     },
     "retrieval-cases.jsonl": {
-      "line_count": 40,
+      "line_count": 84,
       "path": "retrieval-cases.jsonl",
-      "sha256": "sha256:e5f1934adf19415cf708394195e05469d3c72ab3be7838c16203f07d01b07906"
+      "sha256": "sha256:486e0943f673f3049ebba423ed1d02c16b003b6705a6f9603e91acc067e21bc9"
     },
     "sources.jsonl": {
       "line_count": 11,
@@ -64,7 +71,7 @@
   },
   "mode": "public",
   "pack_id": "biz-partner-public-knowledge-v1",
-  "pack_version": "1.0.0",
+  "pack_version": "1.1.0",
   "schema_version": "1.0",
   "source_count": 11,
   "status": "release_eligible"
