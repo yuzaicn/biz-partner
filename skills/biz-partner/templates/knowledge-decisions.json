@@ -1,10 +1,40 @@
 {
   "schema_version": "knowledge-decisions-v1",
-  "change_set_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "change_set_hash": "sha256:58b2968a04d3a62268741f6ac8a0149034cea91362b2badc34fc512381930c28",
   "decisions": [
     {
       "candidate_id": "candidate_source_example",
-      "candidate_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "candidate_hash": "sha256:66d773056875225315a36861108ebcdcfc346bdc495bd50458502a5da98cc8bc",
+      "decision": "defer"
+    },
+    {
+      "candidate_id": "candidate_atom_signal_example",
+      "candidate_hash": "sha256:e64690b6fcdff1c6424a079d3afb11b8171cc9235a8b2f819d5b453bb443f27c",
+      "decision": "defer"
+    },
+    {
+      "candidate_id": "candidate_atom_action_example",
+      "candidate_hash": "sha256:2fe87d638f312c86c688ab803c846f26fa02e035d86729dd036b915b78415c07",
+      "decision": "defer"
+    },
+    {
+      "candidate_id": "candidate_concept_example",
+      "candidate_hash": "sha256:50f33438daae721e38273dd95105e3864a7be6acdb4b646085b0eb2f4eb21f49",
+      "decision": "defer"
+    },
+    {
+      "candidate_id": "candidate_method_example",
+      "candidate_hash": "sha256:dfd72a88bad48c155666481e7a727a79864f3c64bf32eb8e7dd4e935a8611166",
+      "decision": "defer"
+    },
+    {
+      "candidate_id": "candidate_relation_example",
+      "candidate_hash": "sha256:3eb14ca0255dbea8cec452e47c1d77b2623653399c968a4c06e7d592940aba77",
+      "decision": "defer"
+    },
+    {
+      "candidate_id": "candidate_retrieval_example",
+      "candidate_hash": "sha256:cf41f100e0789ba783623b15b6c2cdc6e8ad613a41c95fc8e1394931e3c9d3b9",
       "decision": "defer"
     }
   ]

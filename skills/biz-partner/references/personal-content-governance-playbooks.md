@@ -230,7 +230,8 @@ Drafting and checking never authorize publication and must not create a publish 
 - **Action gate**: quarantine, unlink, edit, or delete only after the user confirms exact
   targets and recovery plan.
 - `scripts/audit_skill.py` is the deterministic read-only baseline scanner. It inventories
-  text files, records hashes, emits line-level heuristic findings, and always reports
+  text files, records hashes, emits line-level heuristic findings, labels executable code,
+  documentation, test fixtures and detector definitions separately, and always reports
   `side_effects: []`; it is a signal generator, not a malware verdict. Run a deeper review
   when code, obfuscation, symlinks, credentials, or high-severity findings are present.
 

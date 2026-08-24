@@ -85,16 +85,16 @@ Skill 已经载入，或者客户端支持隐式调用时，也可以直接用 `
 | 方法 | 把相关原子连成一套能执行的做法，交代何时用、怎么做和何时停。 |
 | 工作词典与分析概念 | 工作词典统一“客户、产品、证据”等常用词；分析概念在需要时帮你换个角度拆问题。 |
 | 结构化数据 | 把原子、词条、概念和测试记录写成程序可读取、可校验的 JSON/JSONL。 |
-| 知识网络 | 每条来源、原子、概念和方法都有固定链接，可以顺着“来源、支撑、依赖、细化、冲突和使用”继续查看。 |
+| 知识网络 | 每条来源、原子、概念和方法都有固定链接，可以查看已经声明的来源、概念、方法与使用关系；没有声明的支撑、细化或冲突关系不会被自动补造。 |
 | 检索回归 | 为固定问题保存预期命中的原子，知识包变化后重跑，检查原来能找到的内容是否丢了。 |
 
 [在线知识网络](skills/biz-partner/public-knowledge/knowledge-network.md) · [机器可读图谱](skills/biz-partner/public-knowledge/knowledge-graph.json) · [知识包说明](skills/biz-partner/public-knowledge/USAGE.md) · [12 套方法](skills/biz-partner/public-knowledge/methods.md) · [工作词典与分析概念](skills/biz-partner/public-knowledge/concept-dictionary.md) · [知识原子数据](skills/biz-partner/public-knowledge/atoms.jsonl) · [方法数据](skills/biz-partner/public-knowledge/methods.jsonl) · [概念数据](skills/biz-partner/public-knowledge/concepts.jsonl) · [检索回归数据](skills/biz-partner/public-knowledge/retrieval-cases.jsonl) · [知识包清单与版本信息](skills/biz-partner/public-knowledge/manifest.json)
 
 ## 它能学新材料，但不会偷改自己
 
-你可以让它分析一份文档、一次项目复盘或一组经过允许的资料。它会先整理出候选知识原子、方法、概念、词条和关系，再检查重复、冲突、隐私、权利与适用边界。
+你可以让它分析一份文档、一次项目复盘或一组经过允许的资料。它会先整理出候选知识原子、方法、概念、词条、关系和检索问法，再检查重复、冲突、隐私、权利与适用边界。本地证据文件还会核对实际文件和哈希；网页或会话材料无法在本地核实时，会明确保留“未核验”状态。
 
-候选内容不会立刻参与判断。只有你确认了准确的变更预览，它才会在你指定的项目里创建一个新的私有知识包版本。旧版本仍然保留，可以验证，也可以回退。整个过程不会自动修改内置公开包、提交 Git 或上传 GitHub。
+候选内容不会立刻参与判断。只有你确认了准确的变更预览，它才会在你指定的项目里创建一个新的私有知识包版本。搜索结果会带回原子的规则或步骤、概念的边界与常见误用、方法的输入和检查点；旧版本仍然保留，也可以通过一个新版本恢复到空白状态。整个过程不会自动修改内置公开包、提交 Git 或上传 GitHub。
 
 ## 它会记住什么
 

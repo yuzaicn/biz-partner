@@ -175,7 +175,7 @@ KEYWORDS: dict[str, tuple[str, ...]] = {
     "content.resonate": ("共鸣", "戳中", "传播性", "完播", "受众情绪", "居高临下", "受众立场", "立场错位", "自嗨", "对应他们的处境", "最小调整"),
     "content.publish_check": ("发布检查", "检查发布", "发布风险", "能不能发", "准备发", "我要发", "敏感词", "导流", "私信引导", "广告", "隐私", "受限内容", "前后对比", "机器信号", "实质问题", "人工判断", "publish-check"),
     "personal.goal": ("十二周", "三个月目标", "成交目标", "目标定清", "目标不清", "澄清目标", "明确目标", "目标改成", "定义成可观察", "可观察结果", "可观察目标", "能验收", "验收的状态", "想变得更好", "目标是什么"),
-    "personal.action": ("最小一步", "最小动作", "怕被拒绝", "名单却没发", "拖到", "拖延", "拖着", "迟迟没行动", "迟迟不", "做不动", "一直研究", "反复换方向", "不行动", "下一步行动", "制定行动", "贪快", "执行卡住"),
+    "personal.action": ("最小一步", "最小动作", "怕被拒绝", "名单却没发", "拖到", "拖延", "拖着", "迟迟没行动", "迟迟不", "做不动", "一直研究", "反复分析", "分析很久", "反复换方向", "推进一步", "推进一小步", "只想推进", "不行动", "下一步行动", "制定行动", "贪快", "执行卡住"),
     "personal.learning": ("学会", "训练的练习", "设计练习", "评分量表", "评分标准", "点评录音", "反馈门", "系统学习", "学习计划", "复盘学习", "带我学习", "继续下一篇", "练习反馈", "刻意练习", "演练反馈"),
     "decision.record": ("记录为何选择", "记录决策", "决策记录", "复盘条件", "反转条件", "何时反转", "被否决选项", "选择依据", "做决定", "长期决策", "复盘决策"),
     "decision.save": ("保存当前", "保存一下", "诊断存档", "本地快照", "可恢复的快照", "可恢复快照", "快照预览", "落盘位置", "确认哈希", "save"),
@@ -185,7 +185,7 @@ KEYWORDS: dict[str, tuple[str, ...]] = {
     "governance.workbench": ("agent 工作台", "多端 agent", "单一真源", "唯一真源", "规范源", "薄适配层", "指令漂移", "版本矩阵", "升级与回退", "工作台"),
     "governance.bridge": ("skill 桥接", "多端桥接", "目标 agent", "旧 agent", "不同目录结构", "兼容性验证", "兼容矩阵", "桥接方案", "被多个 agent 发现", "bridge"),
     "governance.audit_skill": ("只读审计", "审计这个本地skill", "审计一下 skill", "审查本地 skill", "本地 skill", "下载命令", "提示注入", "权限风险", "脚本风险", "audit-skill", "skill 风险", "越权调用", "扫描 skill"),
-    "debate.run": ("支持和反对", "不同立场", "各自论证", "独立论证", "互相质疑", "互相质询", "单一视角", "多 agent", "多角度讨论", "多轮讨论", "交叉质询", "保留给我决策", "debate"),
+    "debate.run": ("支持和反对", "不同立场", "各自论证", "独立论证", "互相质疑", "互相质询", "单一视角", "多 agent", "多个 agent", "多角度讨论", "多轮讨论", "多轮深度讨论", "交叉质疑", "交叉质询", "保留给我决策", "debate"),
 }
 
 
@@ -259,6 +259,37 @@ def clause_negates_task(task_id: str, text: str) -> bool:
         or re.search(rf"{re.escape(term)}.{{0,8}}{suffix}", text)
         for term in NEGATED_TASK_TERMS.get(task_id, ())
     )
+
+
+def has_positive_publish_intent(text: str) -> bool:
+    """Require an affirmative publishing action, not a nearby risk noun."""
+    intent = re.compile(
+        r"(?:准备|打算|计划|将要|想要|能不能|可以|是否|检查|审查).{0,6}(?:发布|发到|发在|发出|发吗|发)|"
+        r"(?:我|我们|这条|这篇|稿子|文案|内容).{0,4}(?:要|想).{0,4}(?:发布|发到|发在|发出|发)|"
+        r"(?:发布|发到|发在|发出).{0,8}(?:前|之前|检查|审查|风险)|"
+        r"(?:发布检查|检查发布|发布风险|审查发布)"
+    )
+    negation_window = re.compile(
+        r"(?:不|没|未|无需|不要|别|暂不|尚未|并不|不会|不再|不打算|不准备)[^\s，。；!?！？]{0,4}$"
+    )
+    negated_action = re.compile(
+        r"(?:不|没|未|无需|不要|别|暂不|尚未|并不|不会|不再)[^\s，。；!?！？]{0,4}(?:发布|发到|发在|发出|发)"
+    )
+    content_safety_check = re.compile(
+        r"(?:检查|审查|审核|排查|看看|有没有|是否包含).{0,12}"
+        r"(?:稿子|文稿|文案|内容|标题|脚本|视频|封面|素材|帖子|推文).{0,18}"
+        r"(?:敏感词|导流|私信|广告|隐私|受限内容|平台规则|违规|风险)|"
+        r"(?:稿子|文稿|文案|内容|标题|脚本|视频|封面|素材|帖子|推文).{0,12}"
+        r"(?:有没有|是否有|检查|审查|审核|排查|看看).{0,12}"
+        r"(?:敏感词|导流|私信|广告|隐私|受限内容|平台规则|违规|风险)"
+    )
+    if content_safety_check.search(text):
+        return True
+    for match in intent.finditer(text):
+        window = text[max(0, match.start() - 8):match.start()]
+        if not negation_window.search(window) and not negated_action.search(match.group(0)):
+            return True
+    return False
 
 
 def explicit_task_is_negated(task_id: str, text: str) -> bool:
@@ -761,8 +792,8 @@ def composite_task_signals(task_id: str, text: str) -> tuple[list[str], bool, bo
         strong = skill and audit and risk
         primary = strong
     elif task_id == "debate.run":
-        positions = mark("intent:independent_positions", contains_any(text, ("不同立场", "多方", "独立角色", "独立分析", "独立论证", "分别论证", "各自论证", "支持和反对")))
-        challenge = mark("output:cross_challenge", contains_any(text, ("互相挑战", "互相质疑", "互相质询", "交叉质询", "证据互相冲突")))
+        positions = mark("intent:independent_positions", contains_any(text, ("不同立场", "多方", "多个 agent", "多 agent", "独立角色", "独立分析", "独立论证", "分别论证", "各自论证", "支持和反对")))
+        challenge = mark("output:cross_challenge", contains_any(text, ("互相挑战", "互相质疑", "互相质询", "交叉质疑", "交叉质询", "证据互相冲突")))
         decision = mark("slot:decision_question", contains_any(text, ("是否", "要不要", "决定留给我", "最后决定", "供我选择", "未来一个季度")))
         strong = positions and challenge and decision
         primary = strong
@@ -795,6 +826,8 @@ def score_tasks(text: str, rows: list[dict]) -> list[dict]:
             hits = [hit for hit in hits if hit != "状态"]
         hits = list(dict.fromkeys(hits))
         task_text = " ".join(eligible_clauses)
+        if task_id == "content.publish_check" and not has_positive_publish_intent(task_text):
+            continue
         composite_signals, composite_strong, primary_request = composite_task_signals(task_id, task_text)
         if not hits and not composite_signals:
             continue

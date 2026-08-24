@@ -8,7 +8,7 @@ import hashlib
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +32,7 @@ EVENT_TYPES = {
 }
 DEFAULT_ROLES = {"business_economics", "user_product", "contrarian_risk"}
 DECISION_OPTIONS = {"accept", "reject", "defer", "add_facts", "rerun_agent", "stop"}
+EXECUTION_MODES = {"real_workers", "single_agent_role_simulation", "contract_fixture"}
 IDENTITY_KEYS = {"worker_id", "role", "agent_id", "author", "output_hash"}
 HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 
@@ -111,10 +112,21 @@ def _event_index(events: list[dict[str, Any]], event: dict[str, Any] | None) -> 
     return events.index(event) if event in events else -1
 
 
-def validate_events(events: list[dict[str, Any]]) -> list[str]:
+def validate_events(
+    events: list[dict[str, Any]],
+    validation_time: datetime | None = None,
+) -> list[str]:
     errors: list[str] = []
     if not events:
         return ["event stream is empty"]
+
+    if validation_time is None:
+        effective_validation_time: datetime | None = datetime.now(timezone.utc)
+    elif not isinstance(validation_time, datetime) or validation_time.tzinfo is None or validation_time.utcoffset() is None:
+        errors.append("validation_time must be a timezone-aware datetime")
+        effective_validation_time = None
+    else:
+        effective_validation_time = validation_time
 
     event_ids: set[str] = set()
     debate_ids: set[str] = set()
@@ -166,8 +178,13 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
 
     roles: set[str] = set()
     knowledge_allowlist: set[str] = set()
+    execution_mode: str | None = None
+    host_receipts_by_worker: dict[str, dict[str, Any]] = {}
     if started:
         payload = _payload(started)
+        execution_mode = payload.get("execution_mode")
+        if execution_mode not in EXECUTION_MODES:
+            errors.append(f"DebateStarted invalid execution_mode: {execution_mode}")
         raw_roles = payload.get("roles")
         if not isinstance(raw_roles, list) or not raw_roles or any(not _is_nonempty_string(role) for role in raw_roles):
             errors.append("DebateStarted roles must be a non-empty string list")
@@ -196,6 +213,46 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
                     errors.append(f"DebateStarted {field} must be a positive integer")
         if not _is_nonempty_string(payload.get("decision_question")):
             errors.append("DebateStarted requires decision_question")
+        raw_receipts = payload.get("host_receipts")
+        if execution_mode == "real_workers":
+            if not isinstance(raw_receipts, list) or not raw_receipts:
+                errors.append("real_workers DebateStarted requires host_receipts")
+            else:
+                receipt_ids: set[str] = set()
+                run_ids: set[str] = set()
+                for receipt in raw_receipts:
+                    if not isinstance(receipt, dict):
+                        errors.append("real_workers host_receipts entries must be objects")
+                        continue
+                    worker_id = receipt.get("worker_id")
+                    required_receipt_fields = ("worker_id", "receipt_id", "run_id", "output_hash")
+                    if not all(_is_nonempty_string(receipt.get(field)) for field in required_receipt_fields):
+                        errors.append(
+                            "real_workers host receipt requires worker_id, receipt_id, run_id, and output_hash"
+                        )
+                        continue
+                    if not HASH_RE.fullmatch(receipt["output_hash"]):
+                        errors.append(
+                            f"real_workers host receipt {receipt['receipt_id']} output_hash "
+                            "must be sha256:<64 lowercase hex>"
+                        )
+                    if worker_id in host_receipts_by_worker:
+                        errors.append(f"duplicate host receipt for worker: {worker_id}")
+                    else:
+                        host_receipts_by_worker[worker_id] = receipt
+                    if receipt["receipt_id"] in receipt_ids:
+                        errors.append(f"duplicate host receipt_id: {receipt['receipt_id']}")
+                    receipt_ids.add(receipt["receipt_id"])
+                    if receipt["run_id"] in run_ids:
+                        errors.append(f"duplicate host run_id: {receipt['run_id']}")
+                    run_ids.add(receipt["run_id"])
+                if roles and set(host_receipts_by_worker) != roles:
+                    errors.append(
+                        "real_workers host_receipts must bind exactly every role: "
+                        f"expected {sorted(roles)}, found {sorted(host_receipts_by_worker)}"
+                    )
+        elif raw_receipts not in (None, []):
+            errors.append(f"{execution_mode} cannot carry host_receipts")
 
     if started:
         budget = _payload(started).get("budget", {})
@@ -232,7 +289,7 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
         if not isinstance(packet, dict):
             errors.append("PacketFrozen requires packet object")
         else:
-            for error in contract_errors_for(packet):
+            for error in contract_errors_for(packet, validation_time=effective_validation_time):
                 errors.append(f"PacketFrozen {error}")
             if packet.get("content_hash") != packet_hash:
                 errors.append("PacketFrozen packet content_hash must match packet_hash")
@@ -244,6 +301,17 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
                 item.get("id") for item in packet.get("items", [])
                 if isinstance(item, dict) and _is_nonempty_string(item.get("id"))
             }
+            frozen_at = _parse_timestamp(packet.get("frozen_at"))
+            ttl = _parse_timestamp(packet.get("ttl"))
+            if frozen_at is not None and ttl is not None:
+                frozen_index = _event_index(events, frozen)
+                for event in events[frozen_index:]:
+                    event_timestamp = _parse_timestamp(event.get("timestamp"))
+                    if event_timestamp is not None and not frozen_at <= event_timestamp < ttl:
+                        errors.append(
+                            f"event {event.get('event_id')} timestamp must be within frozen packet validity window "
+                            "[frozen_at, ttl)"
+                        )
 
     if packet_hash:
         for event in events:
@@ -291,6 +359,12 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
             errors.append(f"WorkerStarted {role} knowledge_allowlist must be a string list")
         elif not set(allowlist).issubset(knowledge_allowlist):
             errors.append(f"WorkerStarted {role} knowledge_allowlist exceeds debate allowlist")
+        if execution_mode == "real_workers":
+            receipt = host_receipts_by_worker.get(role)
+            if receipt is None or payload.get("host_receipt_id") != receipt.get("receipt_id"):
+                errors.append(f"WorkerStarted {role} host receipt does not match DebateStarted binding")
+        elif "host_receipt_id" in payload:
+            errors.append(f"WorkerStarted {role} cannot claim a host receipt in {execution_mode} mode")
 
     worker_output_event_ids: set[str] = set()
     worker_output_hashes: set[str] = set()
@@ -312,6 +386,16 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
             if output_hash in worker_output_hashes:
                 errors.append(f"WorkerCompleted {role} output_hash must be unique")
             worker_output_hashes.add(output_hash)
+        if execution_mode == "real_workers":
+            receipt = host_receipts_by_worker.get(role)
+            if receipt is None or payload.get("host_receipt_id") != receipt.get("receipt_id"):
+                errors.append(f"WorkerCompleted {role} host receipt does not match DebateStarted binding")
+            if receipt is None or payload.get("host_run_id") != receipt.get("run_id"):
+                errors.append(f"WorkerCompleted {role} host run does not match DebateStarted binding")
+            if receipt is None or output_hash != receipt.get("output_hash"):
+                errors.append(f"WorkerCompleted {role} output hash does not match host receipt binding")
+        elif "host_receipt_id" in payload or "host_run_id" in payload:
+            errors.append(f"WorkerCompleted {role} cannot claim a host receipt or run in {execution_mode} mode")
         for field in ("claims", "evidence_refs", "assumptions", "counterexamples", "falsifiers"):
             if not isinstance(payload.get(field), list):
                 errors.append(f"WorkerCompleted {role} {field} must be list")
@@ -351,6 +435,7 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
         if own_start and _event_index(events, own_start) >= _event_index(events, event):
             errors.append(f"WorkerCompleted {role} must follow its WorkerStarted")
 
+    has_recorded_conflicts = False
     if cross_started:
         payload = _payload(cross_started)
         if payload.get("round") != 2:
@@ -361,8 +446,10 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
         elif _has_identity_key(payload):
             errors.append("CrossExamStarted deidentified input leaks worker identity")
         conflicts = payload.get("conflicting_claims")
-        if not isinstance(conflicts, list) or not conflicts:
-            errors.append("CrossExamStarted requires conflicting_claims")
+        if not isinstance(conflicts, list):
+            errors.append("CrossExamStarted conflicting_claims must be list")
+        else:
+            has_recorded_conflicts = bool(conflicts)
         if any(_event_index(events, event) >= _event_index(events, cross_started) for event in worker_completed):
             errors.append("CrossExamStarted must follow all WorkerCompleted events")
 
@@ -410,8 +497,8 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
                 elif not refs or not set(refs).issubset(packet_item_ids):
                     errors.append("Synthesis evidence_strength must resolve to CasePacket evidence")
         actions = payload.get("actions")
-        if isinstance(actions, list) and not 2 <= len(actions) <= 3:
-            errors.append("Synthesis requires 2 to 3 actions or experiments")
+        if isinstance(actions, list) and not actions:
+            errors.append("Synthesis requires at least one action or experiment")
         elif isinstance(actions, list):
             for action in actions:
                 if not isinstance(action, dict) or not all(
@@ -419,8 +506,12 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
                 ):
                     errors.append("Synthesis action requires action and acceptance")
         alternatives = payload.get("alternatives")
-        if isinstance(alternatives, list) and len(alternatives) < 2:
-            errors.append("Synthesis requires at least two reasonable alternatives")
+        disagreements = payload.get("disagreements")
+        has_real_disagreement = has_recorded_conflicts
+        if isinstance(disagreements, list):
+            has_real_disagreement = has_real_disagreement or bool(disagreements)
+        if isinstance(alternatives, list) and has_real_disagreement and len(alternatives) < 2:
+            errors.append("Synthesis real disagreement requires at least two reasonable alternatives")
         elif isinstance(alternatives, list):
             for alternative in alternatives:
                 if not isinstance(alternative, dict) or not all(
@@ -468,6 +559,45 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
         errors.append("confirmed memory commit requires exactly one MemoryCommit event")
     if memory_commits and decision and _event_index(events, decision) >= _event_index(events, memory_commits[0]):
         errors.append("MemoryCommit must follow UserDecision")
+    if memory_commits and confirmed and decision:
+        payload = _payload(memory_commits[0])
+        proposal = payload.get("proposal")
+        proposal_hash = payload.get("proposal_hash")
+        if not isinstance(proposal, dict) or not proposal:
+            errors.append("MemoryCommit requires proposal object")
+        elif not isinstance(proposal_hash, str) or not HASH_RE.fullmatch(proposal_hash):
+            errors.append("MemoryCommit proposal_hash must be sha256:<64 lowercase hex>")
+        elif _content_hash(proposal, "__no_content_hash__") != proposal_hash:
+            errors.append("MemoryCommit proposal_hash does not match canonical proposal")
+
+        confirmation_hash = payload.get("confirmation_hash")
+        if payload.get("confirmation_event_id") != decision.get("event_id"):
+            errors.append("MemoryCommit confirmation_event_id must reference UserDecision")
+        if not isinstance(confirmation_hash, str) or not HASH_RE.fullmatch(confirmation_hash):
+            errors.append("MemoryCommit confirmation_hash must be sha256:<64 lowercase hex>")
+        elif _content_hash(decision, "__no_content_hash__") != confirmation_hash:
+            errors.append("MemoryCommit confirmation_hash does not match UserDecision")
+
+        state_version = payload.get("state_version")
+        if not isinstance(state_version, int) or isinstance(state_version, bool) or state_version < 1:
+            errors.append("MemoryCommit state_version must be a positive integer")
+        state_ref = payload.get("state_event_ref")
+        if not isinstance(state_ref, dict):
+            errors.append("MemoryCommit requires state_event_ref")
+        else:
+            if not _is_nonempty_string(state_ref.get("event_id")):
+                errors.append("MemoryCommit state_event_ref requires event_id")
+            if state_ref.get("state_version") != state_version:
+                errors.append("MemoryCommit state_event_ref state_version must match MemoryCommit state_version")
+            if state_ref.get("proposal_hash") != proposal_hash:
+                errors.append("MemoryCommit state_event_ref proposal_hash must match MemoryCommit proposal_hash")
+            if state_ref.get("confirmation_hash") != confirmation_hash:
+                errors.append("MemoryCommit state_event_ref confirmation_hash must match MemoryCommit confirmation_hash")
+            state_hash = state_ref.get("content_hash")
+            if not isinstance(state_hash, str) or not HASH_RE.fullmatch(state_hash):
+                errors.append("MemoryCommit state_event_ref content_hash must be sha256:<64 lowercase hex>")
+            elif _content_hash(state_ref, "content_hash") != state_hash:
+                errors.append("MemoryCommit state_event_ref content_hash does not match canonical state reference")
 
     if started and _event_index(events, started) != 0:
         errors.append("DebateStarted must be first")
@@ -481,7 +611,7 @@ def validate_events(events: list[dict[str, Any]]) -> list[str]:
 
 def phase_counts(events: list[dict[str, Any]]) -> dict[str, int]:
     return {
-        "independent": sum(event.get("event_type") == "WorkerCompleted" for event in events),
+        "worker_outputs": sum(event.get("event_type") == "WorkerCompleted" for event in events),
         "cross_exam": sum(event.get("event_type") == "CrossExamCompleted" for event in events),
         "synthesis": sum(event.get("event_type") == "Synthesis" for event in events),
         "user_decision": sum(event.get("event_type") == "UserDecision" for event in events),
@@ -503,8 +633,10 @@ def main(argv: list[str] | None = None) -> int:
             failures += 1
         else:
             counts = phase_counts(events)
+            mode = _payload(events[0]).get("execution_mode")
             rendered = ", ".join(f"{name}={count}" for name, count in counts.items())
-            print(f"OK {path}: {rendered}")
+            receipt_binding = " receipt_binding=internal_only" if mode == "real_workers" else ""
+            print(f"OK {path}: claimed_mode={mode}{receipt_binding}, {rendered}")
     return 1 if failures else 0
 
 

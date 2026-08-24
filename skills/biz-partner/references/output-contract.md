@@ -27,6 +27,12 @@
 
 `items.kind` is one of `fact`, `user_claim`, `inference`, `constraint`, `unknown`. A frozen packet is immutable; changes create a new packet with `parent_packet_hash`.
 
+`created_at`, `frozen_at`, and `ttl` are required ISO 8601 date-times with explicit
+timezones. Their order is `created_at <= frozen_at < ttl`. Direct function callers may
+provide a timezone-aware `validation_time` when expiry must be checked deterministically;
+the validator CLI always checks the packet against the current time and rejects an expired
+`ttl`.
+
 Create the hash from the actual packet content. Use `scripts/freeze_contract_bundle.py`
 to fill a missing/empty `content_hash`, bind the Handoff `packet_hash`, and validate the
 packet/state lease. Never type a plausible hash by hand. If the actual CasePacket is not
@@ -84,7 +90,7 @@ Handoff:
 }
 ```
 
-Candidates are unique, ordered by descending score, and contain exactly three entries. They
+Candidates are unique, ordered by descending score, and contain one to three entries. They
 may use registry IDs such as `personal.action` or versioned IDs. `selected_task` is the
 highest-scoring candidate, its score equals `confidence`, and it must identify the same leaf
 as the Handoff's versioned `task_id`. `runtime.intervene` is not the final task ID; the
@@ -116,14 +122,14 @@ The JSON shape is also available as `references/schemas/case-packet.schema.json`
 validation, then run `scripts/validate_contracts.py` for cross-field evidence, state,
 approval, and side-effect invariants.
 
-1. Every non-`unknown` claim has a supporting evidence ref; a missing ref is an explicit validation error.
+1. Every `claim.supporting_refs` entry is unique and resolves to an existing `evidence_refs[].id`. Every non-`unknown` claim has at least one such supporting evidence ref; a missing or dangling ref is an explicit validation error.
 2. Every evidence ref has a source, locator, and as-of time. User claims are not author evidence. Author-derived evidence uses `evidence_kind: knowledge_atom` plus `atom_id`.
 3. `completed` requires claims, evidence or an explicit no-evidence explanation, next action, and stop condition.
 4. `blocked` requires at least one blocker. `SAFE_STOP` has no side-effect intent and no proposed state patch.
-5. An executed `external_write` trace requires exactly one approval matching approval ID, target, body hash, scope hash and idempotency key; the trace time must fall inside the approval window. `approvals` contains only real, explicit approvals for the exact represented object. Drafting or publish checking does not authorize publication, so an unapproved publish action must not appear there.
+5. Every `external_write`, `write_local`, or `destructive` trace requires exactly one prior approval, even when the trace later failed or was blocked. The approval and trace bind the same `authorization_ref`, and that ref must resolve to `user_input` evidence. External writes also bind target, body hash, scope hash and idempotency key; local writes bind target, scope hash and rollback ref. Destructive work additionally requires a different `user_input` ref for the second confirmation, a `tool_result` backup ref, and a post-action `tool_result` recovery check. Trace status is one of `attempted`, `completed`, `failed`, or `blocked`; spelling a success another way cannot bypass approval. The trace time must fall inside both the approval window and the frozen CasePacket window. These checks prove internal binding only: the host remains responsible for authenticating that the referenced user and tool events are genuine. Drafting or publish checking does not authorize publication, so an unapproved publish action must not appear there.
 6. `tool_policy` and `tool_policy.allowed_tools` are required. Every `tool_trace.action` must be allowed twice: the matching CasePacket consent flag is `true`, and the action class is present in the allowlist. Internal advisory computation that did not use user-scoped data should not be mislabeled as a user-authorized file action.
 7. `memory_proposal` cannot commit without explicit user confirmation; deletion creates a suppression event.
 8. The bundle freezer requires an independently supplied `expected_state_version`; it never falls back to the Handoff's self-reported version. Pass `--expected-packet-hash` and `--expected-state-version` when validating a standalone Handoff against the current lease. A value not obtained from current project state proves explicit binding, not external freshness.
 9. Terminal immutability and the two-retry limit require prior event history or runtime state-machine enforcement; they cannot be established from a standalone Handoff object.
 10. Before rendering, verify `claim.supporting_refs -> evidence_ref -> atom_id -> atom.source_refs -> source registry`. Only a materially supporting `knowledge_atom` whose registered source declares `attribution_mode: when_materially_used` can trigger the public attribution name. Do not infer any relationship between that source identity and the runtime user.
-11. A `route_decision` artifact has exactly three auditable candidates, a selected leaf, route reason, and bounded confidence. A `decision_record` is `proposed` or `confirmed`; confirmation requires user-input evidence.
+11. A `route_decision` artifact has one to three auditable candidates, a selected leaf, route reason, and bounded confidence. A `decision_record` is `proposed` or `confirmed`; confirmation requires user-input evidence.

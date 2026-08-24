@@ -76,8 +76,56 @@ class RouteTaskTests(unittest.TestCase):
     def test_explicit_publish_check(self) -> None:
         self.assert_route("/biz publish-check 检查这条小红书文案。", "content.publish_check")
 
+    def test_negated_publish_intent_does_not_match_positive_phrase(self) -> None:
+        for text in (
+            "这个价格表还不准备发布，先帮我检查客户是否愿意买。",
+            "这周计划不发布内容，先处理客户流失问题。",
+        ):
+            with self.subTest(text=text):
+                result = route(text)
+                self.assertNotEqual(result.get("selected_task"), "content.publish_check", result)
+                self.assertFalse(
+                    any(candidate["task_id"] == "content.publish_check" for candidate in result["top_candidates"]),
+                    result,
+                )
+
+    def test_advertising_service_failure_is_business_diagnosis(self) -> None:
+        result = route("我们的广告代投服务卖不动，已访谈三个客户，帮我找出卡在哪里。")
+        self.assertEqual(result["state"], "route", result)
+        self.assertEqual(result["selected_task"], "business.diagnose", result)
+        self.assertFalse(
+            any(candidate["task_id"] == "content.publish_check" for candidate in result["top_candidates"]),
+            result,
+        )
+
+    def test_content_safety_check_does_not_require_the_word_publish(self) -> None:
+        self.assert_route(
+            "帮我检查这篇稿子有没有敏感词、导流和受限内容。",
+            "content.publish_check",
+        )
+
+    def test_advertising_noun_alone_is_not_a_content_safety_check(self) -> None:
+        result = route("广告代投服务已经卖了三个月，帮我分析客户为什么不续费。")
+        self.assertEqual(result["selected_task"], "business.diagnose", result)
+        self.assertFalse(
+            any(candidate["task_id"] == "content.publish_check" for candidate in result["top_candidates"]),
+            result,
+        )
+
     def test_explicit_debate(self) -> None:
         self.assert_route("/biz debate 多角度审查这个商业定价。", "debate.run")
+
+    def test_natural_multi_agent_discussion_routes_to_debate(self) -> None:
+        self.assert_route(
+            "请用多个 Agent 做多轮深度讨论和交叉质疑，判断这个生意要不要继续。",
+            "debate.run",
+        )
+
+    def test_repeated_analysis_routes_to_one_action(self) -> None:
+        self.assert_route(
+            "我已经反复分析很久，今天只想推进一步。",
+            "personal.action",
+        )
 
     def test_explicit_knowledge(self) -> None:
         self.assert_route("/biz knowledge 建立文件夹知识库。", "governance.knowledge")

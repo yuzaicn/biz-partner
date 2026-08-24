@@ -33,6 +33,14 @@ does not copy the deleted value. Historical values may remain in the immutable
 event log for integrity replay, so suppression is a retrieval guarantee rather
 than a physical-erasure claim.
 
+For list-shaped namespaces (`decision_log`, `asset_index`, and
+`playbook_feedback`), `supersede` replaces the current record with the same
+subject. Ordinary current-state reads therefore return only the newest record
+for that subject, while earlier commits remain in the immutable event history.
+After a suppression, a newly confirmed `add` or `supersede` for that namespace
+and subject removes the old tombstone from the current projection so the new
+value can become active. The earlier tombstone remains in its historical event.
+
 “Evolution” may update confirmed, versioned profile and playbook observations.
 `scripts/adaptive_context.py` projects only confirmed, active records into an
 advisory conversation context: profile constraints, cadence/style preferences,
@@ -53,14 +61,23 @@ commit sequence:
    target, payload preview, state version, and confirmation hash without writing.
 2. Show that preview to the user and obtain confirmation for that exact payload.
 3. Call `init` or `commit` with the matching hash. `commit` also requires the
-   expected state version and confirmation timestamp.
+   expected state version and confirmation timestamp. The timestamp must be at
+   or after both the proposal's `created_at` and the current state's
+   `updated_at`; a confirmation cannot predate its proposal and time cannot move
+   backwards.
 4. The script writes only `<root>/.biz-partner`, uses an exclusive lock and atomic
    state replacement, increments `state_version`, and appends an audit event.
+   The `.biz-partner` directory and `state.sqlite3` must be real paths inside the
+   resolved project root; either path being a symbolic link is rejected.
 5. A stale version becomes a conflict. A changed proposal produces a different
    confirmation hash and must be confirmed again.
 
 `show` and `export` return the active-state projection by default. Pass an
 explicit `--as-of` timestamp for reproducible historical visibility checks.
+Historical reads first replay the latest committed event at or before that
+instant, so later commits are not visible, and only then apply expiry and
+suppression to the replayed state. An `--as-of` earlier than state initialization
+is rejected because no project state existed yet.
 `adaptive_context.py <root> [--as-of TIMESTAMP]` uses the same projection and
 writes no state. `plan-commit` is only a preview: until the exact hash is
 confirmed and `commit` succeeds, the proposal cannot appear in adaptive context.

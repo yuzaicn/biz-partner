@@ -7,6 +7,7 @@ import contextlib
 import hashlib
 import io
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -123,6 +124,7 @@ class KnowledgeLearningTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
         self.pack = self.root / ".biz-partner" / "knowledge-packs" / "my-business"
+        self.source_files: dict[str, Path] = {}
 
     def tearDown(self) -> None:
         self.temp.cleanup()
@@ -135,6 +137,43 @@ class KnowledgeLearningTests(unittest.TestCase):
         base_hash: str | None = None,
         suffix: str = "one",
     ) -> dict[str, object]:
+        candidate_sources: dict[str, dict[str, object]] = {}
+        for candidate in candidates:
+            if candidate["record_kind"] == "source":
+                record = candidate["record"]
+                source_id = str(record["source_id"])
+                candidate_sources[source_id] = record
+                path = self.root / "source-material" / f"{source_id}.txt"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                self.source_files[source_id] = path
+        local_refs: dict[str, list[tuple[str, dict[str, object]]]] = {}
+        for candidate in candidates:
+            if candidate["record_kind"] != "atom":
+                continue
+            canonical = str(candidate["record"]["canonical"])
+            for ref in candidate["record"].get("source_refs", []):
+                locator = ref.get("locator", {})
+                if "file" not in locator:
+                    continue
+                source_id = str(ref["source_id"])
+                path = self.source_files.get(source_id)
+                if path is None:
+                    path = self.root / "source-material" / f"{source_id}.txt"
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    if not path.exists():
+                        path.write_text(source_id, encoding="utf-8")
+                    self.source_files[source_id] = path
+                locator["file"] = str(path)
+                local_refs.setdefault(source_id, []).append((canonical, ref))
+        for source_id, record in candidate_sources.items():
+            references = local_refs.get(source_id, [])
+            content = "\n".join(canonical for canonical, _ in references) or source_id
+            path = self.source_files[source_id]
+            path.write_text(content, encoding="utf-8")
+            record["content_sha256"] = kl.sha256_bytes(path.read_bytes())
+            for line_number, (canonical, ref) in enumerate(references, 1):
+                ref["locator"]["lines"] = f"{line_number}-{line_number}"
+                ref["quote_hash"] = text_hash(canonical)
         return {
             "schema_version": kl.CHANGE_SET_SCHEMA,
             "change_set_id": f"kcs_{suffix}",
@@ -210,6 +249,21 @@ class KnowledgeLearningTests(unittest.TestCase):
         self.assertEqual(result, 0, error)
         return kl.current_state(self.pack)
 
+    def replace_revision_content(self, target_revision: int, source_revision: int) -> None:
+        target_dir = self.pack / "versions" / f"v{target_revision:06d}"
+        source_dir = self.pack / "versions" / f"v{source_revision:06d}"
+        source_manifest = kl.load_json(source_dir / "manifest.json")
+        target_manifest = kl.load_json(target_dir / "manifest.json")
+        for name in kl.FILES:
+            shutil.copyfile(source_dir / name, target_dir / name)
+        target_manifest["files"] = source_manifest["files"]
+        target_manifest["counts"] = source_manifest["counts"]
+        (target_dir / "manifest.json").write_bytes(kl.canonical_bytes(target_manifest) + b"\n")
+        active_path = self.pack / "active.json"
+        active = kl.load_json(active_path)
+        active["manifest_sha256"] = kl.digest(target_manifest)
+        active_path.write_bytes(kl.canonical_bytes(active) + b"\n")
+
     def first_change_set(self) -> dict[str, object]:
         return self.change_set(
             [
@@ -241,6 +295,85 @@ class KnowledgeLearningTests(unittest.TestCase):
         change_set["expires_at"] = "2000-01-01T00:00:00+00:00"
         with self.assertRaisesRegex(kl.LearningError, "expired"):
             kl.analyze_change_set(self.pack, change_set)
+
+    def test_analyze_reports_verified_local_evidence_and_keeps_compatibility_field(self) -> None:
+        report = kl.analyze_change_set(self.pack, self.first_change_set())
+        self.assertTrue(report["structurally_ready"])
+        self.assertTrue(report["ready_for_plan"])
+        self.assertEqual(report["evidence_verification"]["status"], "verified")
+        self.assertEqual(report["evidence_verification"]["verified"], 1)
+
+    def test_local_file_locator_verifies_one_based_inclusive_quote_hash(self) -> None:
+        change_set = self.first_change_set()
+        material = b"first line\r\nsecond line\r\nthird line"
+        source_path = self.source_files["user_source_notes"]
+        source_path.write_bytes(material)
+        change_set["candidates"][0]["record"]["content_sha256"] = kl.sha256_bytes(material)
+        source_ref = change_set["candidates"][1]["record"]["source_refs"][0]
+        source_ref["locator"]["lines"] = "1-2"
+        source_ref["quote_hash"] = text_hash("first line\nsecond line")
+
+        report = kl.analyze_change_set(self.pack, change_set)
+        finding = report["evidence_verification"]["findings"][0]
+        self.assertEqual(finding["status"], "verified")
+        self.assertEqual(finding["reason"], "sha256_and_quote_match")
+
+    def test_local_file_locator_rejects_bad_ranges_and_quote_hash(self) -> None:
+        material = b"first line\nsecond line\nthird line"
+        cases = {
+            "malformed": ("second", text_hash("second line"), "locator_lines_invalid"),
+            "zero_based": ("0-1", text_hash("first line"), "locator_lines_invalid"),
+            "reversed": ("3-2", text_hash("second line"), "locator_lines_invalid"),
+            "oversized": ("1-" + "9" * 5000, text_hash("first line"), "locator_lines_invalid"),
+            "out_of_bounds": ("2-4", text_hash("second line\nthird line"), "locator_lines_out_of_bounds"),
+            "quote_mismatch": ("2-2", text_hash("different"), "quote_hash_mismatch"),
+        }
+        for name, (lines, quote_hash, reason) in cases.items():
+            with self.subTest(name=name):
+                change_set = self.first_change_set()
+                source_path = self.source_files["user_source_notes"]
+                source_path.write_bytes(material)
+                change_set["candidates"][0]["record"]["content_sha256"] = kl.sha256_bytes(material)
+                source_ref = change_set["candidates"][1]["record"]["source_refs"][0]
+                source_ref["locator"]["lines"] = lines
+                source_ref["quote_hash"] = quote_hash
+                report = kl.analyze_change_set(self.pack, change_set)
+                finding = report["evidence_verification"]["findings"][0]
+                self.assertEqual(finding["status"], "failed")
+                self.assertEqual(finding["reason"], reason)
+
+    def test_analyze_fails_missing_or_hash_mismatched_local_evidence(self) -> None:
+        missing = self.first_change_set()
+        self.source_files["user_source_notes"].unlink()
+        report = kl.analyze_change_set(self.pack, missing)
+        self.assertTrue(report["structurally_ready"])
+        self.assertFalse(report["ready_for_plan"])
+        self.assertEqual(report["evidence_verification"]["status"], "failed")
+        self.assertEqual(report["evidence_verification"]["findings"][0]["reason"], "file_missing")
+
+        mismatched = self.first_change_set()
+        self.source_files["user_source_notes"].write_text("changed", encoding="utf-8")
+        report = kl.analyze_change_set(self.pack, mismatched)
+        self.assertEqual(report["evidence_verification"]["status"], "failed")
+        self.assertEqual(report["evidence_verification"]["findings"][0]["reason"], "sha256_mismatch")
+
+    def test_analyze_marks_url_and_conversation_evidence_unverified(self) -> None:
+        network = self.first_change_set()
+        network["candidates"][1]["record"]["source_refs"][0]["locator"] = {
+            "url": "https://example.com/source",
+            "field": "body",
+        }
+        report = kl.analyze_change_set(self.pack, network)
+        self.assertTrue(report["ready_for_plan"])
+        self.assertEqual(report["evidence_verification"]["status"], "unverified")
+        self.assertEqual(report["evidence_verification"]["findings"][0]["reason"], "network_locator")
+
+        conversation = self.first_change_set()
+        conversation["candidates"][0]["record"]["evidence_kind"] = "conversation"
+        conversation["candidates"][1]["record"]["claim_kind"] = "user_claim"
+        report = kl.analyze_change_set(self.pack, conversation)
+        self.assertEqual(report["evidence_verification"]["status"], "unverified")
+        self.assertEqual(report["evidence_verification"]["findings"][0]["reason"], "session_source")
 
     def test_apply_requires_exact_confirmation_and_writes_nothing_before_it(self) -> None:
         change_set = self.first_change_set()
@@ -431,6 +564,29 @@ class KnowledgeLearningTests(unittest.TestCase):
         with self.assertRaisesRegex(kl.LearningError, "base is stale"):
             kl.build_apply_plan(self.pack, change_set, decisions)
 
+    def test_write_version_rejects_versions_directory_symlink(self) -> None:
+        change_set = self.first_change_set()
+        decisions = self.decisions(change_set)
+        plan, rows = kl.build_apply_plan(self.pack, change_set, decisions)
+        self.pack.mkdir(parents=True)
+        outside = self.root / "outside-versions"
+        outside.mkdir()
+        (self.pack / "versions").symlink_to(outside, target_is_directory=True)
+        with self.assertRaisesRegex(kl.LearningError, "versions directory must not be a symlink"):
+            kl.write_version(self.pack, plan, rows)
+
+    def test_write_version_rejects_target_revision_symlink(self) -> None:
+        change_set = self.first_change_set()
+        decisions = self.decisions(change_set)
+        plan, rows = kl.build_apply_plan(self.pack, change_set, decisions)
+        versions = self.pack / "versions"
+        versions.mkdir(parents=True)
+        outside = self.root / "outside-revision"
+        outside.mkdir()
+        (versions / "v000001").symlink_to(outside, target_is_directory=True)
+        with self.assertRaisesRegex(kl.LearningError, "target revision must not be a symlink"):
+            kl.write_version(self.pack, plan, rows)
+
     def test_rollback_creates_new_revision_and_preserves_history(self) -> None:
         state_one = self.commit(self.first_change_set())
         change_two = self.change_set(
@@ -462,6 +618,62 @@ class KnowledgeLearningTests(unittest.TestCase):
         self.assertTrue((self.pack / "versions/v000002").is_dir())
         self.assertTrue((self.pack / "versions/v000003").is_dir())
         self.assertEqual(verified["counts"]["atoms"], 1)
+
+    def test_rollback_to_revision_zero_creates_empty_revision_and_preserves_history(self) -> None:
+        self.commit(self.first_change_set())
+        plan, rows = kl.build_rollback_plan(self.pack, 0)
+        self.assertEqual(plan["preview"]["restore_revision"], 0)
+        self.assertIsNone(plan["preview"]["restore_manifest_sha256"])
+        self.assertTrue(all(rows[name] == [] for name in kl.FILES))
+        current = kl.current_state(self.pack)
+        kl.assert_expected(current, 1, plan["preview"])
+        kl.write_version(self.pack, plan, rows)
+        verified = kl.verify_pack(self.pack)
+        self.assertEqual(verified["revision"], 2)
+        self.assertEqual(verified["restores_revision"], 0)
+        self.assertTrue((self.pack / "versions/v000001").is_dir())
+        self.assertTrue((self.pack / "versions/v000002").is_dir())
+        self.assertTrue(all(value == 0 for value in verified["counts"].values()))
+
+    def test_verify_rejects_rollback_zero_with_nonempty_content(self) -> None:
+        self.commit(self.first_change_set())
+        plan, rows = kl.build_rollback_plan(self.pack, 0)
+        kl.write_version(self.pack, plan, rows)
+        self.replace_revision_content(2, 1)
+        with self.assertRaisesRegex(
+            kl.LearningError,
+            "rollback revision 0 must contain empty files and zero counts",
+        ):
+            kl.verify_pack(self.pack)
+
+    def test_verify_rejects_rollback_content_different_from_restored_revision(self) -> None:
+        state_one = self.commit(self.first_change_set())
+        change_two = self.change_set(
+            [
+                self.candidate("candidate_source_two", "source", source("user_source_followup")),
+                self.candidate(
+                    "candidate_atom_two",
+                    "atom",
+                    atom(
+                        "user_atom_followup",
+                        "复盘结论要绑定本周的真实结果",
+                        source_id="user_source_followup",
+                    ),
+                ),
+            ],
+            base_revision=1,
+            base_hash=state_one["manifest_sha256"],
+            suffix="rollback_semantics",
+        )
+        self.commit(change_two)
+        plan, rows = kl.build_rollback_plan(self.pack, 1)
+        kl.write_version(self.pack, plan, rows)
+        self.replace_revision_content(3, 2)
+        with self.assertRaisesRegex(
+            kl.LearningError,
+            "rollback content does not match restored revision 1",
+        ):
+            kl.verify_pack(self.pack)
 
     def test_manifest_chain_detects_an_edited_older_revision(self) -> None:
         state_one = self.commit(self.first_change_set())
@@ -588,6 +800,21 @@ class KnowledgeLearningTests(unittest.TestCase):
             rows["atoms.jsonl"][0]["relations"],
             [{"type": "supports", "atom_id": "user_atom_price_evidence"}],
         )
+
+    def test_decisions_template_covers_current_change_set_with_exact_hashes(self) -> None:
+        change_set = kl.load_json(kl.SKILL_ROOT / "templates" / "knowledge-change-set.json")
+        decisions = kl.load_json(kl.SKILL_ROOT / "templates" / "knowledge-decisions.json")
+        expected = {
+            candidate["candidate_id"]: kl.digest(candidate)
+            for candidate in change_set["candidates"]
+        }
+        actual = {
+            decision["candidate_id"]: decision["candidate_hash"]
+            for decision in decisions["decisions"]
+        }
+        self.assertEqual(len(expected), 7)
+        self.assertEqual(decisions["change_set_hash"], kl.digest(change_set))
+        self.assertEqual(actual, expected)
 
 
 if __name__ == "__main__":

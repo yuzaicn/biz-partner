@@ -7,16 +7,17 @@ import argparse
 import copy
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
-from validate_contracts import canonical_hash, errors_for
+from validate_contracts import canonical_hash, errors_for, parse_datetime
 
 
 class ContractBundleError(ValueError):
     """Raised when a bundle cannot be frozen without changing supplied evidence."""
 
 
-def freeze_bundle(value: object) -> dict:
+def freeze_bundle(value: object, *, validation_time: datetime | None = None) -> dict:
     if not isinstance(value, dict):
         raise ContractBundleError("bundle root must be an object")
     packet = value.get("case_packet")
@@ -39,12 +40,16 @@ def freeze_bundle(value: object) -> dict:
     if supplied_packet_hash in (None, ""):
         handoff["packet_hash"] = computed_hash
 
-    packet_errors = errors_for(packet)
+    validation_time = validation_time or datetime.now(timezone.utc)
+    packet_errors = errors_for(packet, validation_time=validation_time)
     if "expected_state_version" not in bundle:
         raise ContractBundleError("expected_state_version is required as an independent lease")
     expected_state_version = bundle.get("expected_state_version")
     if not isinstance(expected_state_version, int) or isinstance(expected_state_version, bool):
         raise ContractBundleError("expected_state_version must be an integer when provided")
+    frozen_at = parse_datetime(packet.get("frozen_at"))
+    ttl = parse_datetime(packet.get("ttl"))
+    execution_window = (frozen_at, ttl) if frozen_at is not None and ttl is not None else None
     handoff_errors = errors_for(
         handoff,
         expected_packet_hash=computed_hash,
@@ -56,6 +61,7 @@ def freeze_bundle(value: object) -> dict:
             and isinstance(packet["tool_policy"].get("allowed_tools"), list)
             else set()
         ),
+        expected_execution_window=execution_window,
     )
     errors = [f"case_packet: {error}" for error in packet_errors]
     errors.extend(f"handoff: {error}" for error in handoff_errors)
@@ -77,10 +83,19 @@ def read_input(path: Path | None) -> object:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, help="read JSON from this file instead of stdin")
+    parser.add_argument(
+        "--validation-time",
+        help="ISO 8601 time used for deterministic lease checks; defaults to current UTC time",
+    )
     args = parser.parse_args()
     try:
-        frozen = freeze_bundle(read_input(args.input))
-    except (OSError, ContractBundleError) as exc:
+        validation_time = None
+        if args.validation_time:
+            validation_time = datetime.fromisoformat(args.validation_time.replace("Z", "+00:00"))
+            if validation_time.tzinfo is None or validation_time.utcoffset() is None:
+                raise ContractBundleError("validation-time must include timezone")
+        frozen = freeze_bundle(read_input(args.input), validation_time=validation_time)
+    except (OSError, ValueError, ContractBundleError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
     json.dump(frozen, sys.stdout, ensure_ascii=False, sort_keys=True, indent=2)

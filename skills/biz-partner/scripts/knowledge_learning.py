@@ -17,6 +17,7 @@ import shutil
 import sys
 import tempfile
 import unicodedata
+from copy import deepcopy
 from datetime import datetime
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -83,6 +84,7 @@ CASE_FIELDS = {
 SKILL_ROOT = Path(__file__).resolve().parent.parent
 PUBLIC_PACK_ROOT = SKILL_ROOT / "public-knowledge"
 HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+LINE_RANGE_RE = re.compile(r"^([1-9][0-9]*)-([1-9][0-9]*)$")
 SAFE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,95}$")
 SECRET_PATTERNS = (
     ("private_key", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
@@ -121,6 +123,17 @@ def digest(value: Any) -> str:
 
 def sha256_bytes(value: bytes) -> str:
     return "sha256:" + hashlib.sha256(value).hexdigest()
+
+
+def parse_line_range(value: Any) -> tuple[int, int] | None:
+    match = LINE_RANGE_RE.fullmatch(value) if isinstance(value, str) else None
+    if match is None:
+        return None
+    try:
+        start, end = int(match.group(1)), int(match.group(2))
+    except ValueError:
+        return None
+    return (start, end) if start <= end else None
 
 
 def normalized_text(value: str) -> str:
@@ -316,8 +329,19 @@ def validate_record_shape(kind: str, record: dict[str, Any]) -> None:
         return
     if kind == "atom":
         validate_user_id(record, kind)
+        contract_record = deepcopy(record)
+        for ref in contract_record.get("source_refs", []):
+            locator = ref.get("locator") if isinstance(ref, dict) else None
+            if not isinstance(locator, dict) or "file" not in locator:
+                continue
+            raw_path = Path(str(locator["file"])).expanduser()
+            if raw_path.is_absolute():
+                # Absolute local line ranges are evidence checks below. Keep all
+                # other atom-contract validation, but report bad ranges as failed
+                # evidence instead of aborting the analysis report.
+                locator["lines"] = "1-1"
         try:
-            validate_atom_v2(record, allow_private_local_locator=True)
+            validate_atom_v2(contract_record, allow_private_local_locator=True)
         except ValueError as exc:
             raise LearningError(str(exc)) from exc
         return
@@ -497,6 +521,149 @@ def rows_by_kind(rows: dict[str, list[dict[str, Any]]]) -> dict[str, list[dict[s
         "method": rows["methods.jsonl"],
         "retrieval_case": rows["retrieval-cases.jsonl"],
     }
+
+
+def verify_candidate_evidence(
+    existing_sources: list[dict[str, Any]],
+    candidates: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Verify local snapshots without pretending URLs or sessions were fetched."""
+    source_records = {row["source_id"]: row for row in existing_sources}
+    candidate_source_ids: set[str] = set()
+    for candidate in candidates:
+        if candidate["record_kind"] == "source":
+            record = candidate["record"]
+            source_records[record["source_id"]] = record
+            candidate_source_ids.add(record["source_id"])
+
+    findings: list[dict[str, Any]] = []
+    referenced_candidate_sources: set[str] = set()
+    session_markers = ("conversation", "chat", "session", "user_claim")
+    for candidate in candidates:
+        if candidate["record_kind"] != "atom":
+            continue
+        atom = candidate["record"]
+        for ref in atom.get("source_refs", []):
+            source_id = ref["source_id"]
+            source = source_records.get(source_id, {})
+            if source_id in candidate_source_ids:
+                referenced_candidate_sources.add(source_id)
+            finding: dict[str, Any] = {
+                "candidate_id": candidate["candidate_id"],
+                "atom_id": atom["atom_id"],
+                "source_id": source_id,
+            }
+            evidence_kind = str(source.get("evidence_kind", source.get("kind", ""))).casefold()
+            locator = ref.get("locator", {})
+            if any(marker in evidence_kind for marker in session_markers):
+                finding.update(status="unverified", reason="session_source")
+            elif isinstance(locator, dict) and "url" in locator:
+                finding.update(status="unverified", reason="network_locator")
+            elif isinstance(locator, dict) and "file" in locator:
+                raw_path = Path(str(locator["file"])).expanduser()
+                if not raw_path.is_absolute():
+                    finding.update(status="unverified", reason="relative_file_root_unknown")
+                elif not raw_path.is_file():
+                    finding.update(status="failed", reason="file_missing", file=str(raw_path))
+                else:
+                    try:
+                        material = raw_path.read_bytes()
+                        actual_hash = sha256_bytes(material)
+                    except OSError as exc:
+                        finding.update(status="failed", reason="file_unreadable", detail=str(exc))
+                    else:
+                        expected_hash = source.get("content_sha256")
+                        if actual_hash != expected_hash:
+                            finding.update(
+                                status="failed",
+                                reason="sha256_mismatch",
+                                file=str(raw_path),
+                                expected_sha256=expected_hash,
+                                actual_sha256=actual_hash,
+                            )
+                        else:
+                            line_range = locator.get("lines")
+                            parsed_range = parse_line_range(line_range)
+                            if parsed_range is None:
+                                finding.update(
+                                    status="failed",
+                                    reason="locator_lines_invalid",
+                                    file=str(raw_path),
+                                )
+                            else:
+                                start, end = parsed_range
+                                try:
+                                    file_lines = material.decode("utf-8").splitlines()
+                                except UnicodeDecodeError as exc:
+                                    finding.update(
+                                        status="failed",
+                                        reason="file_not_utf8",
+                                        file=str(raw_path),
+                                        detail=str(exc),
+                                    )
+                                else:
+                                    if end > len(file_lines):
+                                        finding.update(
+                                            status="failed",
+                                            reason="locator_lines_out_of_bounds",
+                                            file=str(raw_path),
+                                            available_lines=len(file_lines),
+                                        )
+                                    else:
+                                        selected = "\n".join(file_lines[start - 1 : end])
+                                        actual_quote_hash = sha256_bytes(selected.encode("utf-8"))
+                                        expected_quote_hash = ref.get("quote_hash")
+                                        quote_matches = actual_quote_hash == expected_quote_hash
+                                        finding.update(
+                                            status="verified" if quote_matches else "failed",
+                                            reason="sha256_and_quote_match"
+                                            if quote_matches
+                                            else "quote_hash_mismatch",
+                                            file=str(raw_path),
+                                            lines=line_range,
+                                            expected_sha256=expected_hash,
+                                            actual_sha256=actual_hash,
+                                            expected_quote_hash=expected_quote_hash,
+                                            actual_quote_hash=actual_quote_hash,
+                                        )
+            else:
+                finding.update(status="unverified", reason="unsupported_locator")
+            findings.append(finding)
+
+    for source_id in sorted(candidate_source_ids - referenced_candidate_sources):
+        source = source_records[source_id]
+        evidence_kind = str(source.get("evidence_kind", source.get("kind", ""))).casefold()
+        candidate_id = next(
+            candidate["candidate_id"]
+            for candidate in candidates
+            if candidate["record_kind"] == "source"
+            and candidate["record"]["source_id"] == source_id
+        )
+        findings.append(
+            {
+                "candidate_id": candidate_id,
+                "source_id": source_id,
+                "status": "unverified",
+                "reason": "session_source"
+                if any(marker in evidence_kind for marker in session_markers)
+                else "no_candidate_atom_locator",
+            }
+        )
+
+    counts = {
+        status: sum(finding["status"] == status for finding in findings)
+        for status in ("verified", "failed", "unverified")
+    }
+    status = (
+        "failed"
+        if counts["failed"]
+        else "unverified"
+        if counts["unverified"]
+        else "verified"
+        if counts["verified"]
+        else "not_applicable"
+    )
+    return {"status": status, **counts, "findings": findings}
 
 
 def find_cycles(edges: dict[str, set[str]]) -> list[list[str]]:
@@ -783,6 +950,8 @@ def analyze_change_set(pack: Path, value: dict[str, Any]) -> dict[str, Any]:
             if related & involved:
                 report["blockers"].append({"type": "depends_on_cycle", "cycles": cycles})
     blocker_count = sum(len(report["blockers"]) for report in reports)
+    structurally_ready = base_matches and blocker_count == 0
+    evidence_verification = verify_candidate_evidence(existing["source"], value["candidates"])
     return {
         "schema_version": "knowledge-analysis-report-v1",
         "change_set_id": value["change_set_id"],
@@ -796,7 +965,9 @@ def analyze_change_set(pack: Path, value: dict[str, Any]) -> dict[str, Any]:
         },
         "candidate_count": len(reports),
         "blocker_count": blocker_count + (0 if base_matches else 1),
-        "ready_for_plan": base_matches and blocker_count == 0,
+        "structurally_ready": structurally_ready,
+        "evidence_verification": evidence_verification,
+        "ready_for_plan": structurally_ready and evidence_verification["status"] != "failed",
         "base_conflict": None if base_matches else "change-set base is stale",
         "candidates": reports,
     }
@@ -985,7 +1156,7 @@ def validate_manifest_contract(
         raise LearningError("apply manifest must not restore a revision")
     if manifest["action"] == "rollback" and (
         not isinstance(restores_revision, int)
-        or not 1 <= restores_revision < expected_revision
+        or not 0 <= restores_revision < expected_revision
     ):
         raise LearningError("rollback manifest has an invalid restored revision")
     file_hashes = manifest.get("files")
@@ -1021,6 +1192,25 @@ def verify_manifest_chain(
         expected_hash = manifest["parent_manifest_sha256"]
     if expected_hash is not None:
         raise LearningError("manifest chain does not terminate at the first revision")
+    empty_files = {name: sha256_bytes(b"") for name in FILES}
+    zero_counts = {
+        name.removesuffix(".jsonl").replace("-", "_"): 0 for name in FILES
+    }
+    for revision, manifest in manifests.items():
+        if manifest["action"] != "rollback":
+            continue
+        restores_revision = manifest["restores_revision"]
+        if restores_revision == 0:
+            if manifest["files"] != empty_files or manifest["counts"] != zero_counts:
+                raise LearningError(
+                    "rollback revision 0 must contain empty files and zero counts"
+                )
+            continue
+        restored = manifests[restores_revision]
+        if manifest["files"] != restored["files"] or manifest["counts"] != restored["counts"]:
+            raise LearningError(
+                f"rollback content does not match restored revision {restores_revision}"
+            )
     return manifests
 
 
@@ -1049,6 +1239,8 @@ def build_apply_plan(pack: Path, change_set: dict[str, Any], decision_doc: dict[
     }
     if blockers:
         raise LearningError("accepted candidates contain blockers: " + ",".join(sorted(blockers)))
+    if selected_report["evidence_verification"]["status"] == "failed":
+        raise LearningError("accepted candidates contain failed evidence verification")
     state = current_state(pack)
     current_rows = read_version_rows(active_version_dir(pack, state))
     result_rows = apply_selection(current_rows, change_set, decisions)
@@ -1153,8 +1345,16 @@ def write_version(pack: Path, plan: dict[str, Any], rows: dict[str, list[dict[st
     pack.mkdir(mode=0o700, parents=True, exist_ok=True)
     ensure_privacy_guard(pack, create=True)
     versions = pack / "versions"
+    if versions.is_symlink():
+        raise LearningError("versions directory must not be a symlink")
     versions.mkdir(mode=0o700, parents=True, exist_ok=True)
+    if not versions.is_dir() or not path_inside(versions, pack):
+        raise LearningError("versions directory must resolve inside the private pack")
     final_dir = versions / f"v{revision:06d}"
+    if final_dir.is_symlink():
+        raise LearningError("target revision must not be a symlink")
+    if not path_inside(final_dir, versions):
+        raise LearningError("target revision must resolve inside pack/versions")
     if final_dir.exists():
         raise LearningError("revision already exists; concurrent writer or incomplete prior attempt")
     temp_dir = Path(tempfile.mkdtemp(prefix=f".v{revision:06d}.", suffix=".tmp", dir=str(versions)))
@@ -1284,9 +1484,19 @@ def build_rollback_plan(pack: Path, to_revision: int) -> tuple[dict[str, Any], d
     state = current_state(pack)
     if state["revision"] == 0:
         raise LearningError("cannot rollback an empty pack")
+    if to_revision < 0:
+        raise LearningError("rollback target revision must be non-negative")
     if to_revision >= state["revision"]:
         raise LearningError("rollback target must be older than the active revision")
-    target_manifest, rows = read_revision(pack, to_revision)
+    if to_revision == 0:
+        target_manifest = None
+        rows = {name: [] for name in FILES}
+        target_counts = {
+            name.removesuffix(".jsonl").replace("-", "_"): 0 for name in FILES
+        }
+    else:
+        target_manifest, rows = read_revision(pack, to_revision)
+        target_counts = target_manifest["counts"]
     file_hashes = {name: sha256_bytes(jsonl_bytes(rows[name])) for name in FILES}
     next_revision = state["revision"] + 1
     manifest = build_manifest(
@@ -1297,7 +1507,7 @@ def build_rollback_plan(pack: Path, to_revision: int) -> tuple[dict[str, Any], d
         action="rollback",
         restores_revision=to_revision,
         file_hashes=file_hashes,
-        counts=target_manifest["counts"],
+        counts=target_counts,
         change_set_hash=None,
         decisions_hash=None,
     )
@@ -1308,7 +1518,7 @@ def build_rollback_plan(pack: Path, to_revision: int) -> tuple[dict[str, Any], d
         "expected_revision": state["revision"],
         "expected_manifest_sha256": state["manifest_sha256"],
         "restore_revision": to_revision,
-        "restore_manifest_sha256": digest(target_manifest),
+        "restore_manifest_sha256": digest(target_manifest) if target_manifest is not None else None,
         "next_revision": next_revision,
         "result_file_hashes": file_hashes,
         "result_manifest_sha256": digest(manifest),

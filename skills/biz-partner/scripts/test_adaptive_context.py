@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -28,10 +29,13 @@ class AdaptiveContextTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name).resolve()
+        baseline = state_store.initial_state(self.root)
+        baseline["updated_at"] = "2026-08-20T00:00:00+00:00"
         action = state_store.init_action(self.root)
-        state_store.cmd_init(
-            args(root=str(self.root), confirmation_hash=state_store.digest(action))
-        )
+        with mock.patch.object(state_store, "initial_state", return_value=baseline):
+            state_store.cmd_init(
+                args(root=str(self.root), confirmation_hash=state_store.digest(action))
+            )
 
     def tearDown(self) -> None:
         self.temp.cleanup()

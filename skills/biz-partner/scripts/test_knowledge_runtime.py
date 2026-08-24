@@ -257,6 +257,7 @@ class KnowledgePackRuntimeTests(unittest.TestCase):
             "actionability": "diagnostic_rule",
             "domain": ["business"],
             "decision_rule": canonical,
+            "procedure": ["检查当前证据", "记录验证结果"],
             "limits": ["需要当前证据验证"],
             "source_refs": [
                 {
@@ -313,6 +314,8 @@ class KnowledgePackRuntimeTests(unittest.TestCase):
             "term": "付费信号",
             "normalized": "payment_signal",
             "definition": "客户用可观察承诺表达真实购买意愿",
+            "anti_definition": "不是口头认可或点赞",
+            "common_misuse": "把礼貌回应当成付费证据",
             "aliases": aliases or ["愿不愿掏钱"],
             "source_atoms": atom_ids,
             "related_methods": method_ids,
@@ -518,6 +521,20 @@ class KnowledgePackRuntimeTests(unittest.TestCase):
             self.assertEqual(result["results"][0]["atom_id"], "ka_payment")
             self.assertEqual(result["recommended_methods"][0]["method_id"], "M-001")
             self.assertIn("oc_payment", result["results"][0]["matched_concept_ids"])
+            hit = result["results"][0]
+            self.assertEqual(hit["status"], "release_eligible")
+            self.assertEqual(hit["decision_rule"], atom["decision_rule"])
+            self.assertEqual(hit["procedure"], atom["procedure"])
+            self.assertEqual(hit["source_refs"], atom["source_refs"])
+            matched_concept = result["matched_concepts"][0]
+            self.assertEqual(matched_concept["definition"], concept["definition"])
+            self.assertEqual(matched_concept["anti_definition"], concept["anti_definition"])
+            self.assertEqual(matched_concept["common_misuse"], concept["common_misuse"])
+            recommended = result["recommended_methods"][0]
+            self.assertEqual(recommended["inputs"], method["inputs"])
+            self.assertEqual(recommended["steps"], method["steps"])
+            self.assertEqual(recommended["decision_gates"], method["decision_gates"])
+            self.assertEqual(recommended["quality_checks"], method["quality_checks"])
 
     def test_initial_atom_exposes_one_hop_concept_and_method_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -544,6 +561,9 @@ class KnowledgePackRuntimeTests(unittest.TestCase):
             )
             self.assertEqual(linked["inference"], "linked_atom")
             self.assertEqual(linked["linked_atom_ids"], ["ka_inventory"])
+            self.assertEqual(linked["definition"], concept["definition"])
+            self.assertEqual(linked["anti_definition"], concept["anti_definition"])
+            self.assertEqual(linked["common_misuse"], concept["common_misuse"])
             self.assertEqual(
                 result["recommended_methods"][0]["matched_atom_ids"], ["ka_inventory"]
             )
