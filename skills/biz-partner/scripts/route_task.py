@@ -66,7 +66,7 @@ HEALTH_ACTIONS = (
 )
 ATHLETIC_SUBJECT = (
     "篮球", "足球", "棒球", "网球", "羽毛球", "高尔夫", "f1", "赛车", "跑步", "田径", "游泳", "自由泳", "健身",
-    "马拉松", "全马", "半马", "车手", "球手", "选手", "运动员", "球员", "后卫", "前锋", "投手", "c罗", "梅西",
+    "马拉松", "全马", "半马", "十公里", "跑团", "车手", "球手", "选手", "运动员", "球员", "后卫", "前锋", "投手", "c罗", "梅西",
 )
 TECHNIQUE_REQUEST = (
     "技术对标", "动作", "技巧", "技术", "姿势", "模仿", "训练方案", "训练方法", "变化球", "投篮", "投球",
@@ -125,7 +125,7 @@ ORDINARY_TASK_TERMS = {
     "标题", "内容", "学习", "练习", "保存", "恢复", "复盘", "知识库", "工作台", "桥接", "skill", "风险",
 }
 COMPOUND_CONNECTORS = (
-    "还是", "或者", "也想", "又想", "顺便", "也许", "也可能", "可能是", "随便哪个", "都行", "二选一", "两个都", "选一个",
+    "还是", "或者", "也想", "又想", "同时", "并且", "顺便", "也许", "也可能", "可能是", "随便哪个", "都行", "二选一", "两个都", "选一个",
 )
 NEGATED_TASK_TERMS: dict[str, tuple[str, ...]] = {
     "reasoning.clarify": ("澄清概念", "概念澄清", "问题定义", "定义问题", "澄清口径"),
@@ -136,7 +136,7 @@ NEGATED_TASK_TERMS: dict[str, tuple[str, ...]] = {
     "product.define": ("产品", "prd", "mvp"),
     "research.benchmark": ("商业对标", "对标", "竞品", "同行", "benchmark"),
     "research.standard": ("历史案例", "历史类比", "案例类比", "同构案例", "过去案例"),
-    "content.plan": ("做内容", "内容计划", "内容规划", "选题"),
+    "content.plan": ("做内容", "内容计划", "内容规划", "发布计划", "内容发布", "选题"),
     "content.hook": ("开头", "第一句话", "钩子", "hook"),
     "content.title": ("标题",),
     "content.script": ("脚本", "逐字稿", "正文逻辑", "文稿逻辑"),
@@ -144,10 +144,10 @@ NEGATED_TASK_TERMS: dict[str, tuple[str, ...]] = {
     "personal.goal": ("宏大目标", "目标"),
     "personal.learning": ("学习计划", "学习", "练习"),
     "content.publish_check": ("发布风险", "发布检查", "检查发布", "检查", "审核"),
-    "governance.knowledge": ("知识库治理", "治理体系", "目录治理", "知识库"),
+    "governance.knowledge": ("知识库治理", "治理体系", "目录治理", "知识库", "盘点", "索引", "摄取"),
     "governance.workbench": ("工作台", "唯一真源", "规范源"),
     "governance.bridge": ("桥接", "适配"),
-    "debate.run": ("辩论", "讨论", "质询"),
+    "debate.run": ("辩论", "讨论", "质疑", "质询", "交叉质疑", "交叉质询", "多 agent", "多个 agent"),
 }
 
 KEYWORDS: dict[str, tuple[str, ...]] = {
@@ -175,7 +175,7 @@ KEYWORDS: dict[str, tuple[str, ...]] = {
     "content.resonate": ("共鸣", "戳中", "传播性", "完播", "受众情绪", "居高临下", "受众立场", "立场错位", "自嗨", "对应他们的处境", "最小调整"),
     "content.publish_check": ("发布检查", "检查发布", "发布风险", "能不能发", "准备发", "我要发", "敏感词", "导流", "私信引导", "广告", "隐私", "受限内容", "前后对比", "机器信号", "实质问题", "人工判断", "publish-check"),
     "personal.goal": ("十二周", "三个月目标", "成交目标", "目标定清", "目标不清", "澄清目标", "明确目标", "目标改成", "定义成可观察", "可观察结果", "可观察目标", "能验收", "验收的状态", "想变得更好", "目标是什么"),
-    "personal.action": ("最小一步", "最小动作", "怕被拒绝", "名单却没发", "拖到", "拖延", "拖着", "迟迟没行动", "迟迟不", "做不动", "一直研究", "反复换方向", "不行动", "下一步行动", "制定行动", "贪快", "执行卡住"),
+    "personal.action": ("最小一步", "最小动作", "怕被拒绝", "名单却没发", "拖到", "拖延", "拖着", "迟迟没行动", "迟迟不", "做不动", "一直研究", "反复分析", "分析很久", "反复换方向", "推进一步", "推进一小步", "只想推进", "不行动", "下一步行动", "制定行动", "贪快", "执行卡住"),
     "personal.learning": ("学会", "训练的练习", "设计练习", "评分量表", "评分标准", "点评录音", "反馈门", "系统学习", "学习计划", "复盘学习", "带我学习", "继续下一篇", "练习反馈", "刻意练习", "演练反馈"),
     "decision.record": ("记录为何选择", "记录决策", "决策记录", "复盘条件", "反转条件", "何时反转", "被否决选项", "选择依据", "做决定", "长期决策", "复盘决策"),
     "decision.save": ("保存当前", "保存一下", "诊断存档", "本地快照", "可恢复的快照", "可恢复快照", "快照预览", "落盘位置", "确认哈希", "save"),
@@ -185,7 +185,7 @@ KEYWORDS: dict[str, tuple[str, ...]] = {
     "governance.workbench": ("agent 工作台", "多端 agent", "单一真源", "唯一真源", "规范源", "薄适配层", "指令漂移", "版本矩阵", "升级与回退", "工作台"),
     "governance.bridge": ("skill 桥接", "多端桥接", "目标 agent", "旧 agent", "不同目录结构", "兼容性验证", "兼容矩阵", "桥接方案", "被多个 agent 发现", "bridge"),
     "governance.audit_skill": ("只读审计", "审计这个本地skill", "审计一下 skill", "审查本地 skill", "本地 skill", "下载命令", "提示注入", "权限风险", "脚本风险", "audit-skill", "skill 风险", "越权调用", "扫描 skill"),
-    "debate.run": ("支持和反对", "不同立场", "各自论证", "独立论证", "互相质疑", "互相质询", "单一视角", "多 agent", "多角度讨论", "多轮讨论", "交叉质询", "保留给我决策", "debate"),
+    "debate.run": ("支持和反对", "不同立场", "各自论证", "独立论证", "互相质疑", "互相质询", "单一视角", "多 agent", "多个 agent", "多角度讨论", "多轮讨论", "多轮深度讨论", "交叉质疑", "交叉质询", "保留给我决策", "debate"),
 }
 
 
@@ -238,7 +238,7 @@ def describes_productized_offer(text: str) -> bool:
     """Recognize an offer description without exempting a direct build request."""
     offer_signal = contains_any(text, PRODUCTIZED_OFFER) or re.search(
         r"(?:我们|我|公司|团队).{0,16}(?:卖|销售|提供)", text
-    )
+    ) or re.search(r"(?:给|向).{1,16}(?:提供|卖|销售)", text)
     return bool(offer_signal) and not contains_any(text, DIRECT_BUILD_REQUEST)
 
 
@@ -259,6 +259,37 @@ def clause_negates_task(task_id: str, text: str) -> bool:
         or re.search(rf"{re.escape(term)}.{{0,8}}{suffix}", text)
         for term in NEGATED_TASK_TERMS.get(task_id, ())
     )
+
+
+def has_positive_publish_intent(text: str) -> bool:
+    """Require an affirmative publishing action, not a nearby risk noun."""
+    intent = re.compile(
+        r"(?:准备|打算|计划|将要|想要|能不能|可以|是否|检查|审查).{0,6}(?:发布|发到|发在|发出|发吗|发)|"
+        r"(?:我|我们|这条|这篇|稿子|文案|内容).{0,4}(?:要|想).{0,4}(?:发布|发到|发在|发出|发)|"
+        r"(?:发布|发到|发在|发出).{0,8}(?:前|之前|检查|审查|风险)|"
+        r"(?:发布检查|检查发布|发布风险|审查发布)"
+    )
+    negation_window = re.compile(
+        r"(?:不|没|未|无需|不要|别|暂不|尚未|并不|不会|不再|不打算|不准备)[^\s，。；!?！？]{0,4}$"
+    )
+    negated_action = re.compile(
+        r"(?:不|没|未|无需|不要|别|暂不|尚未|并不|不会|不再)[^\s，。；!?！？]{0,4}(?:发布|发到|发在|发出|发)"
+    )
+    content_safety_check = re.compile(
+        r"(?:检查|审查|审核|排查|看看|有没有|是否包含).{0,12}"
+        r"(?:稿子|文稿|文案|内容|标题|脚本|视频|封面|素材|帖子|推文).{0,18}"
+        r"(?:敏感词|导流|私信|广告|隐私|受限内容|平台规则|违规|风险)|"
+        r"(?:稿子|文稿|文案|内容|标题|脚本|视频|封面|素材|帖子|推文).{0,12}"
+        r"(?:有没有|是否有|检查|审查|审核|排查|看看).{0,12}"
+        r"(?:敏感词|导流|私信|广告|隐私|受限内容|平台规则|违规|风险)"
+    )
+    if content_safety_check.search(text):
+        return True
+    for match in intent.finditer(text):
+        window = text[max(0, match.start() - 8):match.start()]
+        if not negation_window.search(window) and not negated_action.search(match.group(0)):
+            return True
+    return False
 
 
 def explicit_task_is_negated(task_id: str, text: str) -> bool:
@@ -303,10 +334,11 @@ def is_contextual_intervention(text: str) -> bool:
 def has_usable_intervention_case(text: str) -> bool:
     """Require concrete facts, constraints, or a deadline before autonomous intervention."""
     case_evidence = _count_true(
-        contains_any(text, ("当前已知", "已知", "证据", "反馈", "访谈", "试卖", "试过", "实验", "付订金", "成交", "退款", "复购")),
+        contains_any(text, ("当前已知", "已知", "已有", "证据", "实际反馈", "反馈", "访谈", "做过", "试卖", "试过", "实验", "付订金", "成交", "退款", "复购", "续费", "订单")),
         contains_any(text, ("预算", "成本", "容量", "限制", "只能", "必须", "不能", "还没", "未核", "截止", "期限")),
         bool(re.search(r"(?:今天|明天|周[一二三四五六日天]|月底|本周|下周|\d+[日天周月]内|\d+月\d+日)", text)),
-        bool(re.search(r"\d+(?:人|家|元|%|次|条|单|小时|天|周|月)", text)),
+        bool(re.search(r"\d+(?:人|位|家|个|元|%|次|条|份|项|场|笔|单|小时|天|周|月)", text)),
+        bool(re.search(r"(?:从|由).{0,12}(?:变成|变为|降到|涨到).{0,12}", text)),
     )
     next_step = contains_any(text, INTERVENTION_CHOICE) or contains_any(
         text, ("选择下一步", "请选下一步", "决定下一步", "下一步并", "下一项", "直接处理")
@@ -430,6 +462,16 @@ def positive_domain_out_of_scope_reason(text: str) -> str | None:
     )
     if translation_action and not commercial_localization:
         return "pure_translation_request"
+    ordinary_text_action = contains_any(
+        text,
+        ("润色", "校对", "错别字", "抽取原文", "情感分类", "语法检查"),
+    )
+    commercial_text_work = contains_any(
+        text,
+        ("营销", "获客", "转化", "发布检查", "标题", "开头", "脚本", "受众", "内容计划"),
+    )
+    if ordinary_text_action and not commercial_text_work:
+        return "ordinary_text_transformation_request"
     relationship_subject = contains_any(text, ("伴侣", "对象", "男朋友", "女朋友", "婚姻", "感情", "分手"))
     relationship_decision = contains_any(text, ("谁更爱", "爱不爱", "要不要分手", "该不该分手", "替我决定", "感情分析"))
     if relationship_subject and relationship_decision and not contains_any(text, BUSINESS):
@@ -544,37 +586,66 @@ def composite_task_signals(task_id: str, text: str) -> tuple[list[str], bool, bo
     elif task_id == "business.explore":
         no_direction = mark(
             "intent:find_direction",
-            bool(re.search(r"(?:没有|还没|尚未|未有|不清楚).{0,10}(?:方向|点子|想法|生意)", text))
-            or bool(re.search(r"(?:找|探索|想找).{0,10}(?:小生意|副业|生意方向|创业方向|机会)", text))
-            or bool(re.search(r"(?:围绕|利用).{0,12}(?:找机会|探索机会)", text)),
+            bool(re.search(r"(?:没有|还没|尚未|未有|不清楚|不知道|不知|没确定|还没确定).{0,14}(?:方向|点子|想法|生意|卖什么|做什么)", text))
+            or bool(re.search(r"(?:找|探索|想找|摸索|挑).{0,14}(?:小生意|副业|生意方向|创业方向|挣钱方向|赚钱方向|创业切口|生意机会|机会)", text))
+            or bool(re.search(r"(?:找|想找).{0,10}(?:能卖|可卖).{0,8}(?:方向|机会)", text))
+            or bool(re.search(r"(?:不知道|不知|没想好).{0,10}(?:拿什么|用什么|靠什么).{0,8}(?:赚钱|挣钱|变现|卖)", text))
+            or bool(re.search(r"(?:围绕|利用|从).{0,16}(?:找机会|探索机会|挑一个.{0,6}机会)", text))
+            or contains_any(text, ("能卖什么", "先做什么生意", "第一轮该试什么")),
+        )
+        commercial_direction = mark(
+            "object:commercial_direction",
+            contains_any(text, ("生意", "副业", "创业", "挣钱", "赚钱", "变现", "卖什么", "能卖", "轻服务", "商业机会")),
         )
         resources = mark(
             "slot:constraints_resources",
-            contains_any(text, ("每周", "预算", "资金", "时间", "会做", "擅长", "认识", "能联系", "能接触", "不想招人")),
+            contains_any(text, ("每周", "周末", "预算", "资金", "只能亏", "时间", "空出", "会做", "做过", "擅长", "认识", "能联系", "能接触", "不想招人", "不囤货")),
         )
-        access = mark("slot:customer_access", contains_any(text, ("店主", "老板", "客户", "工厂", "社群", "渠道", "联系")))
-        strong = no_direction and contains_any(text, ("生意", "副业", "创业")) and (resources or access)
-        primary = no_direction
+        access = mark("slot:customer_access", contains_any(text, ("店主", "老板", "客户", "工厂", "机构", "商户", "花店", "司仪", "社群", "渠道", "联系", "接触")))
+        strong = no_direction and commercial_direction and (resources or access)
+        primary = strong
     elif task_id == "business.diagnose":
         anomaly = mark(
             "object:business_anomaly",
-            contains_any(text, ("下降", "下滑", "掉到", "卖不动", "流失", "退款", "签约率", "转化率", "复购", "续费", "没询盘")),
+            contains_any(text, ("下降", "下滑", "掉到", "变少", "越来越少", "报名越来越少", "老客在走", "老客也在走", "卖不动", "没成交", "没有成交", "零成交", "订单少", "订单反而少", "失联", "终止", "流失", "退款", "签约", "签约率", "转化率", "定金少", "复购", "续费", "没续费", "没人续费", "没询盘", "翻倍")),
         )
         causal = mark(
             "intent:causal_diagnosis",
-            contains_any(text, ("原因", "断在哪", "卡在哪里", "最可能", "证伪", "定位", "为什么", "问题出在", "哪里出了问题", "哪里出问题", "最该验证", "验证的环节"))
+            contains_any(text, ("原因", "断在哪", "哪里断了", "哪一环坏了", "哪个环节坏了", "卡在哪里", "找卡点", "最可能", "证伪", "定位", "为什么", "问题出在", "哪里出了问题", "哪里出问题", "成交漏点", "首要原因", "先查哪", "最该验证", "验证的环节"))
             or bool(re.search(r"(?:请|帮我|先|想|要).{0,8}诊断|诊断.{0,8}(?:生意|业务|原因|问题)", text)),
         )
+        validation_signal = mark(
+            "evidence:offer_validation_signal",
+            contains_any(text, ("有人来问", "有人问", "愿意试", "愿试", "愿给数据", "愿意给数据", "愿意提供数据", "愿意交文件", "演示", "表达过", "承诺给数据")),
+        )
+        idea_hypothesis = mark(
+            "object:business_hypothesis",
+            contains_any(text, ("点子", "生意想法", "业务假设", "服务假设", "产品假设")),
+        )
+        validation_decision = mark(
+            "intent:continue_or_stop_validation",
+            contains_any(text, ("值得试", "能不能做", "能不能卖", "是否继续", "继续验证", "继续投入", "继续还是暂停", "暂停", "还该不该测", "业务假设")),
+        )
         test = mark("output:falsifiable_test", contains_any(text, ("测试", "实验", "证伪", "证据缺口", "排除")))
-        strong = anomaly and causal
-        primary = strong and (test or contains_any(text, ("先找", "找出", "判断")))
+        strong = (anomaly and causal) or ((validation_signal or idea_hypothesis) and validation_decision)
+        primary = strong and (causal or validation_decision)
     elif task_id == "business.pricing":
-        market = mark("slot:offer_or_customer", contains_any(text, OFFER_OR_MARKET) or describes_productized_offer(text))
+        market = mark(
+            "slot:offer_or_customer",
+            contains_any(text, OFFER_OR_MARKET)
+            or describes_productized_offer(text)
+            or (
+                contains_any(text, ("交付", "支持成本", "售后", "工时", "差旅", "退款成本", "容量"))
+                and contains_any(text, ("定价", "报价", "价格", "收费", "套餐", "月付", "年付", "按次", "按项目"))
+            ),
+        )
         peer_compare = contains_any(text, ("公司", "同行", "服务商", "机构")) and contains_any(text, ("比较", "对比", "找出", "研究"))
         decision = mark(
             "intent:pricing_decision",
-            bool(re.search(r"(?:怎么|如何|是否|要不要|应该|该|设计|测试|比较|选择).{0,12}(?:定价|报价|价格|收费|套餐|降价|年包|按次)", text))
-            or bool(re.search(r"(?:定价|报价|价格|收费|套餐|降价|年包|按次).{0,12}(?:怎么|如何|是否|测试|比较|选择|贵|高)", text)),
+            bool(re.search(r"(?:怎么|如何|是否|要不要|应该|该|设计|测试|比较|选择|先做哪).{0,16}(?:定价|报价|价格|收费|套餐|降价|月费|月付|年付|固定费|按结果|年包|按次)", text))
+            or bool(re.search(r"(?:定价|报价|价格|收费|套餐|降价|月费|月付|年付|固定费|按结果|年包|按次).{0,18}(?:怎么|如何|是否|测试|比较|选择|贵|高|从哪里算|从哪算|该收|覆盖|先做哪)", text))
+            or bool(re.search(r"(?:该|应该).{0,8}(?:收多少钱|怎么收钱|怎样收费)|(?:报|收).{0,4}多少", text))
+            or bool(re.search(r"(?:试试|想试|测试|比较).{0,16}(?:按结果|固定月费|月费|年费|按次|按项目)", text)),
         )
         strong = market and decision and (
             not peer_compare or contains_any(text, ("定价", "报价", "价格", "套餐", "降价", "年包", "按次"))
@@ -582,20 +653,23 @@ def composite_task_signals(task_id: str, text: str) -> tuple[list[str], bool, bo
         primary = strong and not peer_compare
     elif task_id == "business.customer":
         roles = _count_true(
-            bool(re.search(r"(?:谁|由谁|护士长|员工|学员|医生|妻子|丈夫|成员|团队).{0,12}(?:使用|操作|执行|每天用|实际用)", text))
+            bool(re.search(r"(?:谁|由谁|护士长|护士|员工|学员|医生|老人|子女|家长|妻子|丈夫|成员|团队).{0,12}(?:使用|操作|执行|每天用|天天用|实际用)", text))
             or contains_any(text, ("使用者", "实际使用者", "每天用的是")),
-            bool(re.search(r"(?:谁|院办|院长|伴侣|家长|采购|妻子|丈夫).{0,12}(?:购买|采购|决定|下单|批准|付费)", text))
+            bool(re.search(r"(?:谁|院办|院长|伴侣|家长|子女|采购|人事|hr|妻子|丈夫).{0,12}(?:购买|采购|选择|拍板|审批|决定|下单|批准|付费|付款)", text))
             or contains_any(text, ("购买决策者", "决定是否付费", "决定买不买")),
-            bool(re.search(r"(?:谁|财务|预算).{0,8}(?:付款|付费|买单|出钱|来自)", text)),
+            bool(re.search(r"(?:谁|财务|预算|子女|家长|单位).{0,8}(?:审批|付款|付费|买单|出钱|来自)", text)),
             bool(re.search(r"(?:谁|护士|患者|团队).{0,8}(?:受益|获益|得到)", text)),
-            contains_any(text, ("推荐者", "影响者", "介绍人", "转介绍")),
+            contains_any(text, ("推荐者", "影响者", "介绍人", "转介绍", "社区转介", "渠道转介")),
         )
         mark("object:customer_roles", roles >= 2)
         selection = mark(
             "intent:customer_selection",
-            contains_any(text, ("分清", "界定", "收窄", "最早客户", "首批客户", "访谈对象", "客户定义", "谁会买", "谁掏钱", "瞄准谁", "先确定早期", "先确定谁")),
+            contains_any(text, ("分清", "界定", "收窄", "第一批找谁", "访谈对象", "客户定义", "谁会买", "谁掏钱", "最该卖给谁", "瞄准谁", "先找谁谈", "最早接触对象", "先确定早期", "先确定谁"))
+            or bool(re.search(r"(?:首批|第一批|最早|早期).{0,12}(?:找谁|选谁|该找|值得验证|访谈|接触)", text))
+            or bool(re.search(r"(?:首轮|第一轮).{0,12}(?:先找|该找|找哪|访谈哪).{0,8}(?:方|人|角色|对象|谈)?", text)),
         )
-        strong = (roles >= 2 and selection) or contains_any(text, ("收窄早期客户", "形成客户定义和访谈测试"))
+        commercial_customer = contains_any(text, ("卖给", "服务", "客户", "购买", "付钱", "付款", "采购", "首批", "第一批"))
+        strong = (roles >= 2 and selection) or (selection and commercial_customer) or contains_any(text, ("收窄早期客户", "形成客户定义和访谈测试"))
         primary = strong
     elif task_id == "research.benchmark":
         compare = mark(
@@ -669,21 +743,25 @@ def composite_task_signals(task_id: str, text: str) -> tuple[list[str], bool, bo
         goal_ready = mark(
             "slot:observable_goal",
             contains_any(text, ("可观察目标", "目标是", "周一前", "周二前", "周三前", "周四前", "周五前", "周末前"))
-            or bool(re.search(r"(?:今天|明天|本周|周[一二三四五六日天]).{0,12}\d+(?:位|个|次|条|单)", text)),
+            or bool(re.search(r"(?:今天|今晚|明天|本周|周[一二三四五六日天]).{0,16}\d+(?:位|个|次|条|封|单)", text))
+            or contains_any(text, ("今天", "今晚", "现在", "本周要", "周一前", "周二前", "周三前", "周四前", "周五前", "剩二十分钟", "剩四十分钟")),
         )
         failed_attempt = mark(
             "evidence:failed_attempt",
-            contains_any(text, ("没有发出", "没发出", "没有行动", "没行动", "一直修改", "拖到", "打开通讯录", "写完名单")),
+            contains_any(text, ("没有发出", "没发出", "未发送", "没发送", "没有行动", "没行动", "没动手", "没有推进", "没推进", "仍空白", "一直修改", "反复改", "拖到", "打开通讯录", "写完名单", "名单已经列好", "名单已有", "没拨号")),
         )
         friction = mark(
             "object:action_friction",
-            contains_any(text, ("担心被拒绝", "怕被拒绝", "最担心", "卡在", "一直研究", "反复修改", "拖延")),
+            contains_any(text, ("担心被拒绝", "怕被拒绝", "怕对方", "担心熟人", "最担心", "卡在", "一直研究", "学了", "看资料", "资料看了", "想了很久", "反复分析", "反复修改", "反复改", "完美主义", "重做计划", "一直换模板", "拖延")),
         )
         next_action = mark(
             "output:next_action",
-            contains_any(text, ("下一动作", "下一步", "最小一步", "最小动作", "最早断点", "立即动作", "今天先做")),
+            contains_any(text, ("下一动作", "下一步", "第一步", "最小一步", "最小动作", "小动作", "一个能完成", "能完成的动作", "迈出第一步", "先动哪一下", "跨过最早", "最早断点", "立即动作", "今天先做", "只给最小动作")),
         )
-        strong = goal_ready and failed_attempt and friction and next_action
+        direct_intervention = contains_any(text, ("直接介入", "帮我介入"))
+        strong = (goal_ready and failed_attempt and friction and next_action) or (
+            failed_attempt and friction and direct_intervention
+        )
         primary = strong
     elif task_id == "personal.learning":
         performance = mark(
@@ -733,14 +811,19 @@ def composite_task_signals(task_id: str, text: str) -> tuple[list[str], bool, bo
     elif task_id == "governance.knowledge":
         knowledge_object = mark(
             "object:knowledge_collection",
-            contains_any(text, ("知识库", "知识目录", "知识资产", "文件夹知识", "资料库", "笔记库", "这个目录", "文件目录")),
+            contains_any(text, ("知识库", "知识目录", "知识资产", "知识体系", "文件夹知识", "资料库", "笔记库", "知识包", "知识原子", "概念", "词条", "检索样例", "检索问题", "访谈记录", "访谈纪要", "项目复盘", "材料", "资料", "手册", "这个目录", "文件目录")),
         )
         root = mark("slot:exact_root", explicit_path_present(text) or contains_any(text, ("指定目录", "获批目录", "范围只限")))
         inventory = mark(
             "intent:knowledge_inventory",
-            contains_any(text, ("只读清单", "只读盘点", "盘点", "清单", "重复", "来源不明", "过期资料", "索引", "版本规则", "版本冲突", "敏感风险", "摄取计划")),
+            contains_any(text, ("只读清单", "只读盘点", "盘点", "清单", "重复", "查重", "冲突", "来源不明", "过期资料", "索引", "版本规则", "版本冲突", "敏感风险", "权利", "摄取计划", "提炼", "整理成", "分析成", "纳入", "变更候选", "候选原子", "候选概念", "确认后")),
         )
-        strong = (knowledge_object or root) and root and inventory
+        bounded = mark(
+            "boundary:candidate_or_read_only",
+            contains_any(text, ("只读", "先不写入", "不入库", "禁止写入", "不要写入", "暂不改", "不改文件", "只生成候选", "先给预览", "更新预览", "可确认", "等我确认", "确认后")),
+        )
+        known_scope = root or contains_any(text, ("现有知识体系", "项目知识库", "当前知识库"))
+        strong = (knowledge_object or root) and inventory and (known_scope or bounded)
         primary = strong
     elif task_id == "governance.workbench":
         consumers = mark("slot:multiple_agents", contains_any(text, ("多端", "三套 agent", "多个 agent", "消费者", "同时服务", "内部网页助手", "离线检索器", "sales-agent", "research-agent", "ops-agent")))
@@ -761,10 +844,11 @@ def composite_task_signals(task_id: str, text: str) -> tuple[list[str], bool, bo
         strong = skill and audit and risk
         primary = strong
     elif task_id == "debate.run":
-        positions = mark("intent:independent_positions", contains_any(text, ("不同立场", "多方", "独立角色", "独立分析", "独立论证", "分别论证", "各自论证", "支持和反对")))
-        challenge = mark("output:cross_challenge", contains_any(text, ("互相挑战", "互相质疑", "互相质询", "交叉质询", "证据互相冲突")))
-        decision = mark("slot:decision_question", contains_any(text, ("是否", "要不要", "决定留给我", "最后决定", "供我选择", "未来一个季度")))
-        strong = positions and challenge and decision
+        positions = mark("intent:independent_positions", contains_any(text, ("不同立场", "独立视角", "几个独立视角", "三个独立视角", "多方", "多个 agent", "多 agent", "多个智能体", "多智能体", "三名独立", "独立角色", "独立分析", "独立论证", "独立审查", "分别审查", "分别论证", "各自举证", "各自论证", "支持和反对", "支持、反对", "赞成", "主张留守")))
+        challenge = mark("output:cross_challenge", contains_any(text, ("互相挑战", "互相反驳", "互相质疑", "互相质询", "彼此挑", "挑最弱前提", "互审", "交叉质疑", "交叉质询", "第二轮", "两轮", "攻击对方", "攻击最弱", "证据互相冲突")))
+        decision = mark("slot:decision_question", contains_any(text, ("是否", "要不要", "方案", "决策", "定价", "继续投", "续投", "马上停", "继续", "暂停", "关店", "开店", "砍掉", "订阅制", "首个市场", "决定留给我", "结论留给我", "最后决定", "供我选择", "最终选项留给我", "保留分歧", "未来一个季度")))
+        two_sided = contains_any(text, ("两边论证", "两边都论证", "正反两边", "支持和反对", "继续投和马上停"))
+        strong = positions and decision and (challenge or two_sided)
         primary = strong
     return signals, strong, primary
 
@@ -795,7 +879,19 @@ def score_tasks(text: str, rows: list[dict]) -> list[dict]:
             hits = [hit for hit in hits if hit != "状态"]
         hits = list(dict.fromkeys(hits))
         task_text = " ".join(eligible_clauses)
+        task_business_context = contains_any(task_text, BUSINESS)
+        if task_id == "content.publish_check" and not has_positive_publish_intent(task_text):
+            continue
         composite_signals, composite_strong, primary_request = composite_task_signals(task_id, task_text)
+        if task_id in {"business.explore", "business.diagnose", "business.pricing", "business.customer"}:
+            commercial_context = (
+                task_business_context
+                or describes_productized_offer(task_text)
+                or contains_any(task_text, ("挣钱", "赚钱", "变现", "能卖", "卖什么", "商业机会"))
+                or composite_strong
+            )
+            if not commercial_context:
+                continue
         if not hits and not composite_signals:
             continue
         ordinary_only = bool(hits) and all(hit.casefold() in ORDINARY_TASK_TERMS for hit in hits)
@@ -851,6 +947,13 @@ def score_tasks(text: str, rows: list[dict]) -> list[dict]:
                 contains_any(text, ("目标", "愿望", "想在", "三个月", "十二周", "未来90天"))
                 and contains_any(text, ("可观察", "能验收", "验收的状态", "检查点"))
             ),
+            "personal.action": contains_any(
+                text,
+                ("制定下一步行动", "给最小一步", "给最小动作", "只给最小动作", "今天先做", "直接介入"),
+            ) and contains_any(
+                text,
+                ("行动", "动作", "拖延", "不行动", "没动手", "没有推进", "卡在", "反复"),
+            ),
             "personal.learning": (
                 contains_any(text, ("练习", "演练"))
                 and contains_any(text, ("评分", "反馈", "量表"))
@@ -886,6 +989,23 @@ def score_tasks(text: str, rows: list[dict]) -> list[dict]:
             score = max(score, 0.6)
         if task_id == "debate.run" and composite_strong:
             score = max(score, 0.98)
+        if task_id == "personal.action" and not task_business_context and not composite_strong and not strong_intent:
+            action_signal_count = sum(
+                signal in composite_signals
+                for signal in (
+                    "slot:observable_goal",
+                    "evidence:failed_attempt",
+                    "object:action_friction",
+                    "output:next_action",
+                )
+            )
+            if action_signal_count < 2:
+                score = min(score, 0.45)
+        if task_id == "debate.run" and not composite_strong:
+            has_positions = "intent:independent_positions" in composite_signals
+            has_challenge = "output:cross_challenge" in composite_signals
+            if not (has_positions and has_challenge):
+                score = min(score, 0.45)
         clarification_first = contains_any(
             text,
             ("问题定义", "定义问题", "把问题说清", "区分现象和假设", "区分事实、原因假设", "先不讨论解决方案"),
@@ -898,7 +1018,7 @@ def score_tasks(text: str, rows: list[dict]) -> list[dict]:
         )
         if task_id == "runtime.status" and restore_request:
             score = min(score, 0.78)
-        if business_context and hits and not ordinary_only and not primary_request and not composite_strong and (task_id.startswith(("business.", "product.", "content.", "research.")) or task_id == "personal.action"):
+        if task_business_context and hits and not ordinary_only and not primary_request and not composite_strong and (task_id.startswith(("business.", "product.", "content.", "research.")) or task_id == "personal.action"):
             score += 0.1
         signals = list(dict.fromkeys([*hits, *composite_signals]))
         scored.append(
@@ -935,8 +1055,14 @@ def has_action_business_conflict(candidates: list[dict], dynamic: bool) -> bool:
     )
     other_supported = any(
         candidate["task_id"].startswith(BUSINESS_TASK_PREFIXES)
-        and candidate["score"] >= 0.45
         and candidate.get("signals")
+        and (
+            candidate["score"] >= 0.65
+            or (
+                candidate["task_id"] == "research.benchmark"
+                and any(signal in {"竞品", "同行", "对标分析"} for signal in candidate["signals"])
+            )
+        )
         for candidate in candidates
     )
     return action_supported and other_supported
@@ -948,8 +1074,22 @@ def has_compound_task_conflict(text: str, candidates: list[dict]) -> bool:
         ("降价还是改交付", "定价还是改交付", "改产品还是定价", "产品还是定价", "价格还是产品"),
     ):
         return False
-    if candidates and candidates[0]["task_id"] == "business.diagnose" and contains_any(
-        text, ("最该验证", "验证的环节", "可证伪原因", "找出卡在哪里")
+    if (
+        candidates
+        and candidates[0]["task_id"] == "debate.run"
+        and candidates[0].get("strong")
+        and not contains_any(text, ("两个都", "同时还", "并且还", "另外还"))
+    ):
+        return False
+    if candidates and candidates[0]["task_id"] == "business.pricing" and candidates[0].get("primary"):
+        pricing_alternatives = contains_any(
+            text,
+            ("按面积", "按工时", "按项目", "按结果", "固定月费", "月费", "按月", "按年", "月付", "年付", "套餐", "计价", "收费"),
+        )
+        if pricing_alternatives:
+            return False
+    if candidates and candidates[0]["task_id"] == "business.diagnose" and candidates[0].get("primary") and contains_any(
+        text, ("最该验证", "验证的环节", "可证伪原因", "找出卡在哪里", "原因", "断在哪", "哪里断", "先查", "继续还是暂停", "是否继续")
     ):
         return False
     task_ids = {candidate["task_id"] for candidate in candidates if candidate["score"] >= 0.45}
@@ -961,7 +1101,7 @@ def has_compound_task_conflict(text: str, candidates: list[dict]) -> bool:
         return False
     explicit_alternative = contains_any(
         text,
-        ("还是", "或者", "也可能", "可能是", "都行", "二选一", "选一个", "先做哪个"),
+        ("还是", "或者", "也可能", "可能是", "都行", "二选一", "两个都", "选一个", "先做哪个"),
     )
     threshold = 0.45 if explicit_alternative else 0.65
     supported = [candidate for candidate in candidates if candidate["score"] >= threshold]
@@ -990,8 +1130,8 @@ def has_compound_task_conflict(text: str, candidates: list[dict]) -> bool:
 
 
 def asks_for_route_question(text: str) -> bool:
-    question_request = contains_any(text, ("只问一个", "问一个", "用一个问题", "一个能决定"))
-    route_choice = contains_any(text, ("决定路线", "决定先后", "哪个更该先", "还是先", "研究路径"))
+    question_request = contains_any(text, ("只问一个", "问一个", "用一个问题", "一个能决定", "一个最能决定", "先问我一个"))
+    route_choice = contains_any(text, ("决定路线", "决定先后", "哪个更该先", "还是先", "研究路径", "该走", "客户研究还是", "价格测试"))
     return question_request and route_choice
 
 
@@ -1011,6 +1151,18 @@ def required_slot_clarification(task_id: str, text: str) -> str | None:
         )
         if comparison_scope < 2:
             return "benchmark_scope_or_learning_goal_missing"
+    elif task_id == "business.pricing":
+        pricing_context = contains_any(
+            text,
+            (
+                "客户", "用户", "购买者", "付费者", "企业", "门店", "公司", "市场",
+                "交付", "工时", "成本", "容量", "售后", "退款", "差旅", "当前价", "现价", "毛利",
+            ),
+        )
+        if not pricing_context and bool(
+            re.search(r"(?:这项|这个|该项|这种).{0,4}(?:服务|产品).{0,10}(?:怎么|如何|怎样|该).{0,8}(?:收钱|收费|定价|报价)", text)
+        ):
+            return "pricing_customer_unit_or_cost_missing"
     elif task_id == "product.define":
         product_slots = _count_true(
             contains_any(text, ("用户", "客户", "使用者", "团队", "员工")),

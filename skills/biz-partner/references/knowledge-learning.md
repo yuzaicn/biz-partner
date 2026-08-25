@@ -39,13 +39,32 @@ another semantic store.
 
 ## Candidate and decision files
 
-Start from `templates/knowledge-change-set.json`. The authoritative shape is
-`references/schemas/knowledge-change-set.schema.json`. `analyze` validates the
-record contracts and reports exact duplicates, bounded lexical near matches,
-concept alias collisions, dependency cycles, credentials, unnecessary personal
-data, private-rights failures, and a stale target base.
-The all-zero hashes in the templates are placeholders and intentionally fail
-runtime validation until replaced with hashes of the exact material.
+Start from `templates/knowledge-change-set.json`. It contains one worked row for
+every supported candidate kind: source, atom, concept, method, atom relation,
+and retrieval case. Replace its project path, source path, wording, IDs, dates,
+and hashes with values from the exact material; do not treat the example hashes
+as evidence for new content. `references/schemas/knowledge-change-set.schema.json`
+is authoritative for the outer document. `analyze`, the record validators, and
+Atom v2 define the concrete source, atom, concept, method, relation, and retrieval
+case contracts. `analyze` also reports exact duplicates, bounded lexical near
+matches, concept alias collisions, dependency cycles, credentials, unnecessary
+personal data, private-rights failures, and a stale target base.
+
+The report keeps `ready_for_plan` for existing callers and also separates two
+questions. `structurally_ready` covers the change-set contract, graph, rights,
+duplicates, and base revision. `evidence_verification` reports `verified`,
+`failed`, `unverified`, or `not_applicable`. For an absolute local `file`
+locator, `analyze` reads the file and compares its SHA-256 with the referenced
+source record. Only after that whole-file hash matches, it parses `locator.lines`
+as a one-based inclusive range, splits the file using its original line breaks,
+joins the selected lines with `\n`, and compares that UTF-8 SHA-256 with
+`quote_hash`. A missing, unreadable, non-UTF-8, hash-mismatched, malformed, or
+out-of-bounds locator is `failed` and cannot be planned. This proves byte and
+locator consistency only; it is not a semantic, factual, or rights review.
+Relative files without a declared root, live URLs, and conversation or session
+sources remain `unverified`; the script does not fetch or promote them.
+`ready_for_plan` is true only when the structure is ready and evidence
+verification has not failed.
 
 The change-set itself has no final-review status. Use
 `templates/knowledge-decisions.json` to record one `accept`, `reject`, or
@@ -53,6 +72,10 @@ The change-set itself has no final-review status. Use
 change-set hash and that candidate's exact hash. Editing the base, target,
 candidate, or decision invalidates the old plan. When `expires_at` is present,
 the change-set stops working at that time and must be regenerated.
+The example decisions file covers all seven current example candidates. After
+changing any candidate, run `analyze` again and copy its new `change_set_hash`
+and every reported `candidate_hash` into the decisions file; stale or guessed
+hashes are not reusable.
 
 An `atom_relation` candidate may only add a relation to an atom added in the
 same accepted change-set. This preserves add-only behavior; existing atoms are
@@ -89,7 +112,9 @@ Changing the active revision, target, candidates, decisions, or result hashes
 causes the command to fail closed. Before confirmation, the target pack is not
 created. An accepted version is written to `versions/vNNNNNN`, checked through
 the existing KnowledgePack private loader, and activated by an atomic
-`active.json` replacement.
+`active.json` replacement. Before writing, both `versions` and the target
+`vNNNNNN` are rejected if they are symbolic links, and their resolved paths
+must remain inside the pack's `versions` directory.
 
 The first confirmed write also creates a fixed `.gitignore` inside the pack. It
 keeps the private versions out of an ordinary `git add .`. It does not protect
@@ -112,16 +137,21 @@ Plan and confirm a rollback separately:
 ```bash
 python3 scripts/knowledge_learning.py plan-rollback \
   --pack /absolute/project/.biz-partner/knowledge-packs/my-business \
-  --to-revision 1
+  --to-revision 0
 python3 scripts/knowledge_learning.py rollback \
   --pack /absolute/project/.biz-partner/knowledge-packs/my-business \
-  --to-revision 1 \
+  --to-revision 0 \
   --expected-revision 3 --confirmation-hash sha256:...
 ```
 
 Rollback never deletes history. It creates the next revision with the selected
 older content and records `restores_revision` in both its manifest and active
-pointer.
+pointer. Revision `0` means the empty state before the first write; restoring it
+creates a new revision containing five empty JSONL files and keeps every older
+version directory intact. Verification requires a revision-0 rollback to carry
+the empty-file SHA-256 for all five files and zero for every count. A rollback
+to revision `N` must reproduce exactly the `files` and `counts` maps in revision
+`N`'s manifest.
 
 ## Version layout
 

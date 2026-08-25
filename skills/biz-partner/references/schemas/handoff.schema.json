@@ -21,7 +21,7 @@
           "claim_id": {"type": "string", "minLength": 1},
           "kind": {"type": "string", "minLength": 1},
           "assertion": {"type": "string", "minLength": 1},
-          "supporting_refs": {"type": "array", "items": {"type": "string"}},
+          "supporting_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
           "strength": {"type": "string"}
         }
       }
@@ -66,13 +66,28 @@
         "properties": {
           "action": {"type": "string"},
           "approval_id": {"type": "string"},
+          "authorization_ref": {"type": "string", "minLength": 1},
           "target": {"type": "string"},
           "body_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
           "scope_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
           "approved_at": {"type": "string", "format": "date-time"},
           "expires_at": {"type": "string", "format": "date-time"},
-          "idempotency_key": {"type": "string"}
-        }
+          "idempotency_key": {"type": "string"},
+          "rollback_ref": {"type": "string", "minLength": 1},
+          "backup_ref": {"type": "string", "minLength": 1},
+          "second_confirmation_ref": {"type": "string", "minLength": 1},
+          "recovery_check_ref": {"type": "string", "minLength": 1}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"action": {"const": "write_local"}}, "required": ["action"]},
+            "then": {"required": ["approval_id", "authorization_ref", "target", "scope_hash", "approved_at", "expires_at", "rollback_ref"]}
+          },
+          {
+            "if": {"properties": {"action": {"const": "destructive"}}, "required": ["action"]},
+            "then": {"required": ["approval_id", "authorization_ref", "target", "scope_hash", "approved_at", "expires_at", "rollback_ref", "backup_ref", "second_confirmation_ref"]}
+          }
+        ]
       }
     },
     "proposed_patches": {"type": "array"},
@@ -90,15 +105,36 @@
         "required": ["action", "status"],
         "properties": {
           "action": {"enum": ["read_local", "write_local", "network_read", "external_write", "destructive", "sensitive"]},
-          "status": {"type": "string", "minLength": 1},
+          "status": {"enum": ["attempted", "completed", "failed", "blocked"]},
           "tool": {"type": "string"},
           "approval_id": {"type": "string"},
+          "authorization_ref": {"type": "string", "minLength": 1},
           "target": {"type": "string"},
           "body_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
           "scope_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
           "idempotency_key": {"type": "string"},
-          "occurred_at": {"type": "string", "format": "date-time"}
-        }
+          "occurred_at": {"type": "string", "format": "date-time"},
+          "rollback_ref": {"type": "string", "minLength": 1},
+          "backup_ref": {"type": "string", "minLength": 1},
+          "second_confirmation_ref": {"type": "string", "minLength": 1},
+          "recovery_check_ref": {"type": "string", "minLength": 1}
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {"action": {"const": "write_local"}, "status": {"const": "completed"}},
+              "required": ["action", "status"]
+            },
+            "then": {"required": ["approval_id", "authorization_ref", "target", "scope_hash", "occurred_at", "rollback_ref"]}
+          },
+          {
+            "if": {
+              "properties": {"action": {"const": "destructive"}, "status": {"const": "completed"}},
+              "required": ["action", "status"]
+            },
+            "then": {"required": ["approval_id", "authorization_ref", "target", "scope_hash", "occurred_at", "rollback_ref", "backup_ref", "second_confirmation_ref", "recovery_check_ref"]}
+          }
+        ]
       }
     },
     "error": {}

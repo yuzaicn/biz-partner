@@ -48,10 +48,21 @@ def resolve_root(raw: str) -> Path:
 
 
 def paths_for(root: Path) -> dict[str, Path]:
-    state_dir = root / STATE_DIR
+    project_root = root.expanduser().resolve()
+    state_dir = project_root / STATE_DIR
+    if state_dir.is_symlink():
+        raise StateError(f"state directory must not be a symbolic link: {state_dir}")
+    database = state_dir / DATABASE_FILE
+    if database.is_symlink():
+        raise StateError(f"state database must not be a symbolic link: {database}")
+    for label, path in (("state directory", state_dir), ("state database", database)):
+        try:
+            path.resolve().relative_to(project_root)
+        except ValueError as exc:
+            raise StateError(f"{label} must resolve within project root: {path}") from exc
     return {
         "dir": state_dir,
-        "database": state_dir / DATABASE_FILE,
+        "database": database,
     }
 
 
@@ -133,11 +144,17 @@ def decode_state_row(row: sqlite3.Row | None) -> dict[str, Any]:
     return value
 
 
-def replay_event_rows(rows: list[sqlite3.Row]) -> dict[str, Any]:
+def replay_event_rows(
+    rows: list[sqlite3.Row],
+    *,
+    as_of: datetime | None = None,
+) -> dict[str, Any]:
     if not rows:
         raise StateError("state database has no events")
     expected_version = 0
     replayed: dict[str, Any] | None = None
+    historical: dict[str, Any] | None = None
+    future_reached = False
     for row in rows:
         try:
             event = json.loads(row["event_json"])
@@ -156,8 +173,22 @@ def replay_event_rows(rows: list[sqlite3.Row]) -> dict[str, Any]:
         if not isinstance(state_after, dict) or digest(state_after) != event.get("state_hash"):
             raise StateError(f"event state hash mismatch at version {version}")
         replayed = state_after
+        if as_of is not None and version == 1:
+            initialized_at = parse_datetime(event.get("timestamp"))
+            if as_of < initialized_at:
+                raise StateError("as_of precedes state initialization")
+            historical = state_after
+        elif as_of is not None and not future_reached:
+            effective_at = parse_datetime(event.get("confirmed_at", event.get("timestamp")))
+            if effective_at <= as_of:
+                historical = state_after
+            else:
+                future_reached = True
         expected_version = version
     assert replayed is not None
+    if as_of is not None:
+        assert historical is not None
+        return historical
     return replayed
 
 
@@ -196,6 +227,17 @@ def replay_state(root: Path) -> dict[str, Any]:
             "SELECT sequence, event_type, state_version, event_json FROM events ORDER BY sequence"
         ).fetchall()
     return replay_event_rows(rows)
+
+
+def replay_state_as_of(root: Path, *, as_of: str | datetime) -> dict[str, Any]:
+    instant = resolve_as_of(as_of)
+    with closing(connect_store(root)) as connection:
+        connection.execute("BEGIN")
+        load_consistent_state(connection)
+        rows = connection.execute(
+            "SELECT sequence, event_type, state_version, event_json FROM events ORDER BY sequence"
+        ).fetchall()
+        return replay_event_rows(rows, as_of=instant)
 
 
 def parse_datetime(value: str) -> datetime:
@@ -304,7 +346,9 @@ def visible_state(state: dict[str, Any], *, as_of: str | datetime | None = None)
 
 
 def load_visible_state(root: Path, *, as_of: str | datetime | None = None) -> dict[str, Any]:
-    return visible_state(load_state(root), as_of=as_of)
+    instant = resolve_as_of(as_of)
+    state = replay_state_as_of(root, as_of=instant)
+    return visible_state(state, as_of=instant)
 
 
 def validate_proposal(value: dict[str, Any]) -> list[str]:
@@ -401,9 +445,22 @@ def apply_proposal(state: dict[str, Any], proposal: dict[str, Any]) -> None:
         "expires_at": proposal["expires_at"],
         "deletion_key": proposal["deletion_key"],
     }
+    suppression_keys(state)
+    state["suppressions"] = [
+        tombstone
+        for tombstone in state["suppressions"]
+        if not (
+            tombstone["namespace"] == namespace
+            and tombstone["subject"] == subject
+        )
+    ]
     if namespace in {"user_profile", "project_state"}:
         state[namespace][subject] = record
     else:
+        if operation == "supersede":
+            state[namespace] = [
+                current for current in state[namespace] if current.get("subject") != subject
+            ]
         state[namespace].append(record)
 
 
@@ -518,6 +575,10 @@ def cmd_commit(args: argparse.Namespace) -> int:
         raise StateError("confirmation hash does not match proposal, root, and state version")
     if not valid_datetime(args.confirmed_at):
         raise StateError("confirmed_at must be an ISO 8601 date-time with timezone")
+    confirmed_at = parse_datetime(args.confirmed_at)
+    proposal_created_at = parse_datetime(proposal["created_at"])
+    if confirmed_at < proposal_created_at:
+        raise StateError("confirmed_at must be at or after proposal created_at")
     connection = connect_store(root)
     try:
         connection.execute("BEGIN IMMEDIATE")
@@ -526,6 +587,8 @@ def cmd_commit(args: argparse.Namespace) -> int:
             raise StateError(
                 f"state version conflict: expected {args.expected_version}, current {state['state_version']}"
             )
+        if confirmed_at < parse_datetime(state.get("updated_at")):
+            raise StateError("confirmed_at must be at or after current state updated_at")
         apply_proposal(state, proposal)
         state["state_version"] += 1
         state["updated_at"] = args.confirmed_at

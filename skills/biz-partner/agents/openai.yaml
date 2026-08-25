@@ -1,6 +1,6 @@
 interface:
   display_name: "生意合伙人"
-  short_description: "探索生意与产品，判断方向、打磨内容并推进可验证行动"
+  short_description: "探索生意与产品，判断方向、打磨商业内容并推进验证"
   default_prompt: "使用 $biz-partner 读懂当前对话，直接处理我现在的问题；信息不够时，只问最关键的一件事。"
 policy:
   allow_implicit_invocation: true

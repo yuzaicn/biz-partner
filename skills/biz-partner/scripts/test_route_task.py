@@ -25,6 +25,12 @@ class RouteTaskTests(unittest.TestCase):
         self.assertEqual(result["state"], "out_of_scope", result)
         self.assertEqual(result["reason"], reason, result)
 
+    def assert_intervene(self, text: str, expected_leaf: str) -> None:
+        result = route(text)
+        self.assertEqual(result["state"], "route", result)
+        self.assertEqual(result["selected_task"], "runtime.intervene", result)
+        self.assertEqual(result["recommended_leaf_task"], expected_leaf, result)
+
     def test_no_idea(self) -> None:
         self.assert_route("/biz 我想做生意，但是没有点子。", "business.explore")
 
@@ -76,8 +82,56 @@ class RouteTaskTests(unittest.TestCase):
     def test_explicit_publish_check(self) -> None:
         self.assert_route("/biz publish-check 检查这条小红书文案。", "content.publish_check")
 
+    def test_negated_publish_intent_does_not_match_positive_phrase(self) -> None:
+        for text in (
+            "这个价格表还不准备发布，先帮我检查客户是否愿意买。",
+            "这周计划不发布内容，先处理客户流失问题。",
+        ):
+            with self.subTest(text=text):
+                result = route(text)
+                self.assertNotEqual(result.get("selected_task"), "content.publish_check", result)
+                self.assertFalse(
+                    any(candidate["task_id"] == "content.publish_check" for candidate in result["top_candidates"]),
+                    result,
+                )
+
+    def test_advertising_service_failure_is_business_diagnosis(self) -> None:
+        result = route("我们的广告代投服务卖不动，已访谈三个客户，帮我找出卡在哪里。")
+        self.assertEqual(result["state"], "route", result)
+        self.assertEqual(result["selected_task"], "business.diagnose", result)
+        self.assertFalse(
+            any(candidate["task_id"] == "content.publish_check" for candidate in result["top_candidates"]),
+            result,
+        )
+
+    def test_content_safety_check_does_not_require_the_word_publish(self) -> None:
+        self.assert_route(
+            "帮我检查这篇稿子有没有敏感词、导流和受限内容。",
+            "content.publish_check",
+        )
+
+    def test_advertising_noun_alone_is_not_a_content_safety_check(self) -> None:
+        result = route("广告代投服务已经卖了三个月，帮我分析客户为什么不续费。")
+        self.assertEqual(result["selected_task"], "business.diagnose", result)
+        self.assertFalse(
+            any(candidate["task_id"] == "content.publish_check" for candidate in result["top_candidates"]),
+            result,
+        )
+
     def test_explicit_debate(self) -> None:
         self.assert_route("/biz debate 多角度审查这个商业定价。", "debate.run")
+
+    def test_natural_multi_agent_discussion_routes_to_debate(self) -> None:
+        self.assert_route(
+            "请用多个 Agent 做多轮深度讨论和交叉质疑，判断这个生意要不要继续。",
+            "debate.run",
+        )
+
+    def test_repeated_analysis_routes_to_one_action(self) -> None:
+        self.assert_route(
+            "我已经反复分析很久，今天只想推进一步。",
+            "personal.action",
+        )
 
     def test_explicit_knowledge(self) -> None:
         self.assert_route("/biz knowledge 建立文件夹知识库。", "governance.knowledge")
@@ -473,6 +527,134 @@ class RouteTaskTests(unittest.TestCase):
                 result = route(text)
                 self.assertEqual(result["state"], "route", result)
                 self.assertEqual(result["selected_task"], task_id, result)
+
+    def test_reported_natural_route_gaps(self) -> None:
+        expected = {
+            "我周末有七小时，会做表格自动化，认识几家培训机构，想找个能卖的方向": "business.explore",
+            "我想给小团队做客户回访自动化，这个点子值得试吗": "business.diagnose",
+            "访问量涨了但订单反而少了，帮我诊断生意哪里断了": "business.diagnose",
+            "支持成本和交付范围都不清楚，现在报价该从哪里算": "business.pricing",
+            "别做发布计划，先告诉我这种服务最该卖给谁": "business.customer",
+            "学了三周还是没动手，今天给我一个能完成的小动作": "personal.action",
+            "把这份访谈记录提炼成知识原子和方法，先只分析不入库": "governance.knowledge",
+            "请三名独立Agent分别审查，然后互相反驳这个定价方案": "debate.run",
+        }
+        for text, task_id in expected.items():
+            with self.subTest(text=text):
+                self.assert_route(text, task_id)
+
+    def test_reported_intervention_route_gaps(self) -> None:
+        expected = {
+            "/biz intervene 健身房流失提醒已有演示和数据承诺，现在要决定继续还是暂停。": "business.diagnose",
+            "/biz intervene 牙科回访已有八家客户，续费下降，也有退订访谈，请判断先查哪里。": "business.diagnose",
+            "/biz intervene 客户与交付已经明确，但工时、差旅和售后成本未知，先做哪项定价工作。": "business.pricing",
+            "/biz intervene 这不是文案任务；员工使用、人事选择、财务审批，先找谁谈。": "business.customer",
+            "/biz intervene 今晚要完成服务说明，我因完美主义改标题两小时，还剩四十分钟，只给最小动作。": "personal.action",
+            "/biz intervene 材料在 /workspace/review/interviews，项目知识库根目录是 /workspace/project/.biz-partner/knowledge-packs/interviews；只生成候选原子、概念和检索样例，禁止写入。": "governance.knowledge",
+            "/biz intervene 是否关店还是再试三个月已有亏损和订单证据，请让支持、反对和风险角色交叉质疑，保留分歧。": "debate.run",
+        }
+        for text, task_id in expected.items():
+            with self.subTest(text=text):
+                self.assert_intervene(text, task_id)
+
+    def test_unseen_route_rewrites(self) -> None:
+        expected = {
+            "我在县城做了六年婚庆摄影，周末能空出一天，认识二十多家花店和司仪，但还没确定能卖什么轻服务，帮我从这些关系里挑一个最先验证的生意机会。": "business.explore",
+            "手头最多只能亏三千元，我会给宠物店拍短视频，也能每周联系五位店主；想摸索一个不用囤货的创业切口，第一轮该试什么？": "business.explore",
+            "我们给连锁牙科做员工培训，最近试听人数没变，签约却从十家掉到两家；先判断损耗发生在信任、方案还是审批，并给一个能排除错误原因的试验。": "business.diagnose",
+            "社区团购的订单还在涨，但退款和客服工时一起翻倍，我想知道是承诺过头、履约失配还是客群选错，先查哪条证据？": "business.diagnose",
+            "我的上门收纳服务每单要占两名员工四小时，企业客户常要求季度结算；请判断按面积、按工时还是按项目报价更能覆盖容量波动。": "business.pricing",
+            "我们卖给培训机构的排课工具有基础版和协作版，现有用户集中使用高成本客服；想设计一轮月付与年付套餐测试，观察哪类人愿意升级。": "business.pricing",
+            "我们做养老院夜班交接工具，护理员天天操作，院长拍板，财务付款；请收窄首轮访谈该找哪一种角色，以及他们真正想避免的损失。": "business.customer",
+            "我准备卖一套家庭厨房过敏原管理卡，家长购买、孩子使用、营养师可能推荐；先界定最早值得验证的购买者和触发场景。": "business.customer",
+            "周五前我要约到三位店主演示，名单已经列好，却每天都在改开场白，怕对方当场拒绝；替我定一个今天就能发出的最小动作和停止条件。": "personal.action",
+            "本周要完成两次收费访谈，我已经打开通讯录三回都没拨号，卡在担心熟人觉得我在推销；先帮我跨过最早那个断点。": "personal.action",
+            "请只读盘点 /workspace/studio-notes 这套资料库，标出重复文件、来源不明条目和版本冲突，再给索引计划，不要写入。": "governance.knowledge",
+            "范围只限 /workspace/team-archive/research-vault，先列知识资产清单，区分过期材料与仍可追溯来源，并提出版本规则，暂不改文件。": "governance.knowledge",
+            "关于是否在下季度砍掉定制交付，请让支持保留和主张砍掉的独立角色分别论证，再交叉质询成本与客户证据，最终选项留给我。": "debate.run",
+            "我们要不要把首个市场从学校换到诊所？请安排赞成迁移和主张留守的角色各自举证，第二轮专门攻击对方最弱假设，最后只汇总可选路径。": "debate.run",
+        }
+        for text, task_id in expected.items():
+            with self.subTest(text=text):
+                self.assert_route(text, task_id)
+
+    def test_unseen_route_boundaries_and_cross_intents(self) -> None:
+        expected = {
+            "我想靠自己做点生意，你帮我看看。": ("clarify", None),
+            "帮我探索周末适合新手的徒步路线。": ("out_of_scope", None),
+            "这门生意最近有点不对劲，替我找原因。": ("clarify", None),
+            "我这台咖啡机出水忽快忽慢，帮我诊断故障。": ("out_of_scope", None),
+            "这项服务到底该怎么收钱？": ("clarify", None),
+            "查一下这本旧书当年的售价，只返回书目信息。": ("out_of_scope", None),
+            "我做了个产品，但还没想清楚该找什么人，你先帮我看看。": ("clarify", None),
+            "把我通讯录里的联系人按姓氏分组。": ("out_of_scope", None),
+            "我的生意一直推进不动，接下来怎么办？": ("clarify", None),
+            "给我一套十公里跑步提速训练计划，包含每周里程和恢复安排。": ("out_of_scope", None),
+            "把我电脑里的知识库整理成可检索的样子。": ("clarify", None),
+            "请把‘知识库’这三个字翻译成英文，不要扫描任何目录。": ("out_of_scope", None),
+            "找几个人从不同角度争一争。": ("clarify", None),
+            "比较梅西和 C 罗谁的竞技表现更伟大，不讨论商业价值，也不要多角色辩论。": ("out_of_scope", None),
+            "这项上门照护服务的客户已经确定，不要做客户画像；请只比较按小时和按月收费对现金流的影响。": ("route", "business.pricing"),
+            "我们的课程续费连续三个月下滑，先别改价格，也不要找新客群；请找出承诺、使用和交付哪一环最可能断掉，并给排除试验。": ("route", "business.diagnose"),
+            "我还没决定做哪种生意，报价和套餐以后再说；每周只有六小时，能接触到十家社区门店，先找一个可验证方向。": ("route", "business.explore"),
+            "目标客户还不能只写成‘餐饮业’，这次不讨论副业方向；请界定店长、区域经理和财务谁使用、谁拍板、谁付款，安排首轮访谈。": ("route", "business.customer"),
+            "周三前要给两位客户发方案，价格已经定了，也不做业务诊断；我卡在反复改附件，帮我选今天能完成的最小一步。": ("route", "personal.action"),
+            "只读盘点 /workspace/field-notes 的来源与重复项；不要召集多角色讨论，也不要替我设计产品。": ("route", "governance.knowledge"),
+            "是否继续给大客户做定制？客户定义和报价先不动；请让支持与反对两方独立论证、交叉质询交付成本，最后由我决定。": ("route", "debate.run"),
+            "我们既不知道该服务谁，也不知道该怎么收费，现有访谈又互相矛盾；先问我一个最能决定该走客户研究还是价格测试的问题。": ("clarify", None),
+            "不要诊断业务，也不要调整价格；我只是要把这段英文合同逐句翻译成中文。": ("out_of_scope", None),
+            "这套运动课程卖给跑团，学员觉得贵，但我现在只想要一套十公里个人训练计划，不要分析课程收费。": ("out_of_scope", None),
+        }
+        for text, (state, task_id) in expected.items():
+            with self.subTest(text=text):
+                result = route(text)
+                self.assertEqual(result["state"], state, result)
+                self.assertEqual(result["selected_task"], task_id, result)
+
+    def test_route_expansion_does_not_capture_unrelated_requests(self) -> None:
+        cases = (
+            "我没有想法，只想把这封道歉邮件润色得自然一点。",
+            "小说主角没有人生方向，请只校对这一段。",
+            "我的论文卡住了，请分析论证为什么失败。",
+            "客服记录里有一句‘客户说贵’，请只抽取原文，不要做商业判断。",
+            "医院里谁使用这台仪器、谁来付款？我是在核对操作流程，不是定义目标客户。",
+            "我在游戏关卡里卡住了，下一步往哪走？",
+            "这里只是在文档里提到知识库，不要盘点、索引或治理。",
+            "这篇论文讨论多个 Agent 的辩论机制，请翻译摘要。",
+            "不要让多个 Agent 讨论，也不要交叉质疑，只给我一个简短答案。",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                result = route(text)
+                self.assertNotEqual(result["state"], "route", result)
+                self.assertIsNone(result["selected_task"], result)
+
+    def test_second_unseen_route_rewrites(self) -> None:
+        direct = {
+            "我认识不少本地商户，每周能拿出6小时，但完全不知道该拿什么去赚钱，帮我找一个可以先试的方向。": "business.explore",
+            "这个会员服务做了三个月，报名越来越少，老客也在走，我想先弄清是哪一环坏了再改。": "business.diagnose",
+            "给店主提供代运营，每月收三千总被嫌不值，我想试试按结果收还是固定月费。": "business.pricing",
+            "护士天天用，院长拍板，财务付款；首轮该先找哪一方谈？": "business.customer",
+            "资料看了一堆，也想了很久，始终没动手；今天只给我一个能完成的小动作。": "personal.action",
+            "把这批访谈纪要纳入现有知识体系，先查重复和冲突，再给我可确认的更新预览。": "governance.knowledge",
+            "拉三个独立视角，把继续投和马上停两边都论证一遍，彼此挑最弱前提，结论留给我。": "debate.run",
+        }
+        for text, task_id in direct.items():
+            with self.subTest(text=text):
+                self.assert_route(text, task_id)
+
+        interventions = {
+            "/biz intervene 我认识本地商户，每周能拿出6小时，但不知道拿什么赚钱。请选下一步。": "business.explore",
+            "/biz intervene 过去三个月报名从20个变成5个，老客也在走。我想先弄清哪一环坏了，请选下一步。": "business.diagnose",
+            "/biz intervene 三位客户说这个月费不值，我想试按结果收还是固定月费，请选下一步。": "business.pricing",
+            "/biz intervene 已做10次访谈：护士天天用，院长拍板，财务付款。首轮该找谁谈？请选下一步。": "business.customer",
+            "我昨天看资料2小时仍没动手，今天还剩30分钟，请选下一步。 /biz intervene": "personal.action",
+            "/biz intervene 本周新增12份访谈纪要，要纳入现有知识体系并先查重复冲突。请选下一步。": "governance.knowledge",
+            "/biz intervene 明天必须决定是否续投，已有3位客户反馈。我想让几个独立视角把两边论证一遍，再请选下一步。": "debate.run",
+        }
+        for text, task_id in interventions.items():
+            with self.subTest(text=text):
+                self.assert_intervene(text, task_id)
 
 
 if __name__ == "__main__":

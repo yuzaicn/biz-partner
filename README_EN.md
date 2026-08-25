@@ -14,6 +14,8 @@
 
 Start with the situation you actually have.
 
+The conversation can be in English. The built-in knowledge pack and its retrieval vocabulary are currently Chinese-first, so English-only queries may use less of the packaged knowledge.
+
 No idea yet? Start with who you can reach, what you can deliver, and how much time you really have.<br>
 Already have one? Look at the customer, the reason to buy, the price, and the delivery promise.<br>
 Stuck? Make the work smaller instead of adding another plan.
@@ -80,16 +82,16 @@ The knowledge pack has 60 knowledge atoms, 12 methods, 30 work terms, 50 analyti
 | Methods | A usable process assembled from related atoms, with guidance on when to use it, what to do, and when to stop. |
 | Work dictionary and analytical concepts | The work dictionary gives shared meanings to terms such as customer, product, and evidence; analytical concepts offer another way to break down a problem when needed. |
 | Structured data | Machine-readable, checkable JSON/JSONL records for atoms, terms, concepts, and tests. |
-| Knowledge network | Every source, atom, concept, and method has a stable link, with declared source, support, dependency, refinement, contradiction, and usage relationships. |
+| Knowledge network | Every source, atom, concept, and method has a stable link. It shows the source, concept, method, and usage relationships that are actually declared; it does not invent missing support, refinement, or contradiction links. |
 | Retrieval regression | Fixed questions paired with expected atoms, rerun after a pack change to catch missing matches. |
 
 Open the [online knowledge network](skills/biz-partner/public-knowledge/knowledge-network.md) or the [machine-readable graph](skills/biz-partner/public-knowledge/knowledge-graph.json). The repository also includes the [knowledge-pack guide (Chinese)](skills/biz-partner/public-knowledge/USAGE.md), [12 methods (Chinese)](skills/biz-partner/public-knowledge/methods.md), [work dictionary and analytical concepts (Chinese)](skills/biz-partner/public-knowledge/concept-dictionary.md), [atom data](skills/biz-partner/public-knowledge/atoms.jsonl), [method data](skills/biz-partner/public-knowledge/methods.jsonl), [concept data](skills/biz-partner/public-knowledge/concepts.jsonl), [retrieval regression data](skills/biz-partner/public-knowledge/retrieval-cases.jsonl), and [knowledge-pack manifest and version information](skills/biz-partner/public-knowledge/manifest.json).
 
 ## It can learn new material without silently rewriting itself
 
-Ask it to analyze an approved document, project review, or source set. It first prepares candidate atoms, methods, concepts, dictionary terms, and relationships, then checks duplicates, conflicts, privacy, rights, and scope.
+Ask it to analyze an approved document, project review, or source set. It first prepares candidate atoms, methods, concepts, dictionary terms, relationships, and retrieval questions, then checks duplicates, conflicts, privacy, rights, and scope. Local evidence files are checked against their actual hashes; web and conversation evidence stays visibly unverified when it cannot be checked locally.
 
-Candidates do not become active immediately. Only after you confirm the exact change preview will it create a new private knowledge-pack version inside the project you selected. Older versions remain available for verification and rollback. The workflow never silently changes the built-in public pack, commits Git changes, or uploads anything to GitHub.
+Candidates do not become active immediately. Only after you confirm the exact change preview will it create a new private knowledge-pack version inside the project you selected. Search results expose the atom rule or procedure, concept boundaries and common misuse, and method inputs and checks. Older versions remain available, including a new revision that restores the pack to an empty state. The workflow never silently changes the built-in public pack, commits Git changes, or uploads anything to GitHub.
 
 Confirmed project records can carry useful context into later conversations. New preferences and judgments begin as proposals; they become active only after confirmation. Outdated or incorrect information can be corrected or suppressed. One conversation does not become a permanent profile.
 

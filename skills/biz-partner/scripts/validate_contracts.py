@@ -8,7 +8,7 @@ import hashlib
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from state_store import validate_proposal
@@ -18,6 +18,7 @@ HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 VERSIONED_TASK_ID_RE = re.compile(r"^[a-z][a-z0-9_-]*(?:\.[a-z][a-z0-9_-]*)+@[0-9]+\.[0-9]+\.[0-9]+$")
 ROUTE_TASK_ID_RE = re.compile(r"^[a-z][a-z0-9_-]*(?:\.[a-z][a-z0-9_-]*)+(?:@[0-9]+\.[0-9]+\.[0-9]+)?$")
 ACTION_CLASSES = {"read_local", "write_local", "network_read", "external_write", "destructive", "sensitive"}
+TRACE_STATUSES = {"attempted", "completed", "failed", "blocked"}
 TRACE_FIELDS = {
     "action",
     "status",
@@ -27,7 +28,12 @@ TRACE_FIELDS = {
     "body_hash",
     "scope_hash",
     "idempotency_key",
+    "authorization_ref",
     "occurred_at",
+    "rollback_ref",
+    "backup_ref",
+    "second_confirmation_ref",
+    "recovery_check_ref",
 }
 
 
@@ -68,8 +74,8 @@ def bounded_score(value: object) -> bool:
 
 def validate_route_decision(artifact: dict, handoff_task_id: object, errors: list[str]) -> None:
     top_candidates = artifact.get("top_candidates")
-    if not isinstance(top_candidates, list) or len(top_candidates) != 3:
-        errors.append("route_decision top_candidates must contain exactly 3 candidates")
+    if not isinstance(top_candidates, list) or not 1 <= len(top_candidates) <= 3:
+        errors.append("route_decision top_candidates must contain between 1 and 3 candidates")
         return
 
     candidate_ids: list[str] = []
@@ -98,7 +104,7 @@ def validate_route_decision(artifact: dict, handoff_task_id: object, errors: lis
 
     if len(candidate_ids) != len(set(candidate_ids)):
         errors.append("route_decision candidate task_ids must be unique")
-    if len(candidate_scores) == 3 and candidate_scores != sorted(candidate_scores, reverse=True):
+    if len(candidate_scores) == len(top_candidates) and candidate_scores != sorted(candidate_scores, reverse=True):
         errors.append("route_decision candidates must be sorted by descending score")
 
     selected_task = artifact.get("selected_task")
@@ -147,6 +153,8 @@ def errors_for(
     expected_state_version: int | None = None,
     expected_consent: dict[str, bool] | None = None,
     expected_allowed_tools: set[str] | None = None,
+    validation_time: datetime | None = None,
+    expected_execution_window: tuple[datetime, datetime] | None = None,
 ) -> list[str]:
     errors: list[str] = []
     if not isinstance(obj, dict):
@@ -159,10 +167,13 @@ def errors_for(
             "packet_id",
             "case_id",
             "project_id",
+            "created_at",
+            "frozen_at",
             "request",
             "items",
             "consent",
             "tool_policy",
+            "ttl",
             "content_hash",
         )
         for key in required:
@@ -246,8 +257,25 @@ def errors_for(
                 errors.append("case_packet tool_policy allowed_tools contains an unsupported action class")
         if "risk" in obj and not isinstance(obj.get("risk"), dict):
             errors.append("case_packet risk must be object")
-        if "ttl" in obj and not isinstance(obj.get("ttl"), str):
-            errors.append("case_packet ttl must be string")
+        timestamps: dict[str, datetime] = {}
+        for key in ("created_at", "frozen_at", "ttl"):
+            if key not in obj:
+                continue
+            parsed = parse_datetime(obj.get(key))
+            if parsed is None:
+                errors.append(f"case_packet {key} must be an ISO 8601 date-time with timezone")
+            else:
+                timestamps[key] = parsed
+        if all(key in timestamps for key in ("created_at", "frozen_at", "ttl")):
+            if timestamps["frozen_at"] < timestamps["created_at"]:
+                errors.append("case_packet frozen_at must be at or after created_at")
+            if timestamps["ttl"] <= timestamps["frozen_at"]:
+                errors.append("case_packet ttl must be after frozen_at")
+        if validation_time is not None:
+            if validation_time.tzinfo is None or validation_time.utcoffset() is None:
+                errors.append("validation_time must include timezone")
+            elif "ttl" in timestamps and timestamps["ttl"] <= validation_time:
+                errors.append("case_packet ttl has expired")
 
         content_hash = obj.get("content_hash")
         if not isinstance(content_hash, str) or not HASH_RE.fullmatch(content_hash):
@@ -335,6 +363,8 @@ def errors_for(
             errors.append(f"claim missing assertion: {claim.get('claim_id')}")
         if "strength" in claim and not isinstance(claim.get("strength"), str):
             errors.append(f"claim strength must be string: {claim.get('claim_id')}")
+        if "supporting_refs" not in claim:
+            errors.append(f"claim missing supporting_refs: {claim.get('claim_id')}")
         supporting_refs = claim.get("supporting_refs", [])
         if not isinstance(supporting_refs, list):
             errors.append(f"claim supporting_refs must be list: {claim.get('claim_id')}")
@@ -343,6 +373,13 @@ def errors_for(
         if invalid_supporting_refs:
             errors.append(f"claim supporting_refs must contain string ids: {claim.get('claim_id')}")
         supporting_ref_ids = {ref for ref in supporting_refs if isinstance(ref, str)}
+        if len(supporting_ref_ids) != len([ref for ref in supporting_refs if isinstance(ref, str)]):
+            errors.append(f"claim supporting_refs must be unique: {claim.get('claim_id')}")
+        missing_supporting_refs = sorted(supporting_ref_ids - evidence_ids)
+        if missing_supporting_refs:
+            errors.append(
+                f"claim supporting_refs do not exist: {claim.get('claim_id')}: {missing_supporting_refs}"
+            )
         if claim.get("kind") != "unknown" and not supporting_ref_ids & evidence_ids:
             errors.append(f"claim lacks evidence: {claim.get('claim_id')}")
 
@@ -382,39 +419,85 @@ def errors_for(
     if not isinstance(approvals, list):
         errors.append("approvals must be list")
         approvals = []
-    external_approvals: list[dict] = []
+    approval_requirements = {
+        "external_write": (
+            "approval_id",
+            "authorization_ref",
+            "target",
+            "body_hash",
+            "scope_hash",
+            "approved_at",
+            "expires_at",
+            "idempotency_key",
+        ),
+        "write_local": (
+            "approval_id",
+            "authorization_ref",
+            "target",
+            "scope_hash",
+            "approved_at",
+            "expires_at",
+            "rollback_ref",
+        ),
+        "destructive": (
+            "approval_id",
+            "authorization_ref",
+            "target",
+            "scope_hash",
+            "approved_at",
+            "expires_at",
+            "rollback_ref",
+            "backup_ref",
+            "second_confirmation_ref",
+        ),
+    }
+    approvals_by_action: dict[str, list[dict]] = {
+        action: [] for action in approval_requirements
+    }
     for approval in approvals:
         if not isinstance(approval, dict):
             errors.append("approval must be object")
             continue
-        if not nonempty_string(approval.get("action")):
+        approval_action = approval.get("action")
+        if not nonempty_string(approval_action):
             errors.append("approval action must be a non-empty string")
             continue
-        if approval.get("action") == "external_write":
-            external_approvals.append(approval)
-            for key in (
-                "approval_id",
-                "target",
-                "body_hash",
-                "scope_hash",
-                "approved_at",
-                "expires_at",
-                "idempotency_key",
-            ):
+        if approval_action in approval_requirements:
+            approvals_by_action[approval_action].append(approval)
+            for key in approval_requirements[approval_action]:
                 if not nonempty_string(approval.get(key)):
-                    errors.append(f"external_write approval requires {key}")
-            for key in ("body_hash", "scope_hash"):
+                    errors.append(f"{approval_action} approval requires {key}")
+            hash_fields = ("body_hash", "scope_hash") if approval_action == "external_write" else ("scope_hash",)
+            for key in hash_fields:
                 value = approval.get(key)
                 if value is not None and (not isinstance(value, str) or not HASH_RE.fullmatch(value)):
-                    errors.append(f"external_write approval {key} must be sha256:<64 lowercase hex>")
+                    errors.append(f"{approval_action} approval {key} must be sha256:<64 lowercase hex>")
             approved_at = parse_datetime(approval.get("approved_at"))
             expires_at = parse_datetime(approval.get("expires_at"))
             if approved_at is None:
-                errors.append("external_write approval approved_at must be an ISO 8601 date-time with timezone")
+                errors.append(f"{approval_action} approval approved_at must be an ISO 8601 date-time with timezone")
             if expires_at is None:
-                errors.append("external_write approval expires_at must be an ISO 8601 date-time with timezone")
+                errors.append(f"{approval_action} approval expires_at must be an ISO 8601 date-time with timezone")
             if approved_at is not None and expires_at is not None and expires_at <= approved_at:
-                errors.append("external_write approval must expire after approval time")
+                errors.append(f"{approval_action} approval must expire after approval time")
+            authorization_ref = approval.get("authorization_ref")
+            if nonempty_string(authorization_ref):
+                authorization_evidence = evidence_by_id.get(authorization_ref)
+                if authorization_evidence is None or authorization_evidence.get("evidence_kind") != "user_input":
+                    errors.append(f"{approval_action} approval authorization_ref must resolve to user_input evidence")
+            if approval_action == "destructive":
+                second_ref = approval.get("second_confirmation_ref")
+                if nonempty_string(second_ref):
+                    second_evidence = evidence_by_id.get(second_ref)
+                    if second_evidence is None or second_evidence.get("evidence_kind") != "user_input":
+                        errors.append("destructive approval second_confirmation_ref must resolve to user_input evidence")
+                    if second_ref == authorization_ref:
+                        errors.append("destructive approval requires two distinct user confirmations")
+                backup_ref = approval.get("backup_ref")
+                if nonempty_string(backup_ref):
+                    backup_evidence = evidence_by_id.get(backup_ref)
+                    if backup_evidence is None or backup_evidence.get("evidence_kind") != "tool_result":
+                        errors.append("destructive approval backup_ref must resolve to tool_result evidence")
 
     tool_trace = obj.get("tool_trace", [])
     if not isinstance(tool_trace, list):
@@ -435,39 +518,62 @@ def errors_for(
             errors.append(f"tool trace action {action} is not consented by case_packet")
         if expected_allowed_tools is not None and action not in expected_allowed_tools:
             errors.append(f"tool trace action {action} is not allowed by case_packet tool_policy")
-        if not nonempty_string(trace.get("status")):
-            errors.append("tool trace status must be a non-empty string")
+        if trace.get("status") not in TRACE_STATUSES:
+            errors.append(f"tool trace status must be one of {sorted(TRACE_STATUSES)}")
         tool = trace.get("tool")
         if tool is not None and not isinstance(tool, str):
             errors.append("tool trace tool must be string")
         if tool == "external_write" and action != "external_write":
             errors.append("external_write tool trace must use action external_write")
-        if action != "external_write":
+        requires_approval = action in {"external_write", "write_local", "destructive"}
+        if not requires_approval:
             continue
-        for key in ("approval_id", "target", "body_hash", "scope_hash", "idempotency_key", "occurred_at"):
+        trace_match_fields = {
+            "external_write": ("approval_id", "authorization_ref", "target", "body_hash", "scope_hash", "idempotency_key"),
+            "write_local": ("approval_id", "authorization_ref", "target", "scope_hash", "rollback_ref"),
+            "destructive": (
+                "approval_id",
+                "authorization_ref",
+                "target",
+                "scope_hash",
+                "rollback_ref",
+                "backup_ref",
+                "second_confirmation_ref",
+            ),
+        }[action]
+        trace_required_fields = (*trace_match_fields, "occurred_at")
+        if action == "destructive":
+            trace_required_fields = (*trace_required_fields, "recovery_check_ref")
+        for key in trace_required_fields:
             if not nonempty_string(trace.get(key)):
-                errors.append(f"external_write trace requires {key}")
+                errors.append(f"{action} trace requires {key}")
         occurred_at = parse_datetime(trace.get("occurred_at"))
         if occurred_at is None:
-            errors.append("external_write trace occurred_at must be an ISO 8601 date-time with timezone")
+            errors.append(f"{action} trace occurred_at must be an ISO 8601 date-time with timezone")
+        elif expected_execution_window is not None:
+            window_start, window_end = expected_execution_window
+            if not window_start <= occurred_at < window_end:
+                errors.append(f"{action} trace occurred outside the CasePacket execution window")
         matches = [
             approval
-            for approval in external_approvals
-            if approval.get("approval_id") == trace.get("approval_id")
-            and approval.get("target") == trace.get("target")
-            and approval.get("body_hash") == trace.get("body_hash")
-            and approval.get("scope_hash") == trace.get("scope_hash")
-            and approval.get("idempotency_key") == trace.get("idempotency_key")
+            for approval in approvals_by_action[action]
+            if all(approval.get(key) == trace.get(key) for key in trace_match_fields)
         ]
         if len(matches) != 1:
-            errors.append("external_write trace requires exactly one matching approval")
+            errors.append(f"{action} trace requires exactly one matching approval")
             continue
         expires_at = parse_datetime(matches[0].get("expires_at"))
         approved_at = parse_datetime(matches[0].get("approved_at"))
         if occurred_at is not None and (
             approved_at is None or expires_at is None or not approved_at <= occurred_at < expires_at
         ):
-            errors.append("external_write trace occurred outside the approval validity window")
+            errors.append(f"{action} trace occurred outside the approval validity window")
+        if action == "destructive":
+            recovery_ref = trace.get("recovery_check_ref")
+            if nonempty_string(recovery_ref):
+                recovery_evidence = evidence_by_id.get(recovery_ref)
+                if recovery_evidence is None or recovery_evidence.get("evidence_kind") != "tool_result":
+                    errors.append("destructive trace recovery_check_ref must resolve to tool_result evidence")
 
     memory_proposal = obj.get("memory_proposal")
     if memory_proposal is not None:
@@ -496,6 +602,7 @@ def main() -> int:
             obj,
             expected_packet_hash=args.expected_packet_hash,
             expected_state_version=args.expected_state_version,
+            validation_time=datetime.now(timezone.utc),
         )
         if errors:
             print(f"FAIL {path}")

@@ -40,7 +40,10 @@ expected version and confirmation hash emitted by `plan`; product-specific bridg
 loading remains a separate verification responsibility.
 
 `audit_skill.py <exact-skill-path>` is read-only. It inventories files and emits
-heuristic findings without executing or changing the audited Skill.
+heuristic findings without executing or changing the audited Skill. Findings keep the raw
+signal and label its context as executable code, documentation, test fixture, detector
+definition, data/configuration, or filesystem link; the label lowers noise but never proves
+that code is safe.
 
 `render_source_attribution.py <source-registry.jsonl> <atoms.jsonl> <handoff.json>`
 deterministically returns only registered sources whose registered atoms materially

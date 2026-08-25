@@ -30,8 +30,16 @@ class StateStoreTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name).resolve()
+        baseline = state_store.initial_state(self.root)
+        baseline["updated_at"] = "2026-08-20T00:00:00+00:00"
         action = state_store.init_action(self.root)
-        rc = state_store.cmd_init(args(root=str(self.root), confirmation_hash=state_store.digest(action)))
+        with mock.patch.object(state_store, "initial_state", return_value=baseline):
+            rc = state_store.cmd_init(
+                args(
+                    root=str(self.root),
+                    confirmation_hash=state_store.digest(action),
+                )
+            )
         self.assertEqual(rc, 0)
 
     def tearDown(self) -> None:
@@ -67,7 +75,13 @@ class StateStoreTests(unittest.TestCase):
         path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
         return path
 
-    def commit(self, proposal: dict, expected_version: int) -> int:
+    def commit(
+        self,
+        proposal: dict,
+        expected_version: int,
+        *,
+        confirmed_at: str = "2026-08-20T00:01:00+00:00",
+    ) -> int:
         path = self.write_proposal(proposal)
         proposal_hash = state_store.digest(proposal)
         action = state_store.commit_action(self.root, proposal_hash, expected_version)
@@ -77,7 +91,7 @@ class StateStoreTests(unittest.TestCase):
                 proposal=str(path),
                 expected_version=expected_version,
                 confirmation_hash=state_store.digest(action),
-                confirmed_at="2026-08-20T00:01:00+00:00",
+                confirmed_at=confirmed_at,
             )
         )
 
@@ -93,16 +107,107 @@ class StateStoreTests(unittest.TestCase):
             with self.assertRaises(state_store.StateError):
                 state_store.cmd_init(args(root=other, confirmation_hash="sha256:wrong"))
 
+    def test_state_paths_reject_symlinks_and_escape_from_project_root(self) -> None:
+        project = self.root / "symlinked-state-project"
+        project.mkdir()
+        action = state_store.init_action(project)
+        with tempfile.TemporaryDirectory() as outside:
+            outside_state = Path(outside) / "state"
+            outside_state.mkdir()
+            (project / state_store.STATE_DIR).symlink_to(outside_state, target_is_directory=True)
+            with self.assertRaisesRegex(state_store.StateError, "symbolic link"):
+                state_store.cmd_init(
+                    args(
+                        root=str(project),
+                        confirmation_hash=state_store.digest(action),
+                    )
+                )
+
+        database = state_store.paths_for(self.root)["database"]
+        with tempfile.TemporaryDirectory() as outside:
+            outside_database = Path(outside) / state_store.DATABASE_FILE
+            database.replace(outside_database)
+            database.symlink_to(outside_database)
+            with self.assertRaisesRegex(state_store.StateError, "symbolic link"):
+                state_store.load_state(self.root)
+
     def test_valid_proposal_commits_and_increments_version(self) -> None:
         self.assertEqual(self.commit(self.proposal(), 1), 0)
         state = state_store.load_state(self.root)
         self.assertEqual(state["state_version"], 2)
         self.assertEqual(state["user_profile"]["weekly_time_budget"]["value"], "6 hours")
 
+    def test_supersede_replaces_subject_in_list_namespaces_but_keeps_events(self) -> None:
+        version = 1
+        for namespace in ("decision_log", "asset_index", "playbook_feedback"):
+            subject = f"current_{namespace}"
+            original = self.proposal(
+                namespace=namespace,
+                subject=subject,
+                value={"revision": 1},
+            )
+            self.assertEqual(self.commit(original, version), 0)
+            version += 1
+            replacement = self.proposal(
+                "supersede",
+                namespace=namespace,
+                subject=subject,
+                value={"revision": 2},
+            )
+            self.assertEqual(self.commit(replacement, version), 0)
+            version += 1
+
+            current = [
+                record
+                for record in state_store.load_state(self.root)[namespace]
+                if record["subject"] == subject
+            ]
+            self.assertEqual(len(current), 1)
+            self.assertEqual(current[0]["value"], {"revision": 2})
+
+            committed = [
+                event
+                for event in state_store.load_events(self.root)
+                if event.get("proposal", {}).get("subject") == subject
+            ]
+            self.assertEqual(len(committed), 2)
+            self.assertEqual(committed[0]["proposal"]["value"], {"revision": 1})
+            self.assertEqual(committed[1]["proposal"]["value"], {"revision": 2})
+
     def test_stale_version_is_rejected(self) -> None:
         self.assertEqual(self.commit(self.proposal(), 1), 0)
         with self.assertRaises(state_store.StateError):
             self.commit(self.proposal(), 1)
+
+    def test_commit_rejects_confirmed_at_before_current_state_time(self) -> None:
+        proposal = self.proposal()
+        proposal["created_at"] = "2026-08-19T23:00:00+00:00"
+        with self.assertRaisesRegex(
+            state_store.StateError,
+            "confirmed_at must be at or after current state updated_at",
+        ):
+            self.commit(
+                proposal,
+                1,
+                confirmed_at="2026-08-19T23:59:59+00:00",
+            )
+        self.assertEqual(state_store.load_state(self.root)["state_version"], 1)
+        self.assertEqual(len(state_store.load_events(self.root)), 1)
+
+    def test_commit_rejects_confirmation_before_proposal_creation(self) -> None:
+        proposal = self.proposal()
+        proposal["created_at"] = "2026-08-20T00:02:00+00:00"
+        with self.assertRaisesRegex(
+            state_store.StateError,
+            "confirmed_at must be at or after proposal created_at",
+        ):
+            self.commit(
+                proposal,
+                1,
+                confirmed_at="2026-08-20T00:01:00+00:00",
+            )
+        self.assertEqual(state_store.load_state(self.root)["state_version"], 1)
+        self.assertEqual(len(state_store.load_events(self.root)), 1)
 
     def test_wrong_commit_confirmation_is_rejected(self) -> None:
         proposal = self.proposal()
@@ -197,6 +302,159 @@ class StateStoreTests(unittest.TestCase):
                         0,
                     )
                 self.assertNotIn("6 hours", output.getvalue())
+
+    def test_show_and_export_reject_as_of_before_initialization(self) -> None:
+        for command in (state_store.cmd_show, state_store.cmd_export):
+            with self.subTest(command=command.__name__):
+                with self.assertRaisesRegex(
+                    state_store.StateError,
+                    "as_of precedes state initialization",
+                ):
+                    command(
+                        args(
+                            root=str(self.root),
+                            as_of="2026-08-19T23:59:59+00:00",
+                        )
+                    )
+
+    def test_show_and_export_as_of_replay_before_visibility_filters(self) -> None:
+        original = self.proposal(value="original")
+        original["created_at"] = "2026-08-20T00:10:00+00:00"
+        original["expires_at"] = "2026-08-20T00:40:00+00:00"
+        self.assertEqual(
+            self.commit(
+                original,
+                1,
+                confirmed_at="2026-08-20T00:10:00+00:00",
+            ),
+            0,
+        )
+        replacement = self.proposal("supersede", value="replacement")
+        replacement["created_at"] = "2026-08-20T01:00:00+00:00"
+        self.assertEqual(
+            self.commit(
+                replacement,
+                2,
+                confirmed_at="2026-08-20T01:00:00+00:00",
+            ),
+            0,
+        )
+        suppression = self.proposal("suppress", value=None)
+        suppression["created_at"] = "2026-08-20T02:00:00+00:00"
+        self.assertEqual(
+            self.commit(
+                suppression,
+                3,
+                confirmed_at="2026-08-20T02:00:00+00:00",
+            ),
+            0,
+        )
+
+        expectations = {
+            "2026-08-20T00:30:00+00:00": "original",
+            "2026-08-20T00:45:00+00:00": None,
+            "2026-08-20T01:30:00+00:00": "replacement",
+            "2026-08-20T02:30:00+00:00": None,
+        }
+        for command in (state_store.cmd_show, state_store.cmd_export):
+            for as_of, expected_value in expectations.items():
+                with self.subTest(command=command.__name__, as_of=as_of):
+                    output = io.StringIO()
+                    with redirect_stdout(output):
+                        self.assertEqual(
+                            command(args(root=str(self.root), as_of=as_of)),
+                            0,
+                        )
+                    state = json.loads(output.getvalue())
+                    record = state["user_profile"].get("weekly_time_budget")
+                    if expected_value is None:
+                        self.assertIsNone(record)
+                    else:
+                        self.assertEqual(record["value"], expected_value)
+
+    def test_add_and_supersede_revive_subject_after_suppression(self) -> None:
+        subject = "weekly_time_budget"
+        self.assertEqual(
+            self.commit(
+                self.proposal(value="original"),
+                1,
+                confirmed_at="2026-08-20T00:01:00+00:00",
+            ),
+            0,
+        )
+        self.assertEqual(
+            self.commit(
+                self.proposal("suppress", value=None),
+                2,
+                confirmed_at="2026-08-20T00:02:00+00:00",
+            ),
+            0,
+        )
+        self.assertEqual(
+            self.commit(
+                self.proposal("add", value="revived by add"),
+                3,
+                confirmed_at="2026-08-20T00:03:00+00:00",
+            ),
+            0,
+        )
+        visible = state_store.load_visible_state(
+            self.root,
+            as_of="2026-08-20T00:03:00+00:00",
+        )
+        self.assertEqual(visible["user_profile"][subject]["value"], "revived by add")
+        self.assertFalse(
+            any(
+                tombstone["namespace"] == "user_profile" and tombstone["subject"] == subject
+                for tombstone in state_store.load_state(self.root)["suppressions"]
+            )
+        )
+
+        self.assertEqual(
+            self.commit(
+                self.proposal("suppress", value=None),
+                4,
+                confirmed_at="2026-08-20T00:04:00+00:00",
+            ),
+            0,
+        )
+        self.assertEqual(
+            self.commit(
+                self.proposal("supersede", value="revived by supersede"),
+                5,
+                confirmed_at="2026-08-20T00:05:00+00:00",
+            ),
+            0,
+        )
+        visible = state_store.load_visible_state(
+            self.root,
+            as_of="2026-08-20T00:05:00+00:00",
+        )
+        self.assertEqual(
+            visible["user_profile"][subject]["value"],
+            "revived by supersede",
+        )
+        self.assertFalse(
+            any(
+                tombstone["namespace"] == "user_profile" and tombstone["subject"] == subject
+                for tombstone in state_store.load_state(self.root)["suppressions"]
+            )
+        )
+
+        suppression_events = [
+            event
+            for event in state_store.load_events(self.root)
+            if event.get("proposal", {}).get("operation") == "suppress"
+        ]
+        self.assertEqual(len(suppression_events), 2)
+        for event in suppression_events:
+            self.assertTrue(
+                any(
+                    tombstone["namespace"] == "user_profile"
+                    and tombstone["subject"] == subject
+                    for tombstone in event["state_after"]["suppressions"]
+                )
+            )
 
     def test_proposal_requires_evidence_and_confirmation(self) -> None:
         proposal = self.proposal()

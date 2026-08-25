@@ -92,7 +92,12 @@ may expand atom and method candidates; initial atoms may expose linked concepts
 or methods. Every inferred concept carries its linking atom, and the runtime does
 not recurse through the graph. This is controlled-vocabulary expansion, not an
 embedding or a claim of general semantic understanding. Retrieval returns
-provenance and declared relations, but does not prove a final claim.
+provenance and declared relations, but does not prove a final claim. Atom hits
+include their status, procedure or decision rule, and exact source references;
+concept matches include the working definition, exclusion boundary, and common
+misuse; recommended methods include inputs, steps, decision gates, and quality
+checks. These fields let the caller apply and audit a result without opening the
+JSONL files, while ranking and graph-hop behavior remain unchanged.
 
 ## Recall Evaluation
 

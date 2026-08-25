@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from datetime import datetime
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -56,10 +57,13 @@ def valid_bundle() -> dict:
     return {"case_packet": packet, "handoff": valid_handoff(), "expected_state_version": 1}
 
 
+VALIDATION_TIME = datetime.fromisoformat("2026-08-21T00:00:00+08:00")
+
+
 class FreezeContractBundleTests(unittest.TestCase):
     def test_fills_missing_hashes_and_validates_bundle(self) -> None:
         source = valid_bundle()
-        frozen = freeze_bundle(source)
+        frozen = freeze_bundle(source, validation_time=VALIDATION_TIME)
         packet_hash = frozen["case_packet"]["content_hash"]
         self.assertTrue(packet_hash.startswith("sha256:"))
         self.assertEqual(frozen["handoff"]["packet_hash"], packet_hash)
@@ -73,7 +77,12 @@ class FreezeContractBundleTests(unittest.TestCase):
 
     def test_stdin_and_file_modes_are_deterministic(self) -> None:
         payload = json.dumps(valid_bundle(), ensure_ascii=False)
-        command = [sys.executable, str(SCRIPT_DIR / "freeze_contract_bundle.py")]
+        command = [
+            sys.executable,
+            str(SCRIPT_DIR / "freeze_contract_bundle.py"),
+            "--validation-time",
+            VALIDATION_TIME.isoformat(),
+        ]
         stdin_result = subprocess.run(command, input=payload, text=True, capture_output=True, check=False)
         self.assertEqual(stdin_result.returncode, 0, stdin_result.stderr)
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -89,12 +98,19 @@ class FreezeContractBundleTests(unittest.TestCase):
         bundle = valid_bundle()
         bundle["case_packet"]["content_hash"] = "sha256:" + "a" * 64
         with self.assertRaisesRegex(ContractBundleError, "content_hash does not match"):
-            freeze_bundle(bundle)
+            freeze_bundle(bundle, validation_time=VALIDATION_TIME)
 
         bundle = valid_bundle()
         bundle["handoff"]["packet_hash"] = "sha256:" + "b" * 64
         with self.assertRaisesRegex(ContractBundleError, "packet_hash does not match"):
-            freeze_bundle(bundle)
+            freeze_bundle(bundle, validation_time=VALIDATION_TIME)
+
+    def test_rejects_expired_packet_at_freeze_boundary(self) -> None:
+        with self.assertRaisesRegex(ContractBundleError, "ttl has expired"):
+            freeze_bundle(
+                valid_bundle(),
+                validation_time=datetime.fromisoformat("2026-09-03T00:00:00+08:00"),
+            )
 
     def test_rejects_invalid_packet_handoff_and_state_lease(self) -> None:
         cases = []
@@ -113,7 +129,7 @@ class FreezeContractBundleTests(unittest.TestCase):
         for bundle, message in cases:
             with self.subTest(message=message):
                 with self.assertRaisesRegex(ContractBundleError, message):
-                    freeze_bundle(copy.deepcopy(bundle))
+                    freeze_bundle(copy.deepcopy(bundle), validation_time=VALIDATION_TIME)
 
     def test_rejects_tool_trace_without_packet_consent_or_allowlist(self) -> None:
         trace = {"action": "read_local", "status": "completed", "tool": "route_task.py"}
@@ -122,30 +138,61 @@ class FreezeContractBundleTests(unittest.TestCase):
         del missing_policy["case_packet"]["tool_policy"]
         missing_policy["handoff"]["tool_trace"] = [trace]
         with self.assertRaisesRegex(ContractBundleError, "missing tool_policy"):
-            freeze_bundle(missing_policy)
+            freeze_bundle(missing_policy, validation_time=VALIDATION_TIME)
 
         no_consent = valid_bundle()
         no_consent["case_packet"]["consent"]["read_local"] = False
         no_consent["handoff"]["tool_trace"] = [trace]
         with self.assertRaisesRegex(ContractBundleError, "read_local is not consented"):
-            freeze_bundle(no_consent)
+            freeze_bundle(no_consent, validation_time=VALIDATION_TIME)
 
         not_allowed = valid_bundle()
         not_allowed["case_packet"]["tool_policy"]["allowed_tools"] = []
         not_allowed["handoff"]["tool_trace"] = [trace]
         with self.assertRaisesRegex(ContractBundleError, "read_local is not allowed"):
-            freeze_bundle(not_allowed)
+            freeze_bundle(not_allowed, validation_time=VALIDATION_TIME)
 
         allowed = valid_bundle()
         allowed["handoff"]["tool_trace"] = [trace]
-        freeze_bundle(allowed)
+        freeze_bundle(allowed, validation_time=VALIDATION_TIME)
+
+    def test_rejects_side_effect_trace_outside_case_packet_window(self) -> None:
+        bundle = valid_bundle()
+        bundle["case_packet"]["consent"]["write_local"] = True
+        bundle["case_packet"]["tool_policy"]["allowed_tools"].append("write_local")
+        bundle["handoff"]["approvals"] = [
+            {
+                "action": "write_local",
+                "approval_id": "approval-window-1",
+                "authorization_ref": "e1",
+                "target": "project-state.json",
+                "scope_hash": "sha256:" + "c" * 64,
+                "approved_at": "2026-08-20T00:00:00+08:00",
+                "expires_at": "2099-01-01T00:00:00+08:00",
+                "rollback_ref": "rollback:before-write",
+            }
+        ]
+        bundle["handoff"]["tool_trace"] = [
+            {
+                "action": "write_local",
+                "status": "completed",
+                "approval_id": "approval-window-1",
+                "authorization_ref": "e1",
+                "target": "project-state.json",
+                "scope_hash": "sha256:" + "c" * 64,
+                "occurred_at": "2026-09-03T00:00:00+08:00",
+                "rollback_ref": "rollback:before-write",
+            }
+        ]
+        with self.assertRaisesRegex(ContractBundleError, "outside the CasePacket execution window"):
+            freeze_bundle(bundle, validation_time=VALIDATION_TIME)
 
     def test_requires_independent_state_lease(self) -> None:
         bundle = valid_bundle()
         del bundle["expected_state_version"]
         bundle["handoff"]["state_version"] = 999
         with self.assertRaisesRegex(ContractBundleError, "expected_state_version is required"):
-            freeze_bundle(bundle)
+            freeze_bundle(bundle, validation_time=VALIDATION_TIME)
 
 
 if __name__ == "__main__":
